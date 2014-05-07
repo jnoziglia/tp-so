@@ -37,12 +37,13 @@ void* first_fit(int tamanio);
 void* worst_fit(int tamanio);
 int nuevoIDSegmento(int idProceso);
 void insertarSegmento(t_segmento* segmento);
+void* compactar();
 
 
 /* Variables globales */
 void* memPpal;
 void* finMemPpal;
-//const RAND_MAX = 64;
+//RAND_MAX = 64;
 t_segmento* tablaSegmentos = NULL;
 int algoritmo = 0;
 
@@ -154,7 +155,7 @@ void* crearSegmento(int idProceso, int tamanio)
 	segmentoNuevo = malloc(sizeof(t_segmento));
 	segmentoNuevo->idProceso = idProceso;
 	segmentoNuevo->idSegmento = nuevoIDSegmento(idProceso);
-	segmentoNuevo->base = random();
+	segmentoNuevo->base = rand()%101;
 	segmentoNuevo->tamanio = tamanio;
 	segmentoNuevo->dirInicio = inicioNuevo;
 	insertarSegmento(segmentoNuevo);
@@ -205,7 +206,7 @@ void* first_fit(int tamanio)
 		{
 			if(compactado == 0)
 			{
-				//auxinicio = compactar();
+				auxinicio = compactar();
 				compactado = 1;
 			}
 			else
@@ -220,8 +221,7 @@ void* first_fit(int tamanio)
 void* worst_fit(int tamanio)
 {
 	int compactado = 0;
-	t_segmento* aux;
-	aux = tablaSegmentos;
+	t_segmento* aux = tablaSegmentos;
 	void* auxinicio = memPpal;
 	int tamMax = 0;
 	void* dirTamMax = NULL;
@@ -238,9 +238,11 @@ void* worst_fit(int tamanio)
 	}
 	else
 	{
+		tamMax = (int) (aux->dirInicio - auxinicio);
+		dirTamMax = auxinicio;
 		while(aux != NULL)
 		{
-		if(tamMax < (int)(aux->dirInicio - auxinicio))
+			if(tamMax < (int)(aux->dirInicio - auxinicio))
 			{
 				tamMax = (int)(aux->dirInicio - auxinicio);
 				dirTamMax = auxinicio;
@@ -252,29 +254,29 @@ void* worst_fit(int tamanio)
 			}
 		}
 		if(tamMax < (int)(finMemPpal - auxinicio))
-			{
-				tamMax = (int)(aux->dirInicio - auxinicio);
-				dirTamMax = auxinicio;
-			}
+		{
+			tamMax = (int)(finMemPpal - auxinicio);
+			dirTamMax = auxinicio;
+		}
 		while(compactado <= 1)
+		{
+			if(tamMax >= tamanio)
 			{
-				if(tamMax >= tamanio)
+				return dirTamMax;
+			}
+			else
+			{
+				if(compactado == 0)
 				{
-					return dirTamMax;
+					auxinicio = compactar();
+					compactado = 1;
 				}
 				else
 				{
-					if(compactado == 0)
-					{
-						//auxinicio = compactar();
-						compactado = 1;
-					}
-					else
-					{
-						return 0;
-					}
+					return 0;
 				}
 			}
+		}
 	}
 	return 0;
 }
@@ -322,4 +324,25 @@ void insertarSegmento(t_segmento* segmento)
 		aux->siguiente = segmento;
 	}
 	return;
+}
+
+
+void* compactar()
+{
+	t_segmento* auxSegmento;
+	t_segmento aux;
+	if (tablaSegmentos != memPpal)
+	{
+		aux = *tablaSegmentos;
+		tablaSegmentos = memPpal;
+		*tablaSegmentos = aux;
+	}
+	auxSegmento = tablaSegmentos->siguiente;
+	while (auxSegmento != NULL)
+	{
+		aux = *auxSegmento;
+		auxSegmento = tablaSegmentos+tablaSegmentos->tamanio;
+		*auxSegmento = aux;
+	}
+	return auxSegmento+auxSegmento->tamanio;
 }
