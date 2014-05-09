@@ -436,7 +436,6 @@ void insertarSegmento(t_segmento* segmento)
 }
 
 
-//TODO: Sacar funcion solicitarBytes y escribir el codigo ahi
 void* compactar()
 {
 	t_segmento* auxSegmento = tablaSegmentos;
@@ -446,12 +445,8 @@ void* compactar()
 	{
 		if (aux != auxSegmento->dirInicio)
 		{
-			void* buffer = malloc(auxSegmento->tamanio);
-			printf("%d %d",auxSegmento->base,auxSegmento->tamanio);
-			buffer = solicitarBytes(auxSegmento->base,0,auxSegmento->tamanio);
-			enviarBytes(auxSegmento->base,0,auxSegmento->tamanio,buffer);
+			memcpy(aux,auxSegmento->dirInicio,auxSegmento->tamanio);
 			auxSegmento->dirInicio = aux;
-			free(buffer);
 		}
 		aux = auxSegmento->dirInicio+auxSegmento->tamanio;
 		auxSegmento = auxSegmento->siguiente;
