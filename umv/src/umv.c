@@ -102,8 +102,19 @@ void* mainEsperarConexiones()
 		}
 	}
 }
-
-
+void destruirSegmentos( int id){
+	t_segmento* aux = tablaSegmentos;
+	t_segmento* aux2 = tablaSegmentos;
+		while(aux->siguiente != NULL){
+			if(aux->idProceso == id){
+				aux2=aux;
+				aux=aux->siguiente;
+				free(aux2);
+			}else{
+				aux=aux->siguiente;
+			}
+		}
+}
 
 int retornarBytesSolicitados(void* inicio,int offset, int tamanio) {
 	void* bufferLleno;
