@@ -214,6 +214,7 @@ void destruirSegmentos( int id){
 }*/
 
 
+//TODO: Arreglar funciones
 /* Funcion solicitar bytes */
 void* solicitarBytes(int base, int offset, int tamanio)
 {
@@ -255,15 +256,16 @@ void* crearSegmento(int idProceso, int tamanio)
 	return inicioNuevo;
 }
 
+
 t_segmento* buscarSegmento(int base)
 {
 	t_segmento* aux = tablaSegmentos;
 	while(aux != NULL)
 	{
-		//if(aux->base == base && aux->idProceso == procesoActivo)
-		//{
+		if(aux->base == base && aux->idProceso == procesoActivo)
+		{
 			return aux;
-		//}
+		}
 		aux = aux->siguiente;
 	}
 	return NULL;
@@ -434,6 +436,7 @@ void insertarSegmento(t_segmento* segmento)
 }
 
 
+//TODO: Sacar funcion solicitarBytes y escribir el codigo ahi
 void* compactar()
 {
 	t_segmento* auxSegmento = tablaSegmentos;
