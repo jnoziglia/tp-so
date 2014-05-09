@@ -31,6 +31,7 @@ void* solicitarBytes(int base, int offset, int tamanio);
 void enviarBytes(int base, int offset, int tamanio, void* buffer);
 //int retornarBytesSolicitados(void* inicio, int offset, int tamanio);
 void* mainConsola();
+void destruirSegmentos(int id);
 void* mainEsperarConexiones();
 void* crearSegmento(int idProceso, int tamanio);
 t_segmento* buscarSegmento(int base);
@@ -71,17 +72,20 @@ int main (void)
 }
 */
 
+/* Prueba funciones */
 {
 	srand(time(NULL));
 	printf("c");
 		memPpal = malloc (65536);
 		finMemPpal = memPpal+65536;
 
-		crearSegmento(1,10);
-		crearSegmento(1,10);
-		crearSegmento(1,10);
-		crearSegmento(1,30);
+		crearSegmento(1,50);
+		crearSegmento(2,70);
+		crearSegmento(1,100);
+		crearSegmento(2,30);
 		crearSegmento(1,20);
+		crearSegmento(2,20);
+		destruirSegmentos(3);
 		t_segmento* aux = tablaSegmentos;
 		printf("b");
 		while (aux!=NULL)
@@ -133,17 +137,36 @@ void* mainEsperarConexiones()
 }
 
 void destruirSegmentos( int id){
-	t_segmento* aux = tablaSegmentos;
-	t_segmento* aux2 = tablaSegmentos;
-		while(aux->siguiente != NULL){
-			if(aux->idProceso == id){
-				aux2=aux;
-				aux=aux->siguiente;
-				free(aux2);
-			}else{
-				aux=aux->siguiente;
-			}
+	t_segmento* aux = NULL;
+	t_segmento* auxSiguiente = tablaSegmentos;
+
+	while (auxSiguiente->idProceso == id)
+	{
+		tablaSegmentos = auxSiguiente->siguiente;
+		free(auxSiguiente);
+		auxSiguiente = tablaSegmentos;
+	}
+	aux = tablaSegmentos;
+	auxSiguiente = aux->siguiente;
+	while(auxSiguiente->siguiente != NULL)
+	{
+		if(auxSiguiente->idProceso == id)
+		{
+			aux->siguiente = auxSiguiente->siguiente;
+			free(auxSiguiente);
+			auxSiguiente = aux->siguiente;
 		}
+		else
+		{
+			aux=aux->siguiente;
+			auxSiguiente= aux->siguiente;
+		}
+	}
+	if(auxSiguiente->idProceso == id)
+	{
+		aux->siguiente = NULL;
+		free (auxSiguiente);
+	}
 }
 
 
