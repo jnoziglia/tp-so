@@ -49,7 +49,7 @@ void* memPpal;
 void* finMemPpal;
 t_segmento* tablaSegmentos = NULL;
 int algoritmo = 0;
-int procesoActivo;
+int procesoActivo = 2;
 
 
 int main (void)
@@ -85,9 +85,33 @@ int main (void)
 		crearSegmento(2,30);
 		crearSegmento(1,20);
 		crearSegmento(2,20);
-		destruirSegmentos(3);
+
 		t_segmento* aux = tablaSegmentos;
 		printf("b");
+		while (aux!=NULL)
+		{
+			printf("id: %d\n",aux->idProceso);
+			printf("idSeg: %d\n",aux->idSegmento);
+			printf("base: %d\n",aux->base);
+			printf("tamaño: %d\n",aux->tamanio);
+			printf("dir: %p\n\n",aux->dirInicio);
+			aux = aux->siguiente;
+		}
+		destruirSegmentos(1);
+		aux = tablaSegmentos;
+		printf("-----------------------------\n");
+		while (aux!=NULL)
+		{
+			printf("id: %d\n",aux->idProceso);
+			printf("idSeg: %d\n",aux->idSegmento);
+			printf("base: %d\n",aux->base);
+			printf("tamaño: %d\n",aux->tamanio);
+			printf("dir: %p\n\n",aux->dirInicio);
+			aux = aux->siguiente;
+		}
+		printf("-----------------------------\n");
+		compactar();
+		aux = tablaSegmentos;
 		while (aux!=NULL)
 		{
 			printf("id: %d\n",aux->idProceso);
@@ -236,10 +260,10 @@ t_segmento* buscarSegmento(int base)
 	t_segmento* aux = tablaSegmentos;
 	while(aux != NULL)
 	{
-		if(aux->base == base && aux->idProceso == procesoActivo)
-		{
+		//if(aux->base == base && aux->idProceso == procesoActivo)
+		//{
 			return aux;
-		}
+		//}
 		aux = aux->siguiente;
 	}
 	return NULL;
@@ -420,6 +444,7 @@ void* compactar()
 		if (aux != auxSegmento->dirInicio)
 		{
 			void* buffer = malloc(auxSegmento->tamanio);
+			printf("%d %d",auxSegmento->base,auxSegmento->tamanio);
 			buffer = solicitarBytes(auxSegmento->base,0,auxSegmento->tamanio);
 			enviarBytes(auxSegmento->base,0,auxSegmento->tamanio,buffer);
 			auxSegmento->dirInicio = aux;
@@ -428,5 +453,5 @@ void* compactar()
 		aux = auxSegmento->dirInicio+auxSegmento->tamanio;
 		auxSegmento = auxSegmento->siguiente;
 	}
-	return auxSegmento->dirInicio+auxSegmento->tamanio;
+	return aux;
 }
