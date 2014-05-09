@@ -41,14 +41,14 @@ void* worst_fit(int tamanio);
 int nuevoIDSegmento(int idProceso);
 void insertarSegmento(t_segmento* segmento);
 void* compactar();
-
+//TODO: Dump(), Retardo(), cambio de procesoActivo, handshake, consola, segFault, conexiones
 
 
 /* Variables globales */
 void* memPpal;
 void* finMemPpal;
 t_segmento* tablaSegmentos = NULL;
-int algoritmo = 0;
+int algoritmo = 1;
 int procesoActivo = 2;
 
 
@@ -110,7 +110,7 @@ int main (void)
 			aux = aux->siguiente;
 		}
 		printf("-----------------------------\n");
-		compactar();
+		crearSegmento(1,50);
 		aux = tablaSegmentos;
 		while (aux!=NULL)
 		{
@@ -431,6 +431,7 @@ void insertarSegmento(t_segmento* segmento)
 			}
 		}
 		aux->siguiente = segmento;
+		segmento->siguiente = NULL;
 	}
 	return;
 }
