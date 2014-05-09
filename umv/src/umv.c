@@ -13,6 +13,7 @@
 #include <commons/string.h>
 #include <pthread.h>
 #include <string.h>
+#include <time.h>
 
 /* Tabla de segmentos */
 typedef struct segmento
@@ -26,12 +27,13 @@ typedef struct segmento
 } t_segmento;
 
 /* Funciones */
-void* solicitarBytes(void* inicio, int offset, int tamanio);
-void enviarBytes(void* inicio, int offset, int tamanio, void* buffer);
-int retornarBytesSolicitados(void* inicio, int offset, int tamanio);
+void* solicitarBytes(int base, int offset, int tamanio);
+void enviarBytes(int base, int offset, int tamanio, void* buffer);
+//int retornarBytesSolicitados(void* inicio, int offset, int tamanio);
 void* mainConsola();
 void* mainEsperarConexiones();
 void* crearSegmento(int idProceso, int tamanio);
+t_segmento* buscarSegmento(int base);
 void* posicionarSegmento(int algoritmo, int tamanio);
 void* first_fit(int tamanio);
 void* worst_fit(int tamanio);
@@ -40,16 +42,17 @@ void insertarSegmento(t_segmento* segmento);
 void* compactar();
 
 
+
 /* Variables globales */
 void* memPpal;
 void* finMemPpal;
-//RAND_MAX = 64;
 t_segmento* tablaSegmentos = NULL;
 int algoritmo = 0;
+int procesoActivo;
 
 
 int main (void)
-{
+/*{
 	pthread_t consola, esperarConexiones;
 	int rhConsola, rhEsperarConexiones;
 	memPpal = malloc (1024);	//El tamaño va por configuracion
@@ -66,7 +69,33 @@ int main (void)
 
 	exit(0);
 }
+*/
 
+{
+	srand(time(NULL));
+	printf("c");
+		memPpal = malloc (65536);
+		finMemPpal = memPpal+65536;
+
+		crearSegmento(1,10);
+		crearSegmento(1,10);
+		crearSegmento(1,10);
+		crearSegmento(1,30);
+		crearSegmento(1,20);
+		t_segmento* aux = tablaSegmentos;
+		printf("b");
+		while (aux!=NULL)
+		{
+			printf("id: %d\n",aux->idProceso);
+			printf("idSeg: %d\n",aux->idSegmento);
+			printf("base: %d\n",aux->base);
+			printf("tamaño: %d\n",aux->tamanio);
+			printf("dir: %p\n\n",aux->dirInicio);
+			aux = aux->siguiente;
+		}
+		printf("a");
+		return 0;
+}
 
 /* Hilo consola */
 void* mainConsola()
@@ -102,6 +131,7 @@ void* mainEsperarConexiones()
 		}
 	}
 }
+
 void destruirSegmentos( int id){
 	t_segmento* aux = tablaSegmentos;
 	t_segmento* aux2 = tablaSegmentos;
@@ -116,7 +146,10 @@ void destruirSegmentos( int id){
 		}
 }
 
-int retornarBytesSolicitados(void* inicio,int offset, int tamanio) {
+
+
+
+/*int retornarBytesSolicitados(void* inicio,int offset, int tamanio) {
 	void* bufferLleno;
 	int* aux;
 	int i;
@@ -131,14 +164,15 @@ int retornarBytesSolicitados(void* inicio,int offset, int tamanio) {
 
 	printf("\n Valor de aux: %d", *aux);
 	return 0;
-}
+}*/
 
 
 /* Funcion solicitar bytes */
-void* solicitarBytes(void* inicio, int offset, int tamanio)
+void* solicitarBytes(int base, int offset, int tamanio)
 {
 	void* pComienzo;
-	pComienzo = inicio + offset;
+	t_segmento* segmentoBuscado = buscarSegmento(base);
+	pComienzo = segmentoBuscado->dirInicio + offset;
 	void* buffer= malloc(tamanio);
 	memcpy(buffer,pComienzo,tamanio);
 	return buffer;
@@ -146,10 +180,11 @@ void* solicitarBytes(void* inicio, int offset, int tamanio)
 
 
 
-void enviarBytes(void* inicio, int offset, int tamanio, void* buffer)
+void enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
 	void* pComienzo;
-	pComienzo = inicio + offset;
+	t_segmento* segmentoBuscado = buscarSegmento(base);
+	pComienzo = segmentoBuscado->dirInicio + offset;
 	memcpy(pComienzo,buffer,tamanio);
 }
 
@@ -166,11 +201,25 @@ void* crearSegmento(int idProceso, int tamanio)
 	segmentoNuevo = malloc(sizeof(t_segmento));
 	segmentoNuevo->idProceso = idProceso;
 	segmentoNuevo->idSegmento = nuevoIDSegmento(idProceso);
-	segmentoNuevo->base = rand()%101;
+	segmentoNuevo->base = rand()%10001;
 	segmentoNuevo->tamanio = tamanio;
 	segmentoNuevo->dirInicio = inicioNuevo;
 	insertarSegmento(segmentoNuevo);
 	return inicioNuevo;
+}
+
+t_segmento* buscarSegmento(int base)
+{
+	t_segmento* aux = tablaSegmentos;
+	while(aux != NULL)
+	{
+		if(aux->base == base && aux->idProceso == procesoActivo)
+		{
+			return aux;
+		}
+		aux = aux->siguiente;
+	}
+	return NULL;
 }
 
 void* posicionarSegmento(int algoritmo, int tamanio)
@@ -340,20 +389,21 @@ void insertarSegmento(t_segmento* segmento)
 
 void* compactar()
 {
-	t_segmento* auxSegmento;
-	t_segmento aux;
-	if (tablaSegmentos != memPpal)
+	t_segmento* auxSegmento = tablaSegmentos;
+	void* aux = memPpal;
+
+	while(auxSegmento != NULL)
 	{
-		aux = *tablaSegmentos;
-		tablaSegmentos = memPpal;
-		*tablaSegmentos = aux;
+		if (aux != auxSegmento->dirInicio)
+		{
+			void* buffer = malloc(auxSegmento->tamanio);
+			buffer = solicitarBytes(auxSegmento->base,0,auxSegmento->tamanio);
+			enviarBytes(auxSegmento->base,0,auxSegmento->tamanio,buffer);
+			auxSegmento->dirInicio = aux;
+			free(buffer);
+		}
+		aux = auxSegmento->dirInicio+auxSegmento->tamanio;
+		auxSegmento = auxSegmento->siguiente;
 	}
-	auxSegmento = tablaSegmentos->siguiente;
-	while (auxSegmento != NULL)
-	{
-		aux = *auxSegmento;
-		auxSegmento = tablaSegmentos+tablaSegmentos->tamanio;
-		*auxSegmento = aux;
-	}
-	return auxSegmento+auxSegmento->tamanio;
+	return auxSegmento->dirInicio+auxSegmento->tamanio;
 }
