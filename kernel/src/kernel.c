@@ -24,17 +24,17 @@ typedef struct pcb
 	int programCounter;
 	int tamanioContextoActual;
 	int tamanioIndiceEtiquetas;
-};
+}pcb;
 
 /* Funciones */
 void* hiloPCP();
 void* hiloPLP();
 
 /* Variables Globales */
-void* new = NULL;
-void* ready = NULL;
-void* exec = NULL;
-void* exit = NULL;
+void* l_new = NULL;
+void* l_ready = NULL;
+void* l_exec = NULL;
+void* l_exit = NULL;
 
 
 int main(void) {
@@ -46,7 +46,8 @@ int main(void) {
 	pthread_join(hiloPLP, NULL);
 	printf("%d",rhPCP);
 	printf("%d",rhPLP);
-	return EXIT_SUCCESS;
+	return 0;
+	//return EXIT_SUCCESS;
 }
 
 
@@ -57,5 +58,5 @@ void* hiloPCP()
 
 void* hiloPLP()
 {
-	pthread_t esperarConexionesPrograma,
+return 0;
 }
