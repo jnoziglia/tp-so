@@ -48,7 +48,7 @@ void mostrarMemoria();
 void mostrarContenidoDeMemoria();
 void imprimirSegmento(t_segmento* segmento);
 int cambioProcesoActivo(int idProceso);
-//TODO: Retardo(), handshake, consola,conexiones, DUMP()
+//TODO: revisar insertarSegmento(); Retardo(), handshake, consola,conexiones, DUMP(), revisar Destruir segmentos;
 
 
 /* Variables globales */
@@ -57,30 +57,31 @@ void* finMemPpal;
 t_segmento* tablaSegmentos = NULL;
 int algoritmo = 1;
 int procesoActivo = 2;
+int retardo = 0;
 
 
 int main (void)
-/*{
+{
 	pthread_t consola, esperarConexiones;
 	int rhConsola, rhEsperarConexiones;
-	memPpal = malloc (1024);	//El tamaño va por configuracion
-	finMemPpal = memPpal + 1024; //El tamaño va por configuracion
+	memPpal = malloc (10);	//El tamaño va por configuracion
+	finMemPpal = memPpal + 10; //El tamaño va por configuracion
 
 	rhConsola = pthread_create(&consola, NULL, mainConsola, NULL);
-	rhEsperarConexiones = pthread_create(&esperarConexiones, NULL, mainEsperarConexiones, NULL);
+	//rhEsperarConexiones = pthread_create(&esperarConexiones, NULL, mainEsperarConexiones, NULL);
 
 	pthread_join(consola, NULL);
-	pthread_join(esperarConexiones, NULL);
+	//pthread_join(esperarConexiones, NULL);
 
 	printf("%d",rhConsola);
-	printf("%d",rhEsperarConexiones);
+	//printf("%d",rhEsperarConexiones);
 
 	exit(0);
 }
-*/
+
 
 /* Prueba funciones */
-{
+/*{
 	srand(time(NULL));
 	printf("c");
 		memPpal = malloc (65536);
@@ -136,23 +137,151 @@ int main (void)
 		printf("%s \n",(char*)solicitarBytes(tablaSegmentos->base,0,70));
 		dump();
 		return 0;
-}
+}*/
 
 /* Hilo consola */
 void* mainConsola()
 {
-	char* texto = malloc (20);
 	printf("Bienvenido a la consola\n");
+	char* parametros = malloc(1000);
 	while(1)
 	{
-		scanf("%s",texto);
-		printf("Consola: %s\n",texto);
-		if(string_equals_ignore_case(texto,"exit"))
+		gets(parametros);
+		//sleep(retardo);
+		if(string_starts_with(parametros,"operacion "))
 		{
-			free(texto);
-			return NULL;
+			char* resto = string_substring_from(parametros,10);
+			if(string_starts_with(resto,"solicitar "))
+			{
+				char* resto2 = string_substring_from(resto,10);
+				char* pid;
+				char* tamanio;
+				char* base;
+				char* offset;
+				pid = strtok(resto2, " ");
+				base = strtok(NULL, " ");
+				offset = strtok(NULL, " ");
+				tamanio = strtok(NULL, " ");
+				if (pid != 0 || tamanio != 0)
+				{
+					char* buffer = malloc(atoi(tamanio));
+					int procesoAux = cambioProcesoActivo(atoi(pid));
+					buffer = solicitarBytes(atoi(base), atoi(offset), atoi(tamanio));
+					printf("%s",buffer);
+					cambioProcesoActivo(procesoAux);
+					free(buffer);
+				}
+				else
+				{
+					printf("Argumentos incorrectos");
+				}
+				continue;
+			}
+			if(string_starts_with(resto,"escribir "))
+			{
+				char* resto2 = string_substring_from(resto,9);
+				char* pid;
+				char* tamanio;
+				char* base;
+				char* offset;
+				pid = strtok(resto2, " ");
+				base = strtok(NULL, " ");
+				offset = strtok(NULL, " ");
+				tamanio = strtok(NULL, " ");
+
+				if (pid != 0 || tamanio != 0)
+				{
+					//TODO: tratar de cambiar el 128
+					void* buffer = malloc (128);
+					gets(buffer);
+					int procesoAux = cambioProcesoActivo(atoi(pid));
+					enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
+					cambioProcesoActivo(procesoAux);
+				}
+				else
+				{
+					printf("Argumentos incorrectos");
+				}
+				continue;
+			}
+			if(string_starts_with(resto,"crear-segmento "))
+			{
+				char* resto2 = string_substring_from(resto,15);
+				char* pid;
+				char* tamanio;
+				pid = strtok(resto2, " ");
+				tamanio = strtok(NULL, " ");
+				if (tamanio != 0 || pid != 0)
+				{
+					crearSegmento(atoi(pid), atoi(tamanio));
+					printf("Segmento creado\n");
+				}
+				else
+				{
+					printf("Argumentos incorrectos");
+
+				}
+				continue;
+
+			}
+			if(string_starts_with(resto,"destruir-segmentos "))
+			{
+				char* resto2 = string_substring_from(resto,19);
+				if(atoi(resto2) != 0)
+				{
+					destruirSegmentos(atoi(resto2));
+					printf("Segmentos destruidos");
+				}
+				else
+				{
+					printf("Argumentos incorrectos.");
+				}
+				continue;
+			}
+			printf("Argumento incorrecto");
+			continue;
 		}
+		if(string_starts_with(parametros,"retardo "))
+		{
+			char* resto = string_substring_from(parametros,8);
+			retardo = atoi(resto)/1000;
+			printf("Retardo Cambiado\n");
+			continue;
+		}
+		if(string_starts_with(parametros,"algoritmo "))
+		{
+			char* resto = string_substring_from(parametros,10);
+			if(string_equals_ignore_case(resto,"worst-fit"))
+			{
+				algoritmo = 1;
+				printf("Algoritmo cambiado a Worst-Fit\n");
+				continue;
+			}
+			if(string_equals_ignore_case(resto,"first-fit"))
+			{
+				algoritmo = 0;
+				printf("Algoritmo cambiado a First-Fit\n");
+				continue;
+			}
+			printf("Argumento incorrecto");
+			continue;
+		}
+		if(string_equals_ignore_case(parametros,"compactacion"))
+		{
+			compactar();
+			printf("Compactado.\n");
+			continue;
+		}
+		if(string_equals_ignore_case(parametros,"dump"))
+		{
+			dump();
+			printf("Fin de dump\n");
+			continue;
+		}
+		printf("Argumentos incorrectos.");
+		continue;
 	}
+
 }
 
 /* Hilo para escuchar conexiones */
@@ -453,7 +582,17 @@ void insertarSegmento(t_segmento* segmento)
 				return;
 			}
 		}
-		aux->siguiente = segmento;
+		if(segmento->dirInicio > aux->dirInicio)
+		{
+			aux->siguiente = segmento;
+		}
+		else
+		{
+			auxSiguiente = aux->siguiente;
+			aux->siguiente = segmento;
+			segmento->siguiente = auxSiguiente;
+		}
+
 		segmento->siguiente = NULL;
 	}
 	return;

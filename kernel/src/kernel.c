@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <parser/metadata_program.h>
+#include <commons/string.h>
 
 /* Estructuras de datos */
 typedef struct pcb
@@ -25,7 +26,9 @@ typedef struct pcb
 	int programCounter;
 	int tamanioContextoActual;
 	int tamanioIndiceEtiquetas;
+	int peso;
 }t_pcb;
+
 
 /* Funciones */
 void* hiloPCP();
@@ -35,6 +38,8 @@ int generarPid(void);
 int UMV_crearSegmento(int tamanio);
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
+void pasarAReady(void);
+int cantidadDeLineas(char* string);
 
 
 /* Variables Globales */
@@ -45,6 +50,9 @@ void* l_exit = NULL;
 int gradoMultiprogramacion;
 t_medatada_program* metadata;
 int tamanioStack;
+
+/* Semáforos */
+int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
 
 int main(void) {
 	pthread_t hiloPCP, hiloPLP;
@@ -67,8 +75,31 @@ void* hiloPCP()
 
 void* hiloPLP()
 {
-return 0;
+	pthread_t pasarAReady;
+	int rhPasarAReady;
+	char* codigo;
+	t_pcb* pcb;
+	rhPasarAReady = pthread_create(&pasarAReady,NULL,pasarAReady,NULL);
+	while(1)
+	{
+		//Escuchar las conexiones
+
+		//Escuchar las conexiones
+		pcb = crearPcb(codigo);
+		calcularPeso(pcb);
+		encolarEnNew(pcb);
+	}
+	pthread_join(pasarAReady);
+	return 0;
 }
+
+t_pcb* encolar(char* codigo){
+	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
+	int peso=calcularPeso(metadataAux);
+	t_pcb* pcb=crearPcb(codigo);
+	guardarOrdenado(pcb, peso);
+}
+
 
 t_pcb* crearPcb(char* codigo)
 {
@@ -83,10 +114,11 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->tamanioContextoActual = 0;
 	pcbAux->indiceCodigo = UMV_crearSegmento(metadataAux->instrucciones_size)*(sizeof(t_intructions));
 	pcbAux->indiceEtiquetas = UMV_crearSegmento(metadataAux->etiquetas_size);
+	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones) + cantidadDeLineas(codigo);
 	if(pcbAux->segmentoStack == 0 || pcbAux->segmentoCodigo == 0 || pcbAux->indiceCodigo == 0 || pcbAux->indiceEtiquetas == 0)
 	{
 		//avisar al programa :D
-		Programa_imprimirTexto("No se pudo crear el programa");
+		Programa_imprimirTexto("Holis, No se pudo crear el programa");
 	}
 	UMV_enviarBytes(pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
 	UMV_enviarBytes(pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
@@ -113,3 +145,21 @@ void Programa_imprimirTexto(char* texto)
 {
 
 }
+
+void pasarAReady(void)
+{
+
+}
+
+int cantidadDeLineas(char* string)
+{
+	char c;
+	int cantLineas = 0;
+	  while (string != EOF)
+	  {
+		  if (c == '\n')
+	      ++cantLineas;
+	  }
+	  return cantLineas;
+}
+
