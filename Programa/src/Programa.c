@@ -22,6 +22,9 @@ int main(int cantArgs, char **args) {
 	FILE *archivoConfig;
 	FILE *script;
 	char caracter;
+	char codigo[100000];
+	int num=0;
+	char* buffer = malloc(1000);
 
 	//Muestro cuantos argumentos se pasan
 	printf("%d\n", cantArgs);
@@ -42,13 +45,20 @@ int main(int cantArgs, char **args) {
     }
 	else
 	{
-	    printf("\nEl contenido del archivo de prueba es \n\n");
+		fscanf(script,"%s", buffer);//borro el shellbag
 	    while (feof(script) == 0)
 	    {
 	    	caracter = fgetc(script);
-	    	printf("%c",caracter);
+	    	codigo[num]=caracter;
+	    	num++;
 	    }
+
+	    int tamanio=sizeof(char) * num;
+	    printf("tamanio = %d", tamanio);
+	    printf("\nEl contenido del archivo de prueba es \n\n");
+	    printf("%s", codigo);
     }
+	free(buffer);
 	fclose(script);
 
 
