@@ -220,6 +220,17 @@ void* solicitarBytes(int base, int offset, int tamanio)
 {
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
+	if (segmentoBuscado == NULL)
+	{
+		printf("Segmentation Fault");
+		return NULL;
+	}
+	//printf("%p",segmentoBuscado->dirInicio);
+	if (offset + tamanio > segmentoBuscado->tamanio)
+	{
+		printf("Memory Overload");
+		return NULL;
+	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	void* buffer= malloc(tamanio);
 	memcpy(buffer,pComienzo,tamanio);
