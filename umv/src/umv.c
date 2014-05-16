@@ -47,7 +47,8 @@ void mostrarEstructuras();
 void mostrarMemoria();
 void mostrarContenidoDeMemoria();
 void imprimirSegmento(t_segmento* segmento);
-//TODO: Dump(), Retardo(), cambio de procesoActivo, handshake, consola, segFault, conexiones
+int cambioProcesoActivo(int idProceso);
+//TODO: Retardo(), handshake, consola,conexiones, DUMP()
 
 
 /* Variables globales */
@@ -503,4 +504,11 @@ void imprimirSegmento(t_segmento* segmento)
 	printf("Base: %d \n",segmento->base);
 	printf("Tamaño: %d \n",segmento->tamanio);
 	printf("Direccion fisica: %p \n\n",segmento->dirInicio);
+}
+
+int cambioProcesoActivo(int idProceso)
+{
+	int aux = procesoActivo;
+	procesoActivo = idProceso;
+	return aux;
 }
