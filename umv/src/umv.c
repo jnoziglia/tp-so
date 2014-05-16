@@ -40,7 +40,12 @@ void* first_fit(int tamanio);
 void* worst_fit(int tamanio);
 int nuevoIDSegmento(int idProceso);
 void insertarSegmento(t_segmento* segmento);
-void* compactar();
+void* compactar(void);
+void dump(void);
+void mostrarEstructuras();
+void mostrarMemoria();
+void mostrarContenidoDeMemoria();
+void imprimirSegmento(t_segmento* segmento);
 //TODO: Dump(), Retardo(), cambio de procesoActivo, handshake, consola, segFault, conexiones
 
 
@@ -125,7 +130,8 @@ int main (void)
 		}
 
 		enviarBytes(tablaSegmentos->base,0,1,buffer);
-		printf("%s",(char*)solicitarBytes(tablaSegmentos->base,0,70));
+		printf("%s \n",(char*)solicitarBytes(tablaSegmentos->base,0,70));
+		dump();
 		return 0;
 }
 
@@ -451,7 +457,7 @@ void insertarSegmento(t_segmento* segmento)
 }
 
 
-void* compactar()
+void* compactar(void)
 {
 	t_segmento* auxSegmento = tablaSegmentos;
 	void* aux = memPpal;
@@ -467,4 +473,32 @@ void* compactar()
 		auxSegmento = auxSegmento->siguiente;
 	}
 	return aux;
+}
+
+
+void dump(void)
+{
+	mostrarEstructuras();
+	//mostrarMemoria();
+	//mostrarContenidoDeMemoria();
+}
+
+void mostrarEstructuras(void)
+{
+	t_segmento* auxSegmento = tablaSegmentos;
+	printf("")
+		while (auxSegmento != NULL)
+		{
+			imprimirSegmento(auxSegmento);
+			auxSegmento = auxSegmento->siguiente;
+		}
+}
+
+void imprimirSegmento(t_segmento* segmento)
+{
+	printf("Proceso: %d \n",segmento->idProceso);
+	printf("Segmento: %d \n",segmento->idSegmento);
+	printf("Base: %d \n",segmento->base);
+	printf("Tamaño: %d \n",segmento->tamanio);
+	printf("Direccion fisica: %p \n\n",segmento->dirInicio);
 }
