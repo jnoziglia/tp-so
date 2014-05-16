@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <string.h>
 #include <time.h>
+#include <stdint.h>
 
 /* Tabla de segmentos */
 typedef struct segmento
@@ -85,9 +86,10 @@ int main (void)
 		finMemPpal = memPpal+65536;
 		char* buffer = malloc(70);
 		buffer = "Holis";
+		printf("%p \n\n", memPpal);
 
 		crearSegmento(1,50);
-		crearSegmento(2,70);
+		crearSegmento(2,50);
 		crearSegmento(1,100);
 		crearSegmento(2,30);
 		crearSegmento(1,20);
@@ -486,7 +488,7 @@ void dump(void)
 void mostrarEstructuras(void)
 {
 	t_segmento* auxSegmento = tablaSegmentos;
-	printf("")
+	printf(" ");
 		while (auxSegmento != NULL)
 		{
 			imprimirSegmento(auxSegmento);
