@@ -78,6 +78,8 @@ int main (void)
 	printf("c");
 		memPpal = malloc (65536);
 		finMemPpal = memPpal+65536;
+		char* buffer = malloc(70);
+		buffer = "Holis";
 
 		crearSegmento(1,50);
 		crearSegmento(2,70);
@@ -121,7 +123,9 @@ int main (void)
 			printf("dir: %p\n\n",aux->dirInicio);
 			aux = aux->siguiente;
 		}
-		printf("a");
+
+		enviarBytes(tablaSegmentos->base,0,1,buffer);
+		printf("%s",(char*)solicitarBytes(tablaSegmentos->base,0,70));
 		return 0;
 }
 
