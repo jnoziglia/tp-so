@@ -32,16 +32,12 @@ char *ANSISOP_CONFIG;
 
 
 int main(int cantArgs, char **args) {
-	FILE *archivoConfig;
+	//FILE *archivoConfig;
 	FILE *script;
 	char caracter;
 	char codigo[100000];
 	int num=0;
 	char* buffer = malloc(1000);
-
-	struct addrinfo hints;
-	struct addrinfo *serverInfo;
-
 
 	//Muestro cuantos argumentos se pasan
 	printf("%d\n", cantArgs);
@@ -50,9 +46,9 @@ int main(int cantArgs, char **args) {
 	printf("%s\n", args[1]);
 
 	//Abro archivo de config y defino variable global
-	ANSISOP_CONFIG = "./config";
-	archivoConfig = fopen(ANSISOP_CONFIG,"r");
-     fclose(archivoConfig);
+	//ANSISOP_CONFIG = "./config";
+	//archivoConfig = fopen(ANSISOP_CONFIG,"r");
+     //fclose(archivoConfig);
 	/*fread ( void * ptr, size_t size, size_t count, FILE * stream );//lee
 	size_t fwrite(void *puntero, size_t tamano, size_t cantidad, FILE *archivo);//escribe
 	*/
@@ -61,9 +57,13 @@ int main(int cantArgs, char **args) {
 	script = fopen(args[1],"r");
 
 	//empiezo con el socket
+	struct addrinfo hints;
+	struct addrinfo *serverInfo;
+
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
 	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+
 	getaddrinfo(IP, PUERTO, &hints, &serverInfo);	// Carga en serverInfo los datos de la conexion
 
 	int serverSocket;
@@ -71,10 +71,6 @@ int main(int cantArgs, char **args) {
 
 	connect(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen);
 	freeaddrinfo(serverInfo);	// No lo necesitamos mas
-
-
-
-
 
 
 	if (script == NULL)
@@ -95,9 +91,9 @@ int main(int cantArgs, char **args) {
 	    printf("tamanio = %d", tamanio);
 	    printf("\nEl contenido del archivo de prueba es \n\n");
 	    printf("%s", codigo);
-	    char mensaje[tamanio];
+	    char mensaje[tamanio+1];
 	    strcpy(mensaje, codigo);
-	    send(serverSocket, mensaje,tamanio, 0);// lo envio   :) :)
+	    send(serverSocket, mensaje,tamanio+1, 0);// lo envio   :) :)
 	    close(serverSocket);
     }
 	free(buffer);
