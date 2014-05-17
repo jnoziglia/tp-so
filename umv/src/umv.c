@@ -559,15 +559,46 @@ int nuevoIDSegmento(int idProceso)
 
 void insertarSegmento(t_segmento* segmento)
 {
-	t_segmento* aux = tablaSegmentos;
-	t_segmento* auxSiguiente;
+	t_segmento* auxAnterior = tablaSegmentos;
+	t_segmento* aux;
 	if(tablaSegmentos == NULL)
 	{
 		tablaSegmentos = segmento;
 		tablaSegmentos->siguiente = NULL;
+		return;
 	}
 	else
 	{
+		if (tablaSegmentos->dirInicio > segmento->dirInicio)
+		{
+			segmento->siguiente = tablaSegmentos;
+			tablaSegmentos = segmento;
+			return;
+		}
+		else
+		{
+			auxAnterior = tablaSegmentos;
+			aux = auxAnterior->siguiente;
+			while (aux != NULL)
+			{
+				if (aux->dirInicio > segmento->dirInicio)
+				{
+					segmento->siguiente = aux;
+					auxAnterior->siguiente = segmento;
+					return;
+				}
+				else
+				{
+					auxAnterior = aux;
+					aux = aux->siguiente;
+				}
+			}
+			auxAnterior->siguiente = segmento;
+			segmento->siguiente = NULL;
+			return;
+		}
+	}
+}/*
 		while(aux->siguiente != NULL)
 		{
 			if(segmento->dirInicio > aux->dirInicio)
@@ -596,7 +627,7 @@ void insertarSegmento(t_segmento* segmento)
 		segmento->siguiente = NULL;
 	}
 	return;
-}
+}*/
 
 
 void* compactar(void)
