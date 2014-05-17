@@ -13,6 +13,15 @@
 #include <pthread.h>
 #include <parser/metadata_program.h>
 #include <commons/string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+
+/* Definiciones y variables para la conexión por Sockets */
+#define PUERTO "6667"
+#define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+#define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
 
 /* Estructuras de datos */
 typedef struct pcb
@@ -75,30 +84,40 @@ void* hiloPCP()
 
 void* hiloPLP()
 {
-	pthread_t pasarAReady;
-	int rhPasarAReady;
-	char* codigo;
-	t_pcb* pcb;
-	rhPasarAReady = pthread_create(&pasarAReady,NULL,pasarAReady,NULL);
-	while(1)
-	{
-		//Escuchar las conexiones
+	struct addrinfo hints;
+	struct addrinfo *serverInfo;
+	int escucharConexiones;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
+	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
+	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
 
-		//Escuchar las conexiones
-		pcb = crearPcb(codigo);
-		calcularPeso(pcb);
-		encolarEnNew(pcb);
+	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+
+	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
+	printf("Creado el socket, esperando alguna conexión entrante.");
+	listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
+
+	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+	socklen_t addrlen = sizeof(programa);
+
+	int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
+
+	char package[PACKAGESIZE];
+	int status = 1;		// Estructura que manjea el status de los recieve.
+
+	printf("Proceso Programa conectado. Esperando codigo:\n");
+
+	while (status != 0){
+		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
+		if (status != 0) printf("%s", package);
+
 	}
-	pthread_join(pasarAReady);
+
 	return 0;
 }
 
-t_pcb* encolar(char* codigo){
-	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
-	int peso=calcularPeso(metadataAux);
-	t_pcb* pcb=crearPcb(codigo);
-	guardarOrdenado(pcb, peso);
-}
 
 
 t_pcb* crearPcb(char* codigo)
@@ -114,7 +133,7 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->tamanioContextoActual = 0;
 	pcbAux->indiceCodigo = UMV_crearSegmento(metadataAux->instrucciones_size)*(sizeof(t_intructions));
 	pcbAux->indiceEtiquetas = UMV_crearSegmento(metadataAux->etiquetas_size);
-	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones) + cantidadDeLineas(codigo);
+	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
 	if(pcbAux->segmentoStack == 0 || pcbAux->segmentoCodigo == 0 || pcbAux->indiceCodigo == 0 || pcbAux->indiceEtiquetas == 0)
 	{
 		//avisar al programa :D
@@ -151,15 +170,15 @@ void pasarAReady(void)
 
 }
 
-int cantidadDeLineas(char* string)
-{
-	char c;
-	int cantLineas = 0;
-	  while (string != EOF)
-	  {
-		  if (c == '\n')
-	      ++cantLineas;
-	  }
-	  return cantLineas;
-}
+//int cantidadDeLineas(char* string)
+//{
+//	char c;
+//	int cantLineas = 0;
+//	  while (string != EOF)
+//	  {
+//		  if (c == '\n')
+//	      ++cantLineas;
+//	  }
+//	  return cantLineas;
+//}
 
