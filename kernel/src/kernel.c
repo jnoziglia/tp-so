@@ -48,15 +48,14 @@ int UMV_crearSegmento(int tamanio);
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void pasarAReady(void);
-int cantidadDeLineas(char* string);
+//int cantidadDeLineas(char* string);
 
 
 /* Variables Globales */
-void* l_new = NULL;
-void* l_ready = NULL;
-void* l_exec = NULL;
-void* l_exit = NULL;
-int gradoMultiprogramacion;
+//void* l_new = NULL;
+//void* l_ready = NULL;
+//void* l_exec = NULL;
+//void* l_exit = NULL;
 t_medatada_program* metadata;
 int tamanioStack;
 
@@ -64,16 +63,48 @@ int tamanioStack;
 int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
 
 int main(void) {
-	pthread_t hiloPCP, hiloPLP;
-	int rhPCP, rhPLP;
-	rhPCP = pthread_create(&hiloPCP, NULL, (void*)hiloPCP, NULL);
-	rhPLP = pthread_create(&hiloPLP, NULL, (void*)hiloPLP, NULL);
-	pthread_join(hiloPCP, NULL);
-	pthread_join(hiloPLP, NULL);
-	printf("%d",rhPCP);
-	printf("%d",rhPLP);
+//	pthread_t hiloPCP, hiloPLP;
+//	int rhPCP, rhPLP;
+//	//rhPCP = pthread_create(&hiloPCP, NULL, (void*)hiloPCP, NULL);
+//	rhPLP = pthread_create(&hiloPLP, NULL, (void*)hiloPLP, NULL);
+//	//pthread_join(hiloPCP, NULL);
+//	pthread_join(hiloPLP, NULL);
+//	//printf("%d",rhPCP);
+//	printf("%d",rhPLP);
+
+	struct addrinfo hints;
+	struct addrinfo *serverInfo;
+	int escucharConexiones;
+	printf("Inicio");
+	memset(&hints, 0, sizeof(hints));
+
+	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
+	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
+	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+
+	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+
+	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
+
+	listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
+
+	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+	socklen_t addrlen = sizeof(programa);
+
+	int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
+
+	char package[PACKAGESIZE];
+	int status = 1;		// Estructura que maneja el status de los recieve.
+
+	printf("Proceso Programa conectado. Esperando codigo:\n");
+
+	while (status != 0){
+		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
+		if (status != 0) printf("%s", package);
+
+	}
 	return 0;
-	//return EXIT_SUCCESS;
 }
 
 
@@ -88,12 +119,12 @@ void* hiloPLP()
 	struct addrinfo *serverInfo;
 	int escucharConexiones;
 	memset(&hints, 0, sizeof(hints));
+
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
 	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
 
 	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
-
 	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	printf("Creado el socket, esperando alguna conexión entrante.");
