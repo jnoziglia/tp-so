@@ -30,7 +30,6 @@ typedef struct segmento
 /* Funciones */
 void* solicitarBytes(int base, int offset, int tamanio);
 void enviarBytes(int base, int offset, int tamanio, void* buffer);
-//int retornarBytesSolicitados(void* inicio, int offset, int tamanio);
 void* mainConsola();
 void destruirSegmentos(int id);
 void* mainEsperarConexiones();
@@ -48,7 +47,7 @@ void mostrarMemoria();
 void mostrarContenidoDeMemoria();
 void imprimirSegmento(t_segmento* segmento);
 int cambioProcesoActivo(int idProceso);
-//TODO: revisar insertarSegmento(); Retardo(), handshake, consola,conexiones, DUMP(), revisar Destruir segmentos;
+//TODO: Retardo(), handshake, conexiones, DUMP();
 
 
 /* Variables globales */
@@ -305,58 +304,35 @@ void* mainEsperarConexiones()
 void destruirSegmentos( int id){
 	t_segmento* aux = NULL;
 	t_segmento* auxSiguiente = tablaSegmentos;
-
-	while (auxSiguiente->idProceso == id)
-	{
-		tablaSegmentos = auxSiguiente->siguiente;
-		free(auxSiguiente);
-		auxSiguiente = tablaSegmentos;
-	}
-	aux = tablaSegmentos;
-	auxSiguiente = aux->siguiente;
-	while(auxSiguiente->siguiente != NULL)
+	while (auxSiguiente != NULL)
 	{
 		if(auxSiguiente->idProceso == id)
 		{
-			aux->siguiente = auxSiguiente->siguiente;
-			free(auxSiguiente);
-			auxSiguiente = aux->siguiente;
+			if (auxSiguiente == tablaSegmentos)
+			{
+				tablaSegmentos = auxSiguiente->siguiente;
+				free(auxSiguiente);
+			}
+			else
+			{
+				if (auxSiguiente->siguiente == NULL)
+				{
+					aux->siguiente = NULL;
+					free(auxSiguiente);
+				}
+				else
+				{
+					aux->siguiente = auxSiguiente->siguiente;
+					free(auxSiguiente);
+				}
+			}
 		}
-		else
-		{
-			aux=aux->siguiente;
-			auxSiguiente= aux->siguiente;
-		}
-	}
-	if(auxSiguiente->idProceso == id)
-	{
-		aux->siguiente = NULL;
-		free (auxSiguiente);
+		aux = auxSiguiente;
+		auxSiguiente = auxSiguiente->siguiente;
 	}
 }
 
 
-
-
-/*int retornarBytesSolicitados(void* inicio,int offset, int tamanio) {
-	void* bufferLleno;
-	int* aux;
-	int i;
-	bufferLleno = solicitarBytes(inicio,3,tamanio);
-	aux = bufferLleno;
-	printf("\n buffer:\n");
-	for (i=0;i<tamanio;i++)
-	{
-		printf("%p - ", aux+i);
-		printf("%d\n", *(aux+i));
-	}
-
-	printf("\n Valor de aux: %d", *aux);
-	return 0;
-}*/
-
-
-//TODO: Arreglar funciones
 /* Funcion solicitar bytes */
 void* solicitarBytes(int base, int offset, int tamanio)
 {
