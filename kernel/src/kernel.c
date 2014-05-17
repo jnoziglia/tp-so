@@ -52,12 +52,13 @@ void pasarAReady(void);
 
 
 /* Variables Globales */
-//void* l_new = NULL;
-//void* l_ready = NULL;
-//void* l_exec = NULL;
-//void* l_exit = NULL;
+void* l_new = NULL;
+void* l_ready = NULL;
+void* l_exec = NULL;
+void* l_exit = NULL;
 t_medatada_program* metadata;
 int tamanioStack;
+int ultimoPid = 0;
 
 /* Semáforos */
 int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
@@ -100,15 +101,16 @@ void* f_hiloPLP()
 	int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
 	char package[PACKAGESIZE];
 	int status = 1;		// Estructura que maneja el status de los recieve.
-	printf("Proceso Programa conectado. Esperando codigo:\n");
+	printf("Proceso Programa conectado. Recibiendo codigo.\n");
 
 	while (status != 0){
 		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
-		t_metadata_program* metadata;
-		metadata = metadata_desde_literal(package);
-		printf("Cantidad de instrucciones: %d\n",metadata->instrucciones_size);
-		printf("Cantidad de funciones: %d\n",metadata->cantidad_de_funciones);
-		status = 0;
+		if (status != 0)
+		{
+			t_pcb* nuevoPCB;
+			nuevoPCB = crearPcb(package);
+			printf("Nuevo PCB Creado\n");
+		}
 	}
 	return 0;
 }
@@ -142,7 +144,8 @@ t_pcb* crearPcb(char* codigo)
 
 int generarPid(void)
 {
-	return 0;
+	ultimoPid++;
+	return ultimoPid;
 }
 
 int UMV_crearSegmento(int tamanio)
