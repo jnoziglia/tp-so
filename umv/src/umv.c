@@ -628,7 +628,7 @@ void* compactar(void)
 void dump(void)
 {
 	mostrarEstructuras();
-	//mostrarMemoria();
+	mostrarMemoria();
 	//mostrarContenidoDeMemoria();
 }
 
@@ -643,13 +643,45 @@ void mostrarEstructuras(void)
 		}
 }
 
+void mostrarMemoria(void)
+{
+	t_segmento* auxSegmento = tablaSegmentos;
+	int tamanioSegmentos = 0;
+	void* contador = memPpal;
+	while (contador <= finMemPpal)
+	{
+		if(auxSegmento != NULL && contador == auxSegmento->dirInicio)
+		{
+			printf("Desde la posicion %p hasta la %p pertenecen al programa %d, segmento %d\n",auxSegmento->dirInicio
+																						,auxSegmento->dirInicio+auxSegmento->tamanio
+																						,auxSegmento->idProceso
+																						,auxSegmento->idSegmento);
+			contador = contador + auxSegmento->tamanio;
+			auxSegmento = auxSegmento->siguiente;
+		}
+		else
+		{
+			printf("%p -- Libre\n",contador);
+			contador++;
+		}
+	}
+	auxSegmento = tablaSegmentos;
+	while(auxSegmento != NULL)
+	{
+		tamanioSegmentos += auxSegmento->tamanio;
+		auxSegmento = auxSegmento->siguiente;
+	}
+	printf("\nMemoria libre: %d bytes de %d bytes\n\n",(finMemPpal - memPpal) - tamanioSegmentos, finMemPpal - memPpal);
+}
+
 void imprimirSegmento(t_segmento* segmento)
 {
-	printf("Proceso: %d \n",segmento->idProceso);
+	printf("\nProceso: %d \n",segmento->idProceso);
 	printf("Segmento: %d \n",segmento->idSegmento);
 	printf("Base: %d \n",segmento->base);
 	printf("Tamaño: %d \n",segmento->tamanio);
-	printf("Direccion fisica: %p \n\n",segmento->dirInicio);
+	printf("Direccion fisica: %p \n",segmento->dirInicio);
+	printf("-----------------------------------\n");
 }
 
 int cambioProcesoActivo(int idProceso)
