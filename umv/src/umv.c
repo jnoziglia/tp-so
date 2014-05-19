@@ -629,18 +629,19 @@ void dump(void)
 {
 	mostrarEstructuras();
 	mostrarMemoria();
-	//mostrarContenidoDeMemoria();
+	mostrarContenidoDeMemoria(0,10);
 }
 
 void mostrarEstructuras(void)
 {
 	t_segmento* auxSegmento = tablaSegmentos;
-	printf(" ");
+	printf("\nTabla de Segmentos:\n\n");
 		while (auxSegmento != NULL)
 		{
 			imprimirSegmento(auxSegmento);
 			auxSegmento = auxSegmento->siguiente;
 		}
+	printf("--------------------\n");
 }
 
 void mostrarMemoria(void)
@@ -648,7 +649,8 @@ void mostrarMemoria(void)
 	t_segmento* auxSegmento = tablaSegmentos;
 	int tamanioSegmentos = 0;
 	void* contador = memPpal;
-	while (contador <= finMemPpal)
+	printf("Memoria principal:\n\n");
+	while (contador < finMemPpal)
 	{
 		if(auxSegmento != NULL && contador == auxSegmento->dirInicio)
 		{
@@ -672,6 +674,18 @@ void mostrarMemoria(void)
 		auxSegmento = auxSegmento->siguiente;
 	}
 	printf("\nMemoria libre: %d bytes de %d bytes\n\n",(finMemPpal - memPpal) - tamanioSegmentos, finMemPpal - memPpal);
+	printf("-------------------------------------\n");
+}
+
+void mostrarContenidoDeMemoria(int offset, int tamanio)
+{
+	char* contador = memPpal + offset;
+	int i;
+	printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
+	for (i=0; i<tamanio; i++)
+	{
+		printf("%p --- %d\n",contador+i,*(contador+i));
+	}
 }
 
 void imprimirSegmento(t_segmento* segmento)
