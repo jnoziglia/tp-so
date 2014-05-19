@@ -15,6 +15,15 @@
 #include <string.h>
 #include <time.h>
 #include <stdint.h>
+#include <commons/config.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#define PUERTO "6667"
+#define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+#define PACKAGESIZE 1024
 
 /* Tabla de segmentos */
 typedef struct segmento
@@ -63,8 +72,12 @@ int main (void)
 {
 	pthread_t consola, esperarConexiones;
 	int rhConsola, rhEsperarConexiones;
-	memPpal = malloc (10);	//El tamaño va por configuracion
-	finMemPpal = memPpal + 10; //El tamaño va por configuracion
+
+	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/umv/src/config.txt");
+	int sizeMem = config_get_int_value(configuracion, "sizeMemoria");
+
+	memPpal = malloc (sizeMem);	//El tamaño va por configuracion
+	finMemPpal = memPpal + sizeMem; //El tamaño va por configuracion
 
 	rhConsola = pthread_create(&consola, NULL, mainConsola, NULL);
 	//rhEsperarConexiones = pthread_create(&esperarConexiones, NULL, mainEsperarConexiones, NULL);
@@ -195,6 +208,7 @@ void* mainConsola()
 					gets(buffer);
 					int procesoAux = cambioProcesoActivo(atoi(pid));
 					enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
+					free(buffer);
 					cambioProcesoActivo(procesoAux);
 				}
 				else
@@ -287,17 +301,24 @@ void* mainConsola()
 //TODO: Desarrollar funcion
 void* mainEsperarConexiones()
 {
-	char* texto = malloc (20);
+	struct addrinfo hints;
+	struct addrinfo *serverInfo;
+	int escucharConexiones;
+	printf("Inicio del UMv.\n");
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
+	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
+	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
+
 	printf("Bienvenido a la escucha\n");
 	while(1)
 	{
-		scanf("%s",texto);
-		printf("Conexiones: %s\n",texto);
-		if(string_equals_ignore_case(texto,"exit"))
-		{
-			free(texto);
-			return NULL;
-		}
+		listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
+		struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+		socklen_t addrlen = sizeof(programa);
 	}
 }
 
@@ -629,7 +650,7 @@ void dump(void)
 {
 	mostrarEstructuras();
 	mostrarMemoria();
-	mostrarContenidoDeMemoria(0,10);
+	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 }
 
 void mostrarEstructuras(void)
