@@ -21,9 +21,8 @@
 #include <netdb.h>
 #include <unistd.h>
 
-#define PUERTO "6667"
+#define PUERTO "6668"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
-#define PACKAGESIZE 1024
 
 /* Tabla de segmentos */
 typedef struct segmento
@@ -36,13 +35,19 @@ typedef struct segmento
 	struct segmento *siguiente;
 } t_segmento;
 
+enum{
+	kernel,
+	cpu,
+	programa
+};
+
 /* Funciones */
 void* solicitarBytes(int base, int offset, int tamanio);
 void enviarBytes(int base, int offset, int tamanio, void* buffer);
 void* mainConsola();
 void destruirSegmentos(int id);
 void* mainEsperarConexiones();
-void* crearSegmento(int idProceso, int tamanio);
+int crearSegmento(int idProceso, int tamanio);
 t_segmento* buscarSegmento(int base);
 void* posicionarSegmento(int algoritmo, int tamanio);
 void* first_fit(int tamanio);
@@ -56,6 +61,8 @@ void mostrarMemoria();
 void mostrarContenidoDeMemoria();
 void imprimirSegmento(t_segmento* segmento);
 int cambioProcesoActivo(int idProceso);
+int handshake(int id);
+void* f_hiloKernel(void* socketCliente);
 //TODO: Retardo(), handshake, conexiones, DUMP();
 
 
@@ -80,13 +87,13 @@ int main (void)
 	finMemPpal = memPpal + sizeMem; //El tamaño va por configuracion
 
 	rhConsola = pthread_create(&consola, NULL, mainConsola, NULL);
-	//rhEsperarConexiones = pthread_create(&esperarConexiones, NULL, mainEsperarConexiones, NULL);
+	rhEsperarConexiones = pthread_create(&esperarConexiones, NULL, mainEsperarConexiones, NULL);
 
 	pthread_join(consola, NULL);
-	//pthread_join(esperarConexiones, NULL);
+	pthread_join(esperarConexiones, NULL);
 
 	printf("%d",rhConsola);
-	//printf("%d",rhEsperarConexiones);
+	printf("%d",rhEsperarConexiones);
 
 	exit(0);
 }
@@ -301,10 +308,15 @@ void* mainConsola()
 //TODO: Desarrollar funcion
 void* mainEsperarConexiones()
 {
+	pthread_t hiloKernel, hiloCpu;
+	int rhHiloKernel, rhHiloCpu;
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int escucharConexiones;
-	printf("Inicio del UMv.\n");
+	int proceso;
+	int id = -1;
+	int confirmacion;
+	printf("Inicio del UMV.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
@@ -312,14 +324,81 @@ void* mainEsperarConexiones()
 	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
 	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
-
-	printf("Bienvenido a la escucha\n");
+	//printf("Bienvenido a la escucha\n");
 	while(1)
 	{
 		listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
 		struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t addrlen = sizeof(programa);
+		int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
+		printf("%d\n", socketCliente);
+//		recv(socketCliente, (void*)id, sizeof(int), 0);
+//		confirmacion = handshake(id);
+//		send(socketCliente, (void*)confirmacion, sizeof(int), 0);
+//		if (confirmacion == 1)
+//		{
+//			if (id == kernel)
+//			{
+				printf("soy kernel\n");
+				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
+				continue;
+//			}
+//			if (id == cpu)
+//			{
+//				//rhHiloCpu
+//				continue;
+//			}
+//		}
+//		else
+//		{
+//			continue;
+//		}
+		/*if (id == kernel)
+		{
+			send(socketCliente, (void*)confirmacion, 4, 0);
+			if(confirmacion == 1)
+			{
+				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
+				continue;
+			}
+			else
+			{
+				continue;
+			}
+		}*/
 	}
+}
+
+void* f_hiloKernel(void* socketCliente)
+{
+	int socket = (int)socketCliente;
+	int resto, status = 1;
+	int mensaje[2];
+	int respuesta[1];
+	printf("%d\n",socket);
+	while(status != 0)
+	{
+		printf("HOla %d",status);
+		status = recv(socket, mensaje, 2*sizeof(int), 0);
+
+		if(status != 0)
+		{
+			printf("Status: %d %d\n",status, mensaje[0]);
+			respuesta[0] = crearSegmento(mensaje[0], mensaje[1]);
+		}
+		send(socket, respuesta, sizeof(int), 0);
+
+	}
+	return NULL;
+}
+
+int handshake(int id)
+{
+	if (id == kernel || id == cpu)
+	{
+		return 1;
+	}
+	return 0;
 }
 
 void destruirSegmentos( int id){
@@ -353,7 +432,6 @@ void destruirSegmentos( int id){
 	}
 }
 
-
 /* Funcion solicitar bytes */
 void* solicitarBytes(int base, int offset, int tamanio)
 {
@@ -370,8 +448,6 @@ void* solicitarBytes(int base, int offset, int tamanio)
 	return buffer;
 }
 
-
-
 void enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
 	void* pComienzo;
@@ -385,15 +461,14 @@ void enviarBytes(int base, int offset, int tamanio, void* buffer)
 	memcpy(pComienzo,buffer,tamanio);
 }
 
-
-void* crearSegmento(int idProceso, int tamanio)
+int crearSegmento(int idProceso, int tamanio)
 {
 	void* inicioNuevo = posicionarSegmento(algoritmo,tamanio);
 	t_segmento* segmentoNuevo;
 	if(inicioNuevo == NULL)
 	{
 		printf("No pudo posicionarse el segmento nuevo\n");
-		return NULL;
+		return 0;
 	}
 	segmentoNuevo = malloc(sizeof(t_segmento));
 	segmentoNuevo->idProceso = idProceso;
@@ -402,9 +477,8 @@ void* crearSegmento(int idProceso, int tamanio)
 	segmentoNuevo->tamanio = tamanio;
 	segmentoNuevo->dirInicio = inicioNuevo;
 	insertarSegmento(segmentoNuevo);
-	return inicioNuevo;
+	return segmentoNuevo->base;
 }
-
 
 t_segmento* buscarSegmento(int base)
 {
@@ -595,37 +669,7 @@ void insertarSegmento(t_segmento* segmento)
 			return;
 		}
 	}
-}/*
-		while(aux->siguiente != NULL)
-		{
-			if(segmento->dirInicio > aux->dirInicio)
-			{
-				aux = aux->siguiente;
-			}
-			else
-			{
-				auxSiguiente = aux->siguiente;
-				aux->siguiente = segmento;
-				segmento->siguiente = auxSiguiente;
-				return;
-			}
-		}
-		if(segmento->dirInicio > aux->dirInicio)
-		{
-			aux->siguiente = segmento;
-		}
-		else
-		{
-			auxSiguiente = aux->siguiente;
-			aux->siguiente = segmento;
-			segmento->siguiente = auxSiguiente;
-		}
-
-		segmento->siguiente = NULL;
-	}
-	return;
-}*/
-
+}
 
 void* compactar(void)
 {
@@ -644,7 +688,6 @@ void* compactar(void)
 	}
 	return aux;
 }
-
 
 void dump(void)
 {

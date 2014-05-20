@@ -22,6 +22,8 @@
 #define PUERTO "6667"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
+#define PUERTOUMV "6668"
+#define IPUMV "127.0.0.1"
 
 /* Estructuras de datos */
 typedef struct pcb
@@ -44,11 +46,11 @@ void* f_hiloPCP();
 void* f_hiloPLP();
 t_pcb* crearPcb(char* codigo);
 int generarPid(void);
-int UMV_crearSegmento(int tamanio);
+int UMV_crearSegmento(int idProceso, int tamanio);
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void pasarAReady(void);
-//int cantidadDeLineas(char* string);
+void conexionUMV(void);
 
 
 /* Variables Globales */
@@ -57,8 +59,9 @@ void* l_ready = NULL;
 void* l_exec = NULL;
 void* l_exit = NULL;
 t_medatada_program* metadata;
-int tamanioStack;
-int ultimoPid = 0;
+int tamanioStack = 5;
+int ultimoPid = 1;
+int socketUMV = 7;
 
 /* Semáforos */
 int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
@@ -66,6 +69,7 @@ int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar
 int main(void) {
 	pthread_t hiloPCP, hiloPLP;
 	int rhPCP, rhPLP;
+	conexionUMV();
 	//rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
 	//pthread_join(hiloPCP, NULL);
@@ -105,9 +109,12 @@ void* f_hiloPLP()
 
 	while (status != 0){
 		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
+		printf("Codigo Recibido. %d\n", status);
 		if (status != 0)
 		{
 			t_pcb* nuevoPCB;
+			printf("Llegó acá.\n");
+			printf("%s", package);
 			nuevoPCB = crearPcb(package);
 			printf("Nuevo PCB Creado\n");
 		}
@@ -124,12 +131,14 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->cantidad_de_etiquetas;
-	pcbAux->segmentoStack = 0; //TODO: UMV_crearSegmento(tamanioStack);
+	printf("Ahora si llegamos hasta acá :D\n");
+	pcbAux->segmentoStack = UMV_crearSegmento(pcbAux->pid, tamanioStack);
+	printf("Ahora si llegamos hasta acá 2 :D\n");
 	pcbAux->cursorStack = pcbAux->segmentoStack;
-	pcbAux->segmentoCodigo = 0; // todo: UMV_crearSegmento(sizeof(*codigo));
+	pcbAux->segmentoCodigo = UMV_crearSegmento(pcbAux->pid, sizeof(*codigo));
 	pcbAux->tamanioContextoActual = 0;
-	pcbAux->indiceCodigo = 0; // todo: UMV_crearSegmento(metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	pcbAux->indiceEtiquetas = 0; // todo: UMV_crearSegmento(metadataAux->etiquetas_size);
+	pcbAux->indiceCodigo = UMV_crearSegmento(pcbAux->pid, metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	pcbAux->indiceEtiquetas = UMV_crearSegmento(pcbAux->pid, metadataAux->etiquetas_size);
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
 	if(pcbAux->segmentoStack == 0 || pcbAux->segmentoCodigo == 0 || pcbAux->indiceCodigo == 0 || pcbAux->indiceEtiquetas == 0)
 	{
@@ -148,9 +157,19 @@ int generarPid(void)
 	return ultimoPid;
 }
 
-int UMV_crearSegmento(int tamanio)
+int UMV_crearSegmento(int idProceso, int tamanio)
 {
-	return 0;
+	//int* mensaje = malloc (2*(sizeof(int)));
+	int base[1];
+	int mensaje[2];
+	mensaje[0] = idProceso;
+	mensaje[1] = tamanio;
+	//*(mensaje+1) = tamanio;
+	printf("Generamos mensaje\n");
+	send(socketUMV, mensaje, 2*sizeof(int), 0);
+	printf("Enviamos mensaje a Socket: %d\n",socketUMV);
+	recv(socketUMV, base, sizeof(int), 0);
+	return base[0];
 }
 
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer)
@@ -168,15 +187,28 @@ void pasarAReady(void)
 
 }
 
-//int cantidadDeLineas(char* string)
-//{
-//	char c;
-//	int cantLineas = 0;
-//	  while (string != EOF)
-//	  {
-//		  if (c == '\n')
-//	      ++cantLineas;
-//	  }
-//	  return cantLineas;
-//}
+void conexionUMV(void)
+{
+		struct addrinfo hintsumv;
+		struct addrinfo *umvInfo;
 
+		memset(&hintsumv, 0, sizeof(hintsumv));
+		hintsumv.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
+		hintsumv.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+
+		getaddrinfo(IPUMV, PUERTOUMV, &hintsumv, &umvInfo);	// Carga en umvInfo los datos de la conexion
+
+		socketUMV = socket(umvInfo->ai_family, umvInfo->ai_socktype, umvInfo->ai_protocol);
+
+		connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
+		printf("Conexión con la UMV: %d", socketUMV);
+		freeaddrinfo(umvInfo);	// No lo necesitamos mas
+//		int idKernel = 0;
+//		int confirmacion;
+//		send(socketUMV, (void*)idKernel, sizeof(int), 0);
+//		printf("Enviado Tipo:Kernel\n");
+//		recv(socketUMV, (void*)confirmacion, sizeof(int),0);
+//		printf("Confirmación: %d \n",confirmacion);
+
+		return;
+}
