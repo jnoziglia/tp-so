@@ -372,23 +372,56 @@ void* mainEsperarConexiones()
 void* f_hiloKernel(void* socketCliente)
 {
 	int socket = (int)socketCliente;
-	int resto, status = 1;
-	int mensaje[2];
-	int respuesta[1];
+	int status = 1;
+	int mensaje[5];
+	int respuesta[4];
+	int i,j = 0;
 	printf("%d\n",socket);
-	while(status != 0)
-	{
-		printf("HOla %d",status);
-		status = recv(socket, mensaje, 2*sizeof(int), 0);
-
+	//while(1)
+	//{
+		printf("HOla %d\n",status);
+		status = recv(socket, mensaje, 5*sizeof(int), 0);
+//		printf("%d\n",mensaje[1]);
+//		printf("%d\n",mensaje[2]);
+//		printf("%d\n",mensaje[3]);
+//		printf("%d\n",mensaje[4]);
 		if(status != 0)
+		{
+			for(i=0; i<4; i++)
+			{
+				respuesta[i] = crearSegmento(mensaje[0], mensaje[i+1]);
+				if(respuesta[i] != -1)
+				{
+					j++;
+				}
+			}
+			if(j == 4)
+			{
+				send(socket, respuesta, 4*sizeof(int),0);
+			}
+			else
+			{
+				respuesta[0] = -1;
+				send(socket, respuesta, 4*sizeof(int), 0);
+				destruirSegmentos(mensaje[0]);
+			}
+		}
+
+		/*if(status != 0)
 		{
 			printf("Status: %d %d\n",status, mensaje[0]);
 			respuesta[0] = crearSegmento(mensaje[0], mensaje[1]);
 		}
-		send(socket, respuesta, sizeof(int), 0);
-
-	}
+		if(respuesta[0] != -1)
+		{
+			send(socket, respuesta, sizeof(int), 0);
+		}
+		else
+		{
+			send(socket, NULL, 0, 0);
+			destruirSegmentos(mensaje[0]);
+		}*/
+	//}
 	return NULL;
 }
 
@@ -468,7 +501,7 @@ int crearSegmento(int idProceso, int tamanio)
 	if(inicioNuevo == NULL)
 	{
 		printf("No pudo posicionarse el segmento nuevo\n");
-		return 0;
+		return -1;
 	}
 	segmentoNuevo = malloc(sizeof(t_segmento));
 	segmentoNuevo->idProceso = idProceso;
@@ -693,7 +726,7 @@ void dump(void)
 {
 	mostrarEstructuras();
 	mostrarMemoria();
-	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
+	//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 }
 
 void mostrarEstructuras(void)

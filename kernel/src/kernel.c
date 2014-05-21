@@ -51,6 +51,7 @@ void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void pasarAReady(void);
 void conexionUMV(void);
+int* UMV_crearSegmentos(int mensaje[5], int* info);
 
 
 /* Variables Globales */
@@ -61,7 +62,7 @@ void* l_exit = NULL;
 t_medatada_program* metadata;
 int tamanioStack = 5;
 int ultimoPid = 1;
-int socketUMV = 7;
+int socketUMV;
 
 /* Semáforos */
 int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
@@ -97,17 +98,20 @@ void* f_hiloPLP()
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
 	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
 	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+
 	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
+
 	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t addrlen = sizeof(programa);
+
 	int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
 	char package[PACKAGESIZE];
 	int status = 1;		// Estructura que maneja el status de los recieve.
 	printf("Proceso Programa conectado. Recibiendo codigo.\n");
 
-	while (status != 0){
+	//while (status != 0){
 		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
 		printf("Codigo Recibido. %d\n", status);
 		if (status != 0)
@@ -116,9 +120,12 @@ void* f_hiloPLP()
 			printf("Llegó acá.\n");
 			printf("%s", package);
 			nuevoPCB = crearPcb(package);
-			printf("Nuevo PCB Creado\n");
+			if(nuevoPCB != NULL)
+			{
+				printf("Nuevo PCB Creado\n");
+			}
 		}
-	}
+	//}
 	return 0;
 }
 
@@ -128,27 +135,60 @@ t_pcb* crearPcb(char* codigo)
 {
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
+	int mensaje[5];
+	int* info = malloc (4*sizeof(int));
 	pcbAux->pid = generarPid();
+	mensaje[0] = pcbAux->pid;
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->cantidad_de_etiquetas;
 	printf("Ahora si llegamos hasta acá :D\n");
-	pcbAux->segmentoStack = UMV_crearSegmento(pcbAux->pid, tamanioStack);
+	//pcbAux->segmentoStack = UMV_crearSegmento(pcbAux->pid, tamanioStack);
+	mensaje[1] = tamanioStack;
 	printf("Ahora si llegamos hasta acá 2 :D\n");
 	pcbAux->cursorStack = pcbAux->segmentoStack;
-	pcbAux->segmentoCodigo = UMV_crearSegmento(pcbAux->pid, sizeof(*codigo));
+	//pcbAux->segmentoCodigo = UMV_crearSegmento(pcbAux->pid, sizeof(*codigo));
+	mensaje[2] = sizeof(*codigo);
 	pcbAux->tamanioContextoActual = 0;
-	pcbAux->indiceCodigo = UMV_crearSegmento(pcbAux->pid, metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	pcbAux->indiceEtiquetas = UMV_crearSegmento(pcbAux->pid, metadataAux->etiquetas_size);
+	//pcbAux->indiceCodigo = UMV_crearSegmento(pcbAux->pid, metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	//pcbAux->indiceEtiquetas = UMV_crearSegmento(pcbAux->pid, metadataAux->etiquetas_size);
+	mensaje[3] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	mensaje[4] = metadataAux->etiquetas_size;
+	info = UMV_crearSegmentos(mensaje, info);
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
-	if(pcbAux->segmentoStack == 0 || pcbAux->segmentoCodigo == 0 || pcbAux->indiceCodigo == 0 || pcbAux->indiceEtiquetas == 0)
+	//if(pcbAux->segmentoStack == -1 || pcbAux->segmentoCodigo == -1 || pcbAux->indiceCodigo == -1 || pcbAux->indiceEtiquetas == -1)
+	if(info == NULL)
 	{
 		//avisar al programa :D
 		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		printf("no se creo el pcb\n");
+		free (pcbAux);
+		return NULL;
 	}
-	//UMV_enviarBytes(pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
-	//UMV_enviarBytes(pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-	//UMV_enviarBytes(pcbAux->indiceCodigo,0,(metadataAux->instrucciones_size)*(sizeof(t_intructions)),metadataAux->instrucciones_serializado);
-	return pcbAux;
+	else
+	{
+		printf("Se crea el pcb");
+		//UMV_enviarBytes(pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
+		//UMV_enviarBytes(pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
+		//UMV_enviarBytes(pcbAux->indiceCodigo,0,(metadataAux->instrucciones_size)*(sizeof(t_intructions)),metadataAux->instrucciones_serializado);
+		return pcbAux;
+	}
+}
+
+int* UMV_crearSegmentos(int mensaje[5], int* info)
+{
+	int status = 1;
+	//int* info[4];
+	send(socketUMV, mensaje, 5*sizeof(int), 0);
+	status = recv(socketUMV, info, 4*sizeof(int), 0);
+	printf("status : %d\n",status);
+	if (info[0] == -1)
+	{
+		return NULL;
+	}
+	else
+	{
+		return info;
+	}
 }
 
 int generarPid(void)
@@ -161,6 +201,7 @@ int UMV_crearSegmento(int idProceso, int tamanio)
 {
 	//int* mensaje = malloc (2*(sizeof(int)));
 	int base[1];
+	base[0] = -1;
 	int mensaje[2];
 	mensaje[0] = idProceso;
 	mensaje[1] = tamanio;
