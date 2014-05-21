@@ -19,11 +19,13 @@
 #include <unistd.h>
 
 /* Definiciones y variables para la conexión por Sockets */
-#define PUERTO "6667"
+#define PUERTO "6668"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
 #define PUERTOUMV "6668"
 #define IPUMV "127.0.0.1"
+#define PUERTOCPU "6667"
+#define IPCPU "127.0.0.1"
 
 /* Estructuras de datos */
 typedef struct pcb
@@ -50,7 +52,9 @@ int UMV_crearSegmento(int idProceso, int tamanio);
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void pasarAReady(void);
+void conexionCPU(void);
 void conexionUMV(void);
+
 
 
 /* Variables Globales */
@@ -62,6 +66,7 @@ t_medatada_program* metadata;
 int tamanioStack = 5;
 int ultimoPid = 1;
 int socketUMV = 7;
+int socketCPU = 8; //VER
 
 /* Semáforos */
 int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
@@ -185,6 +190,28 @@ void Programa_imprimirTexto(char* texto)
 void pasarAReady(void)
 {
 
+}
+
+void conexionCPU(void)
+{
+		struct addrinfo hintsCPU;
+		struct addrinfo *cpuInfo;
+
+		memset(&hintsCPU, 0, sizeof(hintsCPU));
+		hintsCPU.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
+		hintsCPU.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+
+		getaddrinfo(IPCPU, PUERTOCPU, &hintsCPU, &cpuInfo);	// Carga en umvInfo los datos de la conexion
+
+		socketCPU = socket(cpuInfo->ai_family, cpuInfo->ai_socktype, cpuInfo->ai_protocol);
+
+		connect(socketCPU, cpuInfo->ai_addr, cpuInfo->ai_addrlen);
+		printf("Conexión con la CPU: %d", socketCPU);
+		freeaddrinfo(cpuInfo);	// No lo necesitamos mas
+
+		//ENVIAR DATOS AL CPU
+
+		return;
 }
 
 void conexionUMV(void)
