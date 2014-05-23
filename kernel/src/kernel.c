@@ -54,7 +54,8 @@ void Programa_imprimirTexto(char* texto);
 void encolarEnNew(t_pcb* pcb);
 void conexionCPU(void);
 void conexionUMV(void);
-int* UMV_crearSegmentos(int mensaje[5], int* info);
+int* UMV_crearSegmentos(int mensaje[6], int* info);
+void* f_hiloMostrarNew();
 
 
 
@@ -65,7 +66,7 @@ t_pcb* l_exec = NULL;
 t_pcb* l_exit = NULL;
 t_medatada_program* metadata;
 int tamanioStack = 5;
-int ultimoPid = 1;
+int ultimoPid = 0;
 int socketUMV;
 int socketCPU; //VER
 fd_set readfds;
@@ -75,15 +76,17 @@ fd_set readfds;
 int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
 
 int main(void) {
-	pthread_t hiloPCP, hiloPLP;
-	int rhPCP, rhPLP;
+	pthread_t hiloPCP, hiloPLP, hiloMostrarNew;
+	int rhPCP, rhPLP, rhMostrarNew;
 	conexionUMV();
 	//rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
+	rhMostrarNew = pthread_create(&hiloMostrarNew, NULL, f_hiloMostrarNew, NULL);
 	//pthread_join(hiloPCP, NULL);
 	pthread_join(hiloPLP, NULL);
+	pthread_join(hiloMostrarNew, NULL);
 	//printf("%d",rhPCP);
-	printf("%d",rhPLP);
+	//printf("%d",rhPLP);
 
 	return 0;
 }
@@ -363,4 +366,34 @@ void conexionUMV(void)
 //		printf("Confirmación: %d \n",confirmacion);
 
 		return;
+}
+
+void* f_hiloMostrarNew()
+{
+	char* ingreso = malloc(100);
+	while(1)
+	{
+		gets(ingreso);
+		if(string_equals_ignore_case(ingreso,"mostrar-new"))
+		{
+			printf("Procesos encolados en New\n");
+			printf("PID: \t\tPeso:\n");
+			printf("-----------------------\n");
+			t_pcb* aux = l_new;
+			while(aux != NULL)
+			{
+				printf("%d\t\t",aux->pid);
+				printf("%d\n",aux->peso);
+				aux = aux->siguiente;
+			}
+			continue;
+		}
+		else
+		{
+			printf("Error de comando.");
+			continue;
+		}
+	}
+	free(ingreso);
+	return 0;
 }
