@@ -40,6 +40,7 @@ typedef struct pcb
 	int tamanioContextoActual;
 	int tamanioIndiceEtiquetas;
 	int peso;
+	struct pcb *siguiente;
 }t_pcb;
 
 
@@ -50,7 +51,7 @@ t_pcb* crearPcb(char* codigo);
 int generarPid(void);
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
-void pasarAReady(void);
+void encolarEnNew(t_pcb* pcb);
 void conexionCPU(void);
 void conexionUMV(void);
 int* UMV_crearSegmentos(int mensaje[5], int* info);
@@ -58,10 +59,10 @@ int* UMV_crearSegmentos(int mensaje[5], int* info);
 
 
 /* Variables Globales */
-void* l_new = NULL;
-void* l_ready = NULL;
-void* l_exec = NULL;
-void* l_exit = NULL;
+t_pcb* l_new = NULL;
+t_pcb* l_ready = NULL;
+t_pcb* l_exec = NULL;
+t_pcb* l_exit = NULL;
 t_medatada_program* metadata;
 int tamanioStack = 5;
 int ultimoPid = 1;
@@ -144,6 +145,7 @@ void* f_hiloPLP()
 					{
 						printf("Nuevo PCB Creado\n");
 					}
+					encolarEnNew(nuevoPCB);
 				}
 				else
 				{
@@ -209,6 +211,7 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->cantidad_de_etiquetas;
 	pcbAux->cursorStack = pcbAux->segmentoStack;
 	pcbAux->tamanioContextoActual = 0;
+	pcbAux->siguiente = NULL;
 	mensaje[1] = pcbAux->pid;
 	mensaje[2] = tamanioStack;
 	mensaje[3] = sizeof(*codigo);
@@ -269,9 +272,47 @@ void Programa_imprimirTexto(char* texto)
 
 }
 
-void pasarAReady(void)
+void encolarEnNew(t_pcb* pcb)
 {
-
+	t_pcb* auxAnterior = l_new;
+	t_pcb* aux;
+	if(l_new == NULL)
+	{
+		l_new = pcb;
+		l_new->siguiente = NULL;
+		return;
+	}
+	else
+	{
+		if (l_new->peso > pcb->peso)
+		{
+			pcb->siguiente = l_new;
+			l_new = pcb;
+			return;
+		}
+		else
+		{
+			auxAnterior = l_new;
+			aux = auxAnterior->siguiente;
+			while (aux != NULL)
+			{
+				if (aux->peso > pcb->peso)
+				{
+					pcb->siguiente = aux;
+					auxAnterior->siguiente = pcb;
+					return;
+				}
+				else
+				{
+					auxAnterior = aux;
+					aux = aux->siguiente;
+				}
+			}
+			auxAnterior->siguiente = pcb;
+			pcb->siguiente = NULL;
+			return;
+		}
+	}
 }
 
 void conexionCPU(void)

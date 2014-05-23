@@ -373,7 +373,7 @@ void* f_hiloKernel(void* socketCliente)
 {
 	int socket = (int)socketCliente;
 	int status = 1;
-	int mensaje[5];
+	int mensaje[6];
 	int respuesta[4];
 	int i,j = 0;
 	printf("%d\n",socket);
