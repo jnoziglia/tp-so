@@ -48,7 +48,6 @@ void* f_hiloPCP();
 void* f_hiloPLP();
 t_pcb* crearPcb(char* codigo);
 int generarPid(void);
-int UMV_crearSegmento(int idProceso, int tamanio);
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void pasarAReady(void);
@@ -199,27 +198,20 @@ t_pcb* crearPcb(char* codigo)
 {
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
-	int mensaje[5];
+	int mensaje[6];
 	int* info = malloc (4*sizeof(int));
 	pcbAux->pid = generarPid();
-	mensaje[0] = pcbAux->pid;
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->cantidad_de_etiquetas;
-	printf("Ahora si llegamos hasta acá :D\n");
-	//pcbAux->segmentoStack = UMV_crearSegmento(pcbAux->pid, tamanioStack);
-	mensaje[1] = tamanioStack;
-	printf("Ahora si llegamos hasta acá 2 :D\n");
 	pcbAux->cursorStack = pcbAux->segmentoStack;
-	//pcbAux->segmentoCodigo = UMV_crearSegmento(pcbAux->pid, sizeof(*codigo));
-	mensaje[2] = sizeof(*codigo);
 	pcbAux->tamanioContextoActual = 0;
-	//pcbAux->indiceCodigo = UMV_crearSegmento(pcbAux->pid, metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	//pcbAux->indiceEtiquetas = UMV_crearSegmento(pcbAux->pid, metadataAux->etiquetas_size);
-	mensaje[3] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	mensaje[4] = metadataAux->etiquetas_size;
+	mensaje[1] = pcbAux->pid;
+	mensaje[2] = tamanioStack;
+	mensaje[3] = sizeof(*codigo);
+	mensaje[4] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	mensaje[5] = metadataAux->etiquetas_size;
 	info = UMV_crearSegmentos(mensaje, info);
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
-	//if(pcbAux->segmentoStack == -1 || pcbAux->segmentoCodigo == -1 || pcbAux->indiceCodigo == -1 || pcbAux->indiceEtiquetas == -1)
 	if(info == NULL)
 	{
 		//avisar al programa :D
@@ -238,10 +230,11 @@ t_pcb* crearPcb(char* codigo)
 	}
 }
 
-int* UMV_crearSegmentos(int mensaje[5], int* info)
+int* UMV_crearSegmentos(int mensaje[6], int* info)
 {
 	int status = 1;
 	//int* info[4];
+	mensaje[0] = 1;
 	send(socketUMV, mensaje, 5*sizeof(int), 0);
 	status = recv(socketUMV, info, 4*sizeof(int), 0);
 	printf("status : %d\n",status);
@@ -261,21 +254,6 @@ int generarPid(void)
 	return ultimoPid;
 }
 
-int UMV_crearSegmento(int idProceso, int tamanio)
-{
-	//int* mensaje = malloc (2*(sizeof(int)));
-	int base[1];
-	base[0] = -1;
-	int mensaje[2];
-	mensaje[0] = idProceso;
-	mensaje[1] = tamanio;
-	//*(mensaje+1) = tamanio;
-	printf("Generamos mensaje\n");
-	send(socketUMV, mensaje, 2*sizeof(int), 0);
-	printf("Enviamos mensaje a Socket: %d\n",socketUMV);
-	recv(socketUMV, base, sizeof(int), 0);
-	return base[0];
-}
 
 void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
@@ -291,7 +269,7 @@ void pasarAReady(void)
 {
 
 }
-/*
+
 void conexionCPU(void)
 {
 		struct addrinfo hintsCPU;
@@ -313,7 +291,7 @@ void conexionCPU(void)
 
 		return;
 }
-*/
+
 void conexionUMV(void)
 {
 		struct addrinfo hintsumv;

@@ -89,12 +89,13 @@ int main(int cantArgs, char **args) {
 
 	    int tamanio=sizeof(char) * num;
 	    printf("tamanio = %d", tamanio);
-	    printf("\nEl contenido del archivo de prueba es \n\n");
+	    printf("\nEl código es \n\n");
 	    printf("%s", codigo);
 	    char mensaje[tamanio+1];
 	    strcpy(mensaje, codigo);
-	    printf("socket %d\n",serverSocket);
-	    while (1) {send(serverSocket, mensaje,tamanio+1, 0); printf("a\n");}// lo envio   :) :)
+	    //printf("socket %d\n",serverSocket);
+	    send(serverSocket, mensaje,tamanio+1, 0);
+	    printf("Código enviado\n");
 	    recv(serverSocket, mensaje, tamanio, 0);
 	    close(serverSocket);
     }
