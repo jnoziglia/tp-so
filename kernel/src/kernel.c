@@ -138,7 +138,7 @@ void* f_hiloPLP()
 				{
 					t_pcb* nuevoPCB;
 					printf("Llegó acá.\n");
-					printf("%s", package);
+					//printf("%s", package);
 					nuevoPCB = crearPcb(package);
 					if(nuevoPCB != NULL)
 					{
@@ -202,7 +202,7 @@ t_pcb* crearPcb(char* codigo)
 {
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
-	int mensaje[6];
+	int mensaje[6], i;
 	int* info = malloc (4*sizeof(int));
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
@@ -214,6 +214,7 @@ t_pcb* crearPcb(char* codigo)
 	mensaje[3] = sizeof(*codigo);
 	mensaje[4] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
 	mensaje[5] = metadataAux->etiquetas_size;
+	for(i=1; i<=5; i++)	{printf("%d\n", mensaje[i]);}
 	info = UMV_crearSegmentos(mensaje, info);
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
 	if(info == NULL)
@@ -239,7 +240,8 @@ int* UMV_crearSegmentos(int mensaje[6], int* info)
 	int status = 1;
 	//int* info[4];
 	mensaje[0] = 1;
-	send(socketUMV, mensaje, 5*sizeof(int), 0);
+	printf("PID %d\n", mensaje[1]);
+	send(socketUMV, mensaje, 6*sizeof(int), 0);
 	status = recv(socketUMV, info, 4*sizeof(int), 0);
 	printf("status : %d\n",status);
 	if (info[0] == -1)
