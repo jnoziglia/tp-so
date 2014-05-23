@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 /* Definiciones y variables para la conexión por Sockets */
-#define PUERTO "6668"
+#define PUERTO "6667"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
 #define PUERTOUMV "6668"
@@ -68,6 +68,7 @@ int tamanioStack = 5;
 int ultimoPid = 1;
 int socketUMV;
 int socketCPU; //VER
+fd_set readfds;
 
 
 /* Semáforos */
@@ -97,17 +98,70 @@ void* f_hiloPLP()
 {
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
-	int escucharConexiones;
+	int socketServidor;
+	int socketCliente[10];
+	fd_set readfds;
+	int i, status, maximo = -1;
+	char package[PACKAGESIZE];
 	printf("Inicio del PLP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
 	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
 	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+	socklen_t addrlen = sizeof(programa);
 
-	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	socketServidor = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
+
+	while(1)
+	{
+		FD_ZERO(&readfds);
+		FD_SET (socketServidor, &readfds);
+		for (i=0; i<=maximo; i++)
+		{
+			FD_SET (socketCliente[i], &readfds);
+			printf("socket %d\n",socketCliente[i]);
+		}
+
+		select(socketServidor + maximo, &readfds, NULL, NULL, NULL);
+
+		for(i=0; i<=maximo; i++)
+		{
+			if(FD_ISSET(socketCliente[i], &readfds))
+			{
+				status = recv(socketCliente[i], (void*)package, PACKAGESIZE, 0);
+				printf("Codigo Recibido. %d\n", status);
+				if (status != 0)
+				{
+					t_pcb* nuevoPCB;
+					printf("Llegó acá.\n");
+					printf("%s", package);
+					nuevoPCB = crearPcb(package);
+					if(nuevoPCB != NULL)
+					{
+						printf("Nuevo PCB Creado\n");
+					}
+				}
+			}
+		}
+
+		if(FD_ISSET(socketServidor, &readfds))
+		{
+			printf("socket serv %d\n", socketServidor);
+			maximo++;
+			socketCliente[maximo] = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
+		}
+	}
+	return NULL;
+}
+
+	/*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
+
+	FD_SET(escucharConexiones, &readfds);
 
 	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t addrlen = sizeof(programa);
@@ -132,8 +186,9 @@ void* f_hiloPLP()
 			}
 		}
 	//}
+	select(escucharConexiones+1, &readfds, NULL, NULL, NULL);
 	return 0;
-}
+}*/
 
 
 
@@ -233,7 +288,7 @@ void pasarAReady(void)
 {
 
 }
-
+/*
 void conexionCPU(void)
 {
 		struct addrinfo hintsCPU;
@@ -255,7 +310,7 @@ void conexionCPU(void)
 
 		return;
 }
-
+*/
 void conexionUMV(void)
 {
 		struct addrinfo hintsumv;

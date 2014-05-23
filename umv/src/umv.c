@@ -324,7 +324,7 @@ void* mainEsperarConexiones()
 	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
 	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
-	//printf("Bienvenido a la escucha\n");
+	printf("Bienvenido a la escucha %d\n", escucharConexiones);
 	while(1)
 	{
 		listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
