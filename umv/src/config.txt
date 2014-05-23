@@ -1,1 +1,1 @@
-sizeMemoria=200
+sizeMemoria=240

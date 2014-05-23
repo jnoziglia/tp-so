@@ -94,8 +94,8 @@ int main(int cantArgs, char **args) {
 	    char mensaje[tamanio+1];
 	    strcpy(mensaje, codigo);
 	    printf("socket %d\n",serverSocket);
-	    while (1) {send(serverSocket, mensaje,tamanio+1, 0); printf("a\n");}// lo envio   :) :)
-	    recv(serverSocket, mensaje, tamanio, 0);
+	    send(serverSocket, mensaje,tamanio+1, 0); printf("a\n");
+	    //recv(serverSocket, mensaje, tamanio, 0);
 	    close(serverSocket);
     }
 	free(buffer);

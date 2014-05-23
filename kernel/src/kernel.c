@@ -146,6 +146,10 @@ void* f_hiloPLP()
 						printf("Nuevo PCB Creado\n");
 					}
 				}
+				else
+				{
+					maximo--;
+				}
 			}
 		}
 
