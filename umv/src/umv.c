@@ -377,19 +377,21 @@ void* f_hiloKernel(void* socketCliente)
 	int respuesta[4];
 	int i,j = 0;
 	printf("%d\n",socket);
-	//while(1)
-	//{
+	while(status != 0)
+	{
 		printf("HOla %d\n",status);
-		status = recv(socket, mensaje, 5*sizeof(int), 0);
-//		printf("%d\n",mensaje[1]);
-//		printf("%d\n",mensaje[2]);
-//		printf("%d\n",mensaje[3]);
-//		printf("%d\n",mensaje[4]);
+		for(i=0; i<6; i++){mensaje[i] = 0;}
+		j=0;
+		status = recv(socket, mensaje, 6*sizeof(int), 0);
+		printf("%d\n",mensaje[2]);
+		printf("%d\n",mensaje[3]);
+		printf("%d\n",mensaje[4]);
+		printf("%d\n",mensaje[5]);
 		if(status != 0)
 		{
 			for(i=0; i<4; i++)
 			{
-				respuesta[i] = crearSegmento(mensaje[0], mensaje[i+1]);
+				respuesta[i] = crearSegmento(mensaje[1], mensaje[i+2]);
 				if(respuesta[i] != -1)
 				{
 					j++;
@@ -403,7 +405,7 @@ void* f_hiloKernel(void* socketCliente)
 			{
 				respuesta[0] = -1;
 				send(socket, respuesta, 4*sizeof(int), 0);
-				destruirSegmentos(mensaje[0]);
+				destruirSegmentos(mensaje[1]);
 			}
 		}
 
@@ -421,7 +423,7 @@ void* f_hiloKernel(void* socketCliente)
 			send(socket, NULL, 0, 0);
 			destruirSegmentos(mensaje[0]);
 		}*/
-	//}
+	}
 	return NULL;
 }
 
@@ -725,7 +727,7 @@ void* compactar(void)
 void dump(void)
 {
 	mostrarEstructuras();
-	mostrarMemoria();
+	//mostrarMemoria();
 	//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 }
 
