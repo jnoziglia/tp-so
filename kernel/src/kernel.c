@@ -102,6 +102,7 @@ void* f_hiloPLP()
 	int socketCliente[10];
 	fd_set readfds;
 	int i, status, maximo = -1;
+	int j = 1;
 	char package[PACKAGESIZE];
 	printf("Inicio del PLP.\n");
 	memset(&hints, 0, sizeof(hints));
@@ -114,6 +115,7 @@ void* f_hiloPLP()
 
 	socketServidor = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
+	listen(socketServidor, BACKLOG);
 
 	while(1)
 	{
@@ -125,14 +127,14 @@ void* f_hiloPLP()
 			printf("socket %d\n",socketCliente[i]);
 		}
 
-		select(socketServidor + maximo, &readfds, NULL, NULL, NULL);
+		select(socketServidor + j, &readfds, NULL, NULL, NULL);
 
 		for(i=0; i<=maximo; i++)
 		{
 			if(FD_ISSET(socketCliente[i], &readfds))
 			{
 				status = recv(socketCliente[i], (void*)package, PACKAGESIZE, 0);
-				printf("Codigo Recibido. %d\n", status);
+				printf("Llegó acá.\n");printf("Codigo Recibido. %d\n", status);
 				if (status != 0)
 				{
 					t_pcb* nuevoPCB;
@@ -151,6 +153,7 @@ void* f_hiloPLP()
 		{
 			printf("socket serv %d\n", socketServidor);
 			maximo++;
+			j++;
 			socketCliente[maximo] = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
 		}
 	}
