@@ -133,14 +133,14 @@ int main(){
 		if(matarCPU == 1)
 		{
 			int estadoCPU = 0;
-			send(kernelSocket,estadoCPU,sizeof(int),0); //avisar que se muere
-			send(umvSocket,estadoCPU,sizeof(int),0); //avisar que se muere
+			send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
+			send(umvSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
 			close(kernelSocket);
 			close(umvSocket);
 			return 0;
 		}
 		estadoCPU = 1;
-		send(kernelSocket,estadoCPU,sizeof(int),0); //avisar que se termina el quantum
+		send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se termina el quantum
 	}
 
 
