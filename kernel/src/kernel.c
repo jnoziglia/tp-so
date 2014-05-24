@@ -49,7 +49,7 @@ void* f_hiloPCP();
 void* f_hiloPLP();
 t_pcb* crearPcb(char* codigo);
 int generarPid(void);
-void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer);
+void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void encolarEnNew(t_pcb* pcb);
 void conexionCPU(void);
@@ -137,11 +137,10 @@ void* f_hiloPLP()
 			if(FD_ISSET(socketCliente[i], &readfds))
 			{
 				status = recv(socketCliente[i], (void*)package, PACKAGESIZE, 0);
-				printf("Llegó acá.\n");printf("Codigo Recibido. %d\n", status);
+				printf("Codigo Recibido. %d\n", status);
 				if (status != 0)
 				{
 					t_pcb* nuevoPCB;
-					printf("Llegó acá.\n");
 					//printf("%s", package);
 					nuevoPCB = crearPcb(package);
 					if(nuevoPCB != NULL)
@@ -234,9 +233,9 @@ t_pcb* crearPcb(char* codigo)
 	else
 	{
 		printf("Se crea el pcb");
-		//UMV_enviarBytes(pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
-		//UMV_enviarBytes(pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-		//UMV_enviarBytes(pcbAux->indiceCodigo,0,(metadataAux->instrucciones_size)*(sizeof(t_intructions)),metadataAux->instrucciones_serializado);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,(metadataAux->instrucciones_size)*(sizeof(t_intructions)),metadataAux->instrucciones_serializado);
 		return pcbAux;
 	}
 }
@@ -267,9 +266,21 @@ int generarPid(void)
 }
 
 
-void UMV_enviarBytes(int base, int offset, int tamanio, void* buffer)
+void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 {
-
+	int mensaje[6];
+	int confirmacion;
+	mensaje[0] = 3;
+	mensaje[1] = pid;
+	mensaje[2] = base;
+	mensaje[3] = offset;
+	mensaje[4] = tamanio;
+	send(socketUMV,mensaje,6*sizeof(int),0);
+	confirmacion = recv(socketUMV,confirmacion,sizeof(int),0);
+	if(confirmacion>0)
+	{
+		send(socketUMV,*buffer,tamanio,0);
+	}
 }
 
 void Programa_imprimirTexto(char* texto)
