@@ -39,6 +39,7 @@ typedef struct pcb
 	int programCounter;
 	int tamanioContextoActual;
 	int tamanioIndiceEtiquetas;
+	int tamanioIndiceCodigo;
 	int peso;
 	struct pcb *siguiente;
 }t_pcb;
@@ -210,10 +211,11 @@ t_pcb* crearPcb(char* codigo)
 	int* info = malloc (4*sizeof(int));
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
-	pcbAux->tamanioIndiceEtiquetas = metadataAux->cantidad_de_etiquetas;
+	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
 	pcbAux->cursorStack = pcbAux->segmentoStack;
 	pcbAux->tamanioContextoActual = 0;
 	pcbAux->siguiente = NULL;
+	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
 	mensaje[1] = pcbAux->pid;
 	mensaje[2] = tamanioStack;
 	mensaje[3] = sizeof(*codigo);
@@ -235,7 +237,7 @@ t_pcb* crearPcb(char* codigo)
 		printf("Se crea el pcb");
 		UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
 		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,(metadataAux->instrucciones_size)*(sizeof(t_intructions)),metadataAux->instrucciones_serializado);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 		return pcbAux;
 	}
 }
