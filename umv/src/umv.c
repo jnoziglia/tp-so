@@ -371,41 +371,42 @@ void* mainEsperarConexiones()
 
 void* f_hiloKernel(void* socketCliente)
 {
-	int socket = (int)socketCliente;
+	int socketKernel = (int)socketCliente;
 	int status = 1;
-	int mensaje[6];
+	int mensaje[5];
 	int respuesta[4];
+	char operacion;
+	char confirmacion;
 	int i,j = 0;
-	printf("%d\n",socket);
 	while(status != 0)
 	{
-		printf("HOla %d\n",status);
-		for(i=0; i<6; i++){mensaje[i] = 0;}
-		j=0;
-		status = recv(socket, mensaje, 6*sizeof(int), 0);
-		printf("%d\n",mensaje[2]);
-		printf("%d\n",mensaje[3]);
-		printf("%d\n",mensaje[4]);
-		printf("%d\n",mensaje[5]);
-		if(status != 0)
+		recv(socketKernel, &operacion, sizeof(char), 0);
+		if (operacion == 1)
 		{
-			for(i=0; i<4; i++)
+			confirmacion = 1;
+			send(socketKernel, &confirmacion, sizeof(char), 0);
+			j=0;
+			status = recv(socketKernel, mensaje, 5*sizeof(int), 0);
+			if(status != 0)
 			{
-				respuesta[i] = crearSegmento(mensaje[1], mensaje[i+2]);
-				if(respuesta[i] != -1)
+				for(i=0; i<4; i++)
 				{
-					j++;
+					respuesta[i] = crearSegmento(mensaje[1], mensaje[i+1]);
+					if(respuesta[i] != -1)
+					{
+						j++;
+					}
 				}
-			}
-			if(j == 4)
-			{
-				send(socket, respuesta, 4*sizeof(int),0);
-			}
-			else
-			{
-				respuesta[0] = -1;
-				send(socket, respuesta, 4*sizeof(int), 0);
-				destruirSegmentos(mensaje[1]);
+				if(j == 4)
+				{
+					send(socketKernel, respuesta, 4*sizeof(int),0);
+				}
+				else
+				{
+					respuesta[0] = -1;
+					send(socketKernel, respuesta, 4*sizeof(int), 0);
+					destruirSegmentos(mensaje[1]);
+				}
 			}
 		}
 

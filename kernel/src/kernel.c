@@ -55,7 +55,7 @@ void Programa_imprimirTexto(char* texto);
 void encolarEnNew(t_pcb* pcb);
 void conexionCPU(void);
 void conexionUMV(void);
-int* UMV_crearSegmentos(int mensaje[6], int* info);
+void UMV_crearSegmentos(int mensaje[6], int* info);
 void* f_hiloMostrarNew();
 
 
@@ -207,7 +207,7 @@ t_pcb* crearPcb(char* codigo)
 {
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
-	int mensaje[6], i;
+	int mensaje[5], i;
 	int* info = malloc (4*sizeof(int));
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
@@ -216,13 +216,13 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->tamanioContextoActual = 0;
 	pcbAux->siguiente = NULL;
 	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	mensaje[1] = pcbAux->pid;
-	mensaje[2] = tamanioStack;
-	mensaje[3] = sizeof(*codigo);
-	mensaje[4] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	mensaje[5] = metadataAux->etiquetas_size;
+	mensaje[0] = pcbAux->pid;
+	mensaje[1] = tamanioStack;
+	mensaje[2] = strlen(codigo);
+	mensaje[3] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	mensaje[4] = metadataAux->etiquetas_size;
 	for(i=1; i<=5; i++)	{printf("%d\n", mensaje[i]);}
-	info = UMV_crearSegmentos(mensaje, info);
+	UMV_crearSegmentos(mensaje, info);
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
 	if(info == NULL)
 	{
@@ -235,29 +235,34 @@ t_pcb* crearPcb(char* codigo)
 	else
 	{
 		printf("Se crea el pcb");
-		UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
-		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
+		//UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
+		//UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
+		//UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 		return pcbAux;
 	}
 }
 
-int* UMV_crearSegmentos(int mensaje[6], int* info)
+void UMV_crearSegmentos(int mensaje[5], int* info)
 {
 	int status = 1;
-	//int* info[4];
-	mensaje[0] = 1;
-	printf("PID %d\n", mensaje[1]);
-	send(socketUMV, mensaje, 6*sizeof(int), 0);
-	status = recv(socketUMV, info, 4*sizeof(int), 0);
-	printf("status : %d\n",status);
-	if (info[0] == -1)
+	char operacion = 1;
+	char confirmacion;
+	send(socketUMV, &operacion, sizeof(char), 0);
+	recv(socketUMV, &confirmacion, sizeof(char), 0);
+	if(confirmacion == 1)
 	{
-		return NULL;
-	}
-	else
-	{
-		return info;
+		send(socketUMV, mensaje, 5*sizeof(int), 0);
+		status = recv(socketUMV, info, 4*sizeof(int), 0);
+		printf("status : %d\n",status);
+		if (info[0] == -1)
+		{
+			info = NULL;
+			return;
+		}
+		else
+		{
+			return;
+		}
 	}
 }
 
@@ -267,7 +272,7 @@ int generarPid(void)
 	return ultimoPid;
 }
 
-
+/*
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 {
 	int mensaje[6];
@@ -283,7 +288,7 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	{
 		send(socketUMV,*buffer,tamanio,0);
 	}
-}
+}*/
 
 void Programa_imprimirTexto(char* texto)
 {
