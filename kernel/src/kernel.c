@@ -51,6 +51,7 @@ void* f_hiloPLP();
 t_pcb* crearPcb(char* codigo);
 int generarPid(void);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
+char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
 void encolarEnNew(t_pcb* pcb);
 void conexionCPU(void);
@@ -147,8 +148,9 @@ void* f_hiloPLP()
 					if(nuevoPCB != NULL)
 					{
 						printf("Nuevo PCB Creado\n");
+						encolarEnNew(nuevoPCB);
 					}
-					encolarEnNew(nuevoPCB);
+
 				}
 				else
 				{
@@ -208,7 +210,7 @@ t_pcb* crearPcb(char* codigo)
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
 	int mensaje[5], i;
-	int* info = malloc (4*sizeof(int));
+	int info[4];
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
@@ -221,10 +223,11 @@ t_pcb* crearPcb(char* codigo)
 	mensaje[2] = strlen(codigo);
 	mensaje[3] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
 	mensaje[4] = metadataAux->etiquetas_size;
-	for(i=1; i<=5; i++)	{printf("%d\n", mensaje[i]);}
-	UMV_crearSegmentos(mensaje, info);
+	for(i=0; i<5; i++)	{printf("%d\n", mensaje[i]);}
+	UMV_crearSegmentos(mensaje, &info[0]);
+	for(i=0; i<4; i++){printf("%d\n",info[i]);}
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
-	if(info == NULL)
+	if(info[0] == -1)
 	{
 		//avisar al programa :D
 		Programa_imprimirTexto("Holis, No se pudo crear el programa");
@@ -234,10 +237,14 @@ t_pcb* crearPcb(char* codigo)
 	}
 	else
 	{
+		pcbAux->segmentoStack = info[0];
+		pcbAux->segmentoCodigo = info[1];
+		pcbAux->indiceEtiquetas = info[3];
+		pcbAux->indiceCodigo = info[2];
 		printf("Se crea el pcb");
-		//UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,sizeof(*codigo),codigo);
-		//UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-		//UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
+		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 		return pcbAux;
 	}
 }
@@ -253,16 +260,8 @@ void UMV_crearSegmentos(int mensaje[5], int* info)
 	{
 		send(socketUMV, mensaje, 5*sizeof(int), 0);
 		status = recv(socketUMV, info, 4*sizeof(int), 0);
-		printf("status : %d\n",status);
-		if (info[0] == -1)
-		{
-			info = NULL;
-			return;
-		}
-		else
-		{
-			return;
-		}
+		printf("CONFIRMACION : %d\n",info[0]);
+		return;
 	}
 }
 
@@ -272,23 +271,43 @@ int generarPid(void)
 	return ultimoPid;
 }
 
-/*
+
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 {
-	int mensaje[6];
-	int confirmacion;
-	mensaje[0] = 3;
-	mensaje[1] = pid;
-	mensaje[2] = base;
-	mensaje[3] = offset;
-	mensaje[4] = tamanio;
-	send(socketUMV,mensaje,6*sizeof(int),0);
-	confirmacion = recv(socketUMV,confirmacion,sizeof(int),0);
-	if(confirmacion>0)
+	int status = 1;
+	char operacion = 3;
+	char confirmacion;
+	char* package;
+	send(socketUMV, &operacion, sizeof(char), 0);
+	recv(socketUMV, &confirmacion, sizeof(char), 0);
+	if(confirmacion == 1)
 	{
-		send(socketUMV,*buffer,tamanio,0);
+		package = serializarEnvioBytes(pid, base, offset, tamanio, buffer);
+		send(socketUMV, package, 4*sizeof(int) + tamanio, 0);
 	}
-}*/
+}
+
+char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer)
+{
+	int despl = 0;
+	char* package = malloc(4*sizeof(int)+tamanio);
+
+	memcpy(package + despl, &pid, sizeof(int));
+	despl += sizeof(int);
+
+	memcpy(package + despl, &base, sizeof(int));
+	despl += sizeof(int);
+
+	memcpy(package + despl, &offset, sizeof(int));
+	despl += sizeof(int);
+
+	memcpy(package + despl, &tamanio, sizeof(int));
+	despl += sizeof(int);
+
+	memcpy(package + despl, (char*)buffer, tamanio);
+
+	return package;
+}
 
 void Programa_imprimirTexto(char* texto)
 {

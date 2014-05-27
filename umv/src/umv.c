@@ -79,12 +79,15 @@ int main (void)
 {
 	pthread_t consola, esperarConexiones;
 	int rhConsola, rhEsperarConexiones;
+	int i;
 
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/umv/src/config.txt");
 	int sizeMem = config_get_int_value(configuracion, "sizeMemoria");
 
 	memPpal = malloc (sizeMem);	//El tamaño va por configuracion
+	char* aux = (char*) memPpal;
 	finMemPpal = memPpal + sizeMem; //El tamaño va por configuracion
+	for(i=0; i<sizeMem; i++){aux[i] = 0;}
 
 	rhConsola = pthread_create(&consola, NULL, mainConsola, NULL);
 	rhEsperarConexiones = pthread_create(&esperarConexiones, NULL, mainEsperarConexiones, NULL);
@@ -377,6 +380,8 @@ void* f_hiloKernel(void* socketCliente)
 	int respuesta[4];
 	char operacion;
 	char confirmacion;
+	int pid, base, offset, tamanio;
+	char* buffer;
 	int i,j = 0;
 	while(status != 0)
 	{
@@ -391,7 +396,7 @@ void* f_hiloKernel(void* socketCliente)
 			{
 				for(i=0; i<4; i++)
 				{
-					respuesta[i] = crearSegmento(mensaje[1], mensaje[i+1]);
+					respuesta[i] = crearSegmento(mensaje[0], mensaje[i+1]);
 					if(respuesta[i] != -1)
 					{
 						j++;
@@ -400,13 +405,31 @@ void* f_hiloKernel(void* socketCliente)
 				if(j == 4)
 				{
 					send(socketKernel, respuesta, 4*sizeof(int),0);
+					printf("J: %d\n", j);
 				}
 				else
 				{
 					respuesta[0] = -1;
 					send(socketKernel, respuesta, 4*sizeof(int), 0);
-					destruirSegmentos(mensaje[1]);
+					destruirSegmentos(mensaje[0]);
 				}
+			}
+		}
+		else
+		{
+			if(operacion == 3)
+			{
+				confirmacion = 1;
+				send(socketKernel, &confirmacion, sizeof(char), 0);
+				status = recv(socketKernel, &pid, sizeof(int), 0);
+				status = recv(socketKernel, &base, sizeof(int), 0);
+				status = recv(socketKernel, &offset, sizeof(int), 0);
+				status = recv(socketKernel, &tamanio, sizeof(int), 0);
+				buffer = malloc(tamanio);
+				status = recv(socketKernel, buffer, tamanio, 0);
+				cambioProcesoActivo(pid);
+				enviarBytes(base, offset, tamanio, buffer);
+				free(buffer);
 			}
 		}
 
@@ -729,7 +752,7 @@ void dump(void)
 {
 	mostrarEstructuras();
 	//mostrarMemoria();
-	//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
+	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 }
 
 void mostrarEstructuras(void)
