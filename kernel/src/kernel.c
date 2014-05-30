@@ -56,7 +56,8 @@ void Programa_imprimirTexto(char* texto);
 void encolarEnNew(t_pcb* pcb);
 void conexionCPU(void);
 void conexionUMV(void);
-void UMV_crearSegmentos(int mensaje[6], int* info);
+int UMV_crearSegmentos(int mensaje[2]);
+void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 
 
@@ -209,8 +210,8 @@ t_pcb* crearPcb(char* codigo)
 {
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
-	int mensaje[5], i;
-	int info[4];
+	int mensaje[2], i;
+	int respuesta;
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
@@ -220,49 +221,91 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
 	mensaje[0] = pcbAux->pid;
 	mensaje[1] = tamanioStack;
-	mensaje[2] = strlen(codigo);
-	mensaje[3] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
-	mensaje[4] = metadataAux->etiquetas_size;
-	for(i=0; i<5; i++)	{printf("%d\n", mensaje[i]);}
-	UMV_crearSegmentos(mensaje, &info[0]);
-	for(i=0; i<4; i++){printf("%d\n",info[i]);}
-	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
-	if(info[0] == -1)
+	respuesta = UMV_crearSegmentos(mensaje);
+	if(respuesta == -1)
 	{
 		//avisar al programa :D
 		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
 		return NULL;
 	}
-	else
+	pcbAux->segmentoStack = respuesta;
+	mensaje[1] = strlen(codigo);
+	respuesta = UMV_crearSegmentos(mensaje);
+	if(respuesta == -1)
 	{
-		pcbAux->segmentoStack = info[0];
-		pcbAux->segmentoCodigo = info[1];
-		pcbAux->indiceEtiquetas = info[3];
-		pcbAux->indiceCodigo = info[2];
-		printf("Se crea el pcb");
-		UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
-		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
-		return pcbAux;
+		//avisar al programa :D
+		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		UMV_destruirSegmentos(pcbAux->pid);
+		printf("no se creo el pcb\n");
+		free (pcbAux);
+		return NULL;
 	}
+	pcbAux->segmentoCodigo = respuesta;
+	mensaje[1] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	respuesta = UMV_crearSegmentos(mensaje);
+	if(respuesta == -1)
+	{
+		//avisar al programa :D
+		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		UMV_destruirSegmentos(pcbAux->pid);
+		printf("no se creo el pcb\n");
+		free (pcbAux);
+		return NULL;
+	}
+	pcbAux->indiceCodigo = respuesta;
+	mensaje[1] = metadataAux->etiquetas_size;
+	respuesta = UMV_crearSegmentos(mensaje);
+	if(respuesta == -1)
+	{
+		//avisar al programa :D
+		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		UMV_destruirSegmentos(pcbAux->pid);
+		printf("no se creo el pcb\n");
+		free (pcbAux);
+		return NULL;
+	}
+	pcbAux->indiceEtiquetas = respuesta;;
+	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
+	printf("Se crea el pcb");
+	UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
+	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
+	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
+	return pcbAux;
 }
 
-void UMV_crearSegmentos(int mensaje[5], int* info)
+int UMV_crearSegmentos(int mensaje[2])
 {
 	int status = 1;
 	char operacion = 1;
 	char confirmacion;
+	int respuesta;
 	send(socketUMV, &operacion, sizeof(char), 0);
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
 	if(confirmacion == 1)
 	{
-		send(socketUMV, mensaje, 5*sizeof(int), 0);
-		status = recv(socketUMV, info, 4*sizeof(int), 0);
-		printf("CONFIRMACION : %d\n",info[0]);
+		send(socketUMV, mensaje, 2*sizeof(int), 0);
+		status = recv(socketUMV, &respuesta, sizeof(int), 0);
+		printf("CONFIRMACION : %d\n",respuesta);
+		return respuesta;
+	}
+	return -1;
+}
+
+void UMV_destruirSegmentos(int pid)
+{
+	char operacion = 2;
+	char confirmacion;
+	send (socketUMV, &operacion, sizeof(char), 0);
+	recv(socketUMV, &confirmacion, sizeof(char), 0);
+	if (confirmacion ==  1)
+	{
+		send(socketUMV, &pid, sizeof(int), 0);
 		return;
 	}
+	return;
 }
 
 int generarPid(void)

@@ -41,6 +41,13 @@ enum{
 	programa
 };
 
+enum{
+	operSolicitarBytes,
+	operCrearSegmento,
+	operDestruirSegmentos,
+	operEnviarBytes
+};
+
 /* Funciones */
 void* solicitarBytes(int base, int offset, int tamanio);
 void enviarBytes(int base, int offset, int tamanio, void* buffer);
@@ -377,7 +384,7 @@ void* f_hiloKernel(void* socketCliente)
 	int socketKernel = (int)socketCliente;
 	int status = 1;
 	int mensaje[5];
-	int respuesta[4];
+	int respuesta;
 	char operacion;
 	char confirmacion;
 	int pid, base, offset, tamanio;
@@ -386,50 +393,40 @@ void* f_hiloKernel(void* socketCliente)
 	while(status != 0)
 	{
 		recv(socketKernel, &operacion, sizeof(char), 0);
-		if (operacion == 1)
+		if (operacion == operCrearSegmento)
 		{
 			confirmacion = 1;
 			send(socketKernel, &confirmacion, sizeof(char), 0);
 			j=0;
-			status = recv(socketKernel, mensaje, 5*sizeof(int), 0);
+			status = recv(socketKernel, mensaje, 2*sizeof(int), 0);
 			if(status != 0)
 			{
-				for(i=0; i<4; i++)
-				{
-					respuesta[i] = crearSegmento(mensaje[0], mensaje[i+1]);
-					if(respuesta[i] != -1)
-					{
-						j++;
-					}
-				}
-				if(j == 4)
-				{
-					send(socketKernel, respuesta, 4*sizeof(int),0);
-					printf("J: %d\n", j);
-				}
-				else
-				{
-					respuesta[0] = -1;
-					send(socketKernel, respuesta, 4*sizeof(int), 0);
-					destruirSegmentos(mensaje[0]);
-				}
+				respuesta = crearSegmento(mensaje[0], mensaje[1]);
+				send(socketKernel, &respuesta, sizeof(int), 0);
 			}
 		}
-		else
+		else if(operacion == operEnviarBytes)
 		{
-			if(operacion == 3)
+			confirmacion = 1;
+			send(socketKernel, &confirmacion, sizeof(char), 0);
+			status = recv(socketKernel, &pid, sizeof(int), 0);
+			status = recv(socketKernel, &base, sizeof(int), 0);
+			status = recv(socketKernel, &offset, sizeof(int), 0);
+			status = recv(socketKernel, &tamanio, sizeof(int), 0);
+			buffer = malloc(tamanio);
+			status = recv(socketKernel, buffer, tamanio, 0);
+			cambioProcesoActivo(pid);
+			enviarBytes(base, offset, tamanio, buffer);
+			free(buffer);
+		}
+		else if(operacion == operDestruirSegmentos)
+		{
+			confirmacion = 1;
+			send(socketKernel, &confirmacion, sizeof(char), 0);
+			status = recv(socketKernel, &pid, sizeof(int), 0);
+			if(status != 0)
 			{
-				confirmacion = 1;
-				send(socketKernel, &confirmacion, sizeof(char), 0);
-				status = recv(socketKernel, &pid, sizeof(int), 0);
-				status = recv(socketKernel, &base, sizeof(int), 0);
-				status = recv(socketKernel, &offset, sizeof(int), 0);
-				status = recv(socketKernel, &tamanio, sizeof(int), 0);
-				buffer = malloc(tamanio);
-				status = recv(socketKernel, buffer, tamanio, 0);
-				cambioProcesoActivo(pid);
-				enviarBytes(base, offset, tamanio, buffer);
-				free(buffer);
+				destruirSegmentos(pid);
 			}
 		}
 
