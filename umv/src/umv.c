@@ -70,6 +70,8 @@ void imprimirSegmento(t_segmento* segmento);
 int cambioProcesoActivo(int idProceso);
 int handshake(int id);
 void* f_hiloKernel(void* socketCliente);
+void* f_hiloCpu(void* socketCliente);
+
 //TODO: Retardo(), handshake, conexiones, DUMP();
 
 
@@ -323,8 +325,7 @@ void* mainEsperarConexiones()
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int escucharConexiones;
-	int proceso;
-	int id = -1;
+	char id = -1;
 	int confirmacion;
 	printf("Inicio del UMV.\n");
 	memset(&hints, 0, sizeof(hints));
@@ -337,45 +338,35 @@ void* mainEsperarConexiones()
 	printf("Bienvenido a la escucha %d\n", escucharConexiones);
 	while(1)
 	{
+		id = -1;
+		confirmacion = -1;
 		listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
 		struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t addrlen = sizeof(programa);
 		int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
 		printf("%d\n", socketCliente);
-//		recv(socketCliente, (void*)id, sizeof(int), 0);
-//		confirmacion = handshake(id);
-//		send(socketCliente, (void*)confirmacion, sizeof(int), 0);
-//		if (confirmacion == 1)
-//		{
-//			if (id == kernel)
-//			{
+		recv(socketCliente, &id, sizeof(char), 0);
+		confirmacion = handshake(id);
+		send(socketCliente, &confirmacion, sizeof(char), 0);
+		if (confirmacion == 1)
+		{
+			if (id == kernel)
+			{
 				printf("soy kernel\n");
 				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
 				continue;
-//			}
-//			if (id == cpu)
-//			{
-//				//rhHiloCpu
-//				continue;
-//			}
-//		}
-//		else
-//		{
-//			continue;
-//		}
-		/*if (id == kernel)
+			}
+			if (id == cpu)
+			{
+				printf("Soy CPU :D\n");
+				rhHiloCpu = pthread_create(&hiloCpu, NULL, f_hiloCpu, (void*)socketCliente);
+				continue;
+			}
+		}
+		else
 		{
-			send(socketCliente, (void*)confirmacion, 4, 0);
-			if(confirmacion == 1)
-			{
-				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
-				continue;
-			}
-			else
-			{
-				continue;
-			}
-		}*/
+			continue;
+		}
 	}
 }
 
@@ -444,6 +435,61 @@ void* f_hiloKernel(void* socketCliente)
 			send(socket, NULL, 0, 0);
 			destruirSegmentos(mensaje[0]);
 		}*/
+	}
+	return NULL;
+}
+
+void* f_hiloCpu(void* socketCliente)
+{
+	int socketCPU = (int)socketCliente;
+	int status = 1;
+	int mensaje[4];
+	char operacion;
+	char confirmacion;
+	int pid, base, offset, tamanio;
+	void* buffer;
+	while(status != 0)
+	{
+		recv(socketCPU, &operacion, sizeof(char), 0);
+		if (operacion == operSolicitarBytes)
+		{
+			confirmacion = 1;
+			send(socketCPU, &confirmacion, sizeof(char), 0);
+			status = recv(socketCPU, mensaje, 4*sizeof(int), 0);
+			buffer = malloc(mensaje[3]);
+			cambioProcesoActivo(mensaje[0]);
+			buffer = solicitarBytes(mensaje[1], mensaje[2], mensaje[3]);
+			send(socketCPU, buffer, sizeof(int), 0);
+			free(buffer);
+		}
+		else if(operacion == operEnviarBytes)
+		{
+			confirmacion = 1;
+			send(socketCPU, &confirmacion, sizeof(char), 0);
+			status = recv(socketCPU, &pid, sizeof(int), 0);
+			status = recv(socketCPU, &base, sizeof(int), 0);
+			status = recv(socketCPU, &offset, sizeof(int), 0);
+			status = recv(socketCPU, &tamanio, sizeof(int), 0);
+			buffer = malloc(tamanio);
+			status = recv(socketCPU, buffer, tamanio, 0);
+			cambioProcesoActivo(pid);
+			enviarBytes(base, offset, tamanio, buffer);
+			free(buffer);
+		}
+		else if(operacion == operDestruirSegmentos)
+		{
+			confirmacion = 1;
+			send(socketCPU, &confirmacion, sizeof(char), 0);
+			status = recv(socketCPU, &pid, sizeof(int), 0);
+			if(status != 0)
+			{
+				destruirSegmentos(pid);
+			}
+		}
+		else
+		{
+			printf("ERROR");
+		}
 	}
 	return NULL;
 }

@@ -25,9 +25,9 @@
 #include <signal.h>
 
 /* Definiciones y variables para la conexión por Sockets */
-#define PUERTOUMV "6667"
+#define PUERTOUMV "6668"
 #define IPUMV "127.0.0.1"
-#define PUERTOKERNEL "6668"
+#define PUERTOKERNEL "6669"
 #define IPKERNEL "127.0.0.1"
 #define BACKLOG 3	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define PACKAGESIZE 1024 	// Define cual va a ser el size maximo del paquete a enviar
@@ -49,6 +49,29 @@ typedef struct pcb
 	struct pcb *siguiente;
 }t_pcb;
 
+typedef struct misFunciones
+{
+	t_puntero (*AnSISOP_definirVariable)(t_nombre_variable identificador_variable);
+	t_puntero (*AnSISOP_obtenerPosicionVariable)(t_nombre_variable identificador_variable);
+	t_valor_variable (*AnSISOP_dereferenciar)(t_puntero direccion_variable);
+	void (*AnSISOP_asignar)(t_puntero direccion_variable, t_valor_variable valor);
+	t_valor_variable (*AnSISOP_obtenerValorCompartida)(t_nombre_compartida variable);
+	t_valor_variable (*AnSISOP_asignarValorCompartida)(t_nombre_compartida variable, t_valor_variable valor);
+	void (*AnSISOP_irAlLabel)(t_nombre_etiqueta t_nombre_etiqueta);
+	void (*AnSISOP_llamarSinRetorno)(t_nombre_etiqueta etiqueta);
+	void (*AnSISOP_llamarConRetorno)(t_nombre_etiqueta etiqueta, t_puntero donde_retornar);
+	void (*AnSISOP_finalizar)(void);
+	void (*AnSISOP_retornar)(t_valor_variable retorno);
+	void (*primitiva_signal)(char* nombre_semaforo);
+	void (*wait) (char* nombre_semaforo);
+}t_misFunciones;
+
+typedef struct funcionesKernel
+{
+	void (*AnSISOP_wait)(t_nombre_semaforo identificador_semaforo);
+	void (*AnSISOP_signal)(t_nombre_semaforo identificador_semaforo);
+}t_funcionesKernel;
+
 /* Funciones */
 void conectarConKernel();
 void conectarConUMV();
@@ -57,21 +80,25 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void dejarDeDarServicio();
 /* Primitivas*/
-int definirVariable(char identificador_variable);
-int obtenerPosicionVariable(char identificador_variable);
-int dereferenciar (int direccion_variable);
-void asignar(int direccion_variable,int valor);
+t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable);
+t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable);
+t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable);
+void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor);
 //todo:ObtenerValorCompartida, AsignarValorCompartida,
-int irAlLabel(char* etiqueta);
-int llamarSinRetorno(char* etiqueta, int linea_en_ejecucion);
-int llamarConRetorno(char* etiqueta, int donde_retornar, int linea_en_ejecucion);
-int finalizar();
-int retornar(int retorno);
+t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable);
+t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor);
+void AnSISOP_irAlLabel(t_nombre_etiqueta t_nombre_etiqueta);
+void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta);
+void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar);
+void AnSISOP_finalizar(void);
+void AnSISOP_retornar(t_valor_variable retorno);
+void AnSISOP_signal(t_nombre_semaforo identificador_semaforo);
+void AnSISOP_wait(t_nombre_semaforo identificador_semaforo);
 
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 3; //todo:quantum que lee de archivo de configuración
+int quantum = 10; //todo:quantum que lee de archivo de configuración
 int estadoCPU;
 bool matarCPU = 0;
 t_pcb* pcb;
@@ -79,6 +106,9 @@ t_pcb* pcb;
 //todo:Primitivas, Hot Plug.
 
 int main(){
+	t_misFunciones* funciones;
+	t_funcionesKernel* kernel;
+
 	pcb = malloc(sizeof(pcb));
 	t_intructions* indiceCodigo;
 	t_intructions instruccionABuscar;
@@ -86,12 +116,16 @@ int main(){
 	signal(SIGUSR1,dejarDeDarServicio);
 	conectarConKernel();
 	conectarConUMV();
+	printf("Conexiones establecidas.\n");
 	while(1)
 	{
 		recv(kernelSocket,pcb,sizeof(pcb),0);
+		printf("PCB recibido.\n");
+		printf("pid: %d\n", pcb->pid);
 
 		while(quantumUtilizado<=quantum)
 		{
+
 			indiceCodigo = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,0,pcb->tamanioIndiceCodigo);
 			instruccionABuscar = indiceCodigo[pcb->programCounter];
 			char* instruccionAEjecutar = malloc(instruccionABuscar.offset);
@@ -99,10 +133,11 @@ int main(){
 			if(instruccionAEjecutar == NULL)
 			{
 				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
-				//finalizar(); // Es una primitiva.
+				AnSISOP_finalizar(); // Es una primitiva.
 				return 0;
 			}
-			analizadorLinea(instruccionAEjecutar,NULL,NULL); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
+			printf("%s\n", instruccionAEjecutar);
+			analizadorLinea(instruccionAEjecutar,funciones,kernel); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			pcb->programCounter++;
 			quantumUtilizado++;
 		}
@@ -145,6 +180,8 @@ void conectarConUMV()
 {
 	struct addrinfo hintsUmv;
 	struct addrinfo *umvInfo;
+	char id = 1;
+	char conf = 0;
 
 	memset(&hintsUmv, 0, sizeof(hintsUmv));
 	hintsUmv.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
@@ -155,6 +192,9 @@ void conectarConUMV()
 
 	connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
 	freeaddrinfo(umvInfo);	// No lo necesitamos mas
+
+	send(socketUMV, &id, sizeof(char), 0);
+	recv(socketUMV, &conf, sizeof(char), 0);
 }
 
 void dejarDeDarServicio()
@@ -164,7 +204,22 @@ void dejarDeDarServicio()
 
 void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 {
-	return 0;
+	char operacion = 0;
+	char confirmacion;
+	void* buffer = malloc(tamanio);
+	int mensaje[4];
+	mensaje[0] = pid;
+	mensaje[1] = base;
+	mensaje[2] = offset;
+	mensaje[3] = tamanio;
+	send(socketUMV, &operacion, sizeof(char), 0);
+	recv(socketUMV, &confirmacion, sizeof(char), 0);
+	if(confirmacion == 0)
+	{
+		send(socketUMV, mensaje, 4*sizeof(int), 0);
+		recv(socketUMV, buffer, tamanio, 0);
+	}
+	return buffer;
 }
 
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
@@ -209,7 +264,7 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
  * PRIMITVAS
  */
 
-int definirVariable(char identificador_variable)
+t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
 	void* buffer = malloc(5);
 	memcpy(buffer,&identificador_variable,1);
@@ -220,7 +275,7 @@ int definirVariable(char identificador_variable)
 	return (pcb->cursorStack + pcb->tamanioContextoActual * 5)+1;
 }
 
-int obtenerPosicionVariable(char identificador_variable)
+t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable)
 {
 	int offset = -1;
 	int aux = 0;
@@ -240,59 +295,72 @@ int obtenerPosicionVariable(char identificador_variable)
 	return offset;
 }
 
-int dereferenciar (int direccion_variable)
+t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable)
 {
+	printf("dereferenciar\n");
 	int* valor;
 	valor = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4);
 	return *valor;
 }
 
-void asignar(int direccion_variable,int valor)
+void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor)
 {
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4,&valor);
 }
 
 //TODO:ObtenerValorCompartida, asignarVariableCompartida
-
-int irAlLabel(char* etiqueta)
+t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable)
 {
-	int pos = -1;
-	void* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
-	etiquetas = UMV_solicitarBytes(pcb->pid,pcb->indiceEtiquetas,0,pcb->tamanioIndiceEtiquetas);
-	pos = metadata_buscar_etiqueta(etiqueta,etiquetas,pcb->tamanioIndiceEtiquetas);
-	free(etiquetas);
-	return pos;
+	return 0;
 }
 
-int llamarSinRetorno(char* etiqueta, int linea_en_ejecucion)
+t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor)
 {
+	return 0;
+}
+
+void AnSISOP_irAlLabel(t_nombre_etiqueta t_nombre_etiqueta)
+{
+	printf("irallabel\n");
+	void* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
+	etiquetas = UMV_solicitarBytes(pcb->pid,pcb->indiceEtiquetas,0,pcb->tamanioIndiceEtiquetas);
+	metadata_buscar_etiqueta(t_nombre_etiqueta,etiquetas,pcb->tamanioIndiceEtiquetas);
+	free(etiquetas);
+	return;
+}
+
+void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta)
+{
+	printf("llamarsinretorno\n");
 	void* buffer = malloc(8);
 	memcpy(buffer,&(pcb->cursorStack),4);
-	memcpy((buffer+4),&linea_en_ejecucion,4);
+	memcpy((buffer+4),&(pcb->programCounter),4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),8,buffer);
 	pcb->cursorStack = pcb->cursorStack + 8;
 	free(buffer);
-	return irAlLabel(etiqueta);
+	return;
 }
 
 
-int llamarConRetorno(char* etiqueta, int donde_retornar, int linea_en_ejecucion)
+void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar)
 {
+	printf("llamarconretorno\n");
 	void* buffer = malloc(12);
 	memcpy(buffer,&(pcb->cursorStack),4);
 	memcpy((buffer+4),&donde_retornar,4);
-	memcpy((buffer+8),&linea_en_ejecucion,4);
+	memcpy((buffer+8),&(pcb->programCounter),4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),12,buffer);
 	pcb->cursorStack = pcb->cursorStack + 12;
 	free(buffer);
-	return irAlLabel(etiqueta);
+	return;
 }
 
-int finalizar()
+void AnSISOP_finalizar(void)
 {
+	printf("finalizar\n");
 	if(pcb->cursorStack == 0)
 	{
-		return -1;
+		return;
 	}
 	else
 	{
@@ -303,11 +371,11 @@ int finalizar()
 		memcpy(&contexto_anterior,buffer,4);
 		pcb->cursorStack = contexto_anterior;
 		free(buffer);
-		return instruccion_a_ejecutar+1;
+		return;
 	}
 }
 
-int retornar(int retorno)
+void AnSISOP_retornar(t_valor_variable retorno)
 {
 	int contexto_anterior, instruccion_a_ejecutar, direccion_a_retornar;
 	void* buffer = malloc(12);
@@ -318,6 +386,14 @@ int retornar(int retorno)
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_a_retornar,4,&retorno);
 	pcb->cursorStack = contexto_anterior;
 	free(buffer);
-	return instruccion_a_ejecutar+1;
+	return;
 }
 
+void AnSISOP_wait(t_nombre_semaforo identificador_semaforo)
+{
+	return;
+}
+void AnSISOP_signal(t_nombre_semaforo identificador_semaforo)
+{
+	return;
+}
