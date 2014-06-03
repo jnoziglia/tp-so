@@ -24,7 +24,7 @@
 #define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
 #define PUERTOUMV "6668"
 #define IPUMV "127.0.0.1"
-#define PUERTOCPU "6669"
+#define PUERTOCPU "6680"
 #define IPCPU "127.0.0.1"
 
 /* Estructuras de datos */
@@ -59,6 +59,7 @@ void conexionUMV(void);
 int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
+void serializarPcb(t_pcb* pcb, void* package);
 
 
 
@@ -71,7 +72,7 @@ t_medatada_program* metadata;
 int tamanioStack = 5;
 int ultimoPid = 0;
 int socketUMV;
-int socketCPU; //VER
+//int socketCPU; //VER
 //fd_set readfds;
 
 
@@ -82,10 +83,10 @@ int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew;
 	int rhPCP, rhPLP, rhMostrarNew;
 	conexionUMV();
-	//rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
+	rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
 	rhMostrarNew = pthread_create(&hiloMostrarNew, NULL, f_hiloMostrarNew, NULL);
-	//pthread_join(hiloPCP, NULL);
+	pthread_join(hiloPCP, NULL);
 	pthread_join(hiloPLP, NULL);
 	pthread_join(hiloMostrarNew, NULL);
 	//printf("%d",rhPCP);
@@ -98,69 +99,104 @@ int main(void) {
 void* f_hiloPCP()
 {
 	struct addrinfo hints;
-		struct addrinfo *serverInfo;
-		int socketPCP;
-		int socketCliente[10];
-		fd_set writefds;
-		int i, status, maximo = -1;
-		int j = 1;
-		char package[sizeof(t_pcb)];
-		printf("Inicio del PCP.\n");
-		memset(&hints, 0, sizeof(hints));
-		hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
-		hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
-		hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
-		getaddrinfo(NULL, PUERTOCPU, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
-		struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
-		socklen_t addrlen = sizeof(programa);
+	struct addrinfo *serverInfo;
+	int socketPCP;
+	int socketCliente[10];
+	fd_set writefds;
+	fd_set readfds;
+	int i, maximo = -1;
+	int status = 1;
+	int j = 1;
+	void* package = malloc(sizeof(t_pcb));
+	printf("Inicio del PCP.\n");
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
+	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
+	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+	getaddrinfo(NULL, PUERTOCPU, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+	struct sockaddr_in conexioncpu;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+	socklen_t addrlen = sizeof(conexioncpu);
 
-		socketPCP = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
-		bind(socketPCP,serverInfo->ai_addr, serverInfo->ai_addrlen);
-		listen(socketPCP, BACKLOG);
+	socketPCP = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	bind(socketPCP,serverInfo->ai_addr, serverInfo->ai_addrlen);
+	listen(socketPCP, BACKLOG);
 
-		while(1)
-		{
-			FD_ZERO(&writefds);
-			FD_SET (socketPCP, &writefds);
-			for (i=0; i<=maximo; i++)
-			{
-				FD_SET (socketCliente[i], &writefds);
-				printf("socket %d\n",socketCliente[i]);
-			}
+	int socketpiola = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 
-			select(socketPCP + j, &writefds, NULL, NULL, NULL);
+	while(l_new == NULL)
+	{
 
-			for(i=0; i<=maximo; i++)
-			{
-				if(FD_ISSET(socketCliente[i], &writefds))
-				{
-					if (status != 0)
-					{
-						if(l_new != NULL)
-						{
-							t_pcb* pcbAux;
-							pcbAux = l_new;
-							status = send(socketCPU,pcbAux,sizeof(t_pcb),0);
-							printf("PCB Enviado.\n");
-						}
+	}
 
-					}
-					else
-					{
-						maximo--;
-					}
-				}
-			}
+	t_pcb* pcbAux;
+	pcbAux = l_new;
+	int superMensaje[11];
+	superMensaje[0] = pcbAux->pid;
+	superMensaje[1] = pcbAux->segmentoCodigo;
+	superMensaje[2] = pcbAux->segmentoStack;
+	superMensaje[3] = pcbAux->cursorStack;
+	superMensaje[4] = pcbAux->indiceCodigo;
+	superMensaje[5] = pcbAux->indiceEtiquetas;
+	superMensaje[6] = pcbAux->programCounter;
+	superMensaje[7] = pcbAux->tamanioContextoActual;
+	superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
+	superMensaje[9] = pcbAux->tamanioIndiceCodigo;
+	superMensaje[10] = pcbAux->peso;
+	//serializarPcb(pcbAux, package)
 
-			if(FD_ISSET(socketPCP, &writefds))
-			{
-				printf("socket serv %d\n", socketPCP);
-				maximo++;
-				j++;
-				socketCliente[maximo] = accept(socketPCP, (struct sockaddr *) &programa, &addrlen);
-			}
-		}
-		return NULL;
+	status = send(socketpiola, superMensaje, sizeof(t_pcb), 0);
+	l_new = NULL;
+
+
+//	while(1)
+//	{
+//		FD_ZERO(&writefds);
+//		FD_ZERO(&readfds);
+//		FD_SET (socketPCP, &readfds);
+//		for (i=0; i<=maximo; i++)
+//		{
+//			FD_SET (socketCliente[i], &writefds);
+//			//printf("socketkernCPU %d\n",socketCliente[i]);
+//		}
+//
+//		select(socketPCP + j, &readfds, &writefds, NULL, NULL);
+//
+//		for(i=0; i<=maximo; i++)
+//		{
+//			if(FD_ISSET(socketCliente[i], &writefds))
+//			{
+//				//printf("entre al if.\n");
+//				if (status != 0)
+//				{
+//					//printf("entre al if2.\n");
+//					if(l_new != NULL)
+//					{
+//						//printf("entre al if3.\n");
+//						t_pcb* pcbAux;
+//						pcbAux = l_new;
+//						serializarPcb(pcbAux, package);
+//						status = send(socketCliente[i], package, sizeof(t_pcb), 0);
+//						l_new = NULL;
+//						//printf("PCB Enviado.\n");
+//					}
+//
+//				}
+//				else
+//				{
+//					maximo--;
+//				}
+//			}
+//		}
+//
+//		if(FD_ISSET(socketPCP, &readfds))
+//		{
+//			//printf("socket CPU %d\n", socketPCP);
+//			maximo++;
+//			j++;
+//			socketCliente[maximo] = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
+//		}
+//	}
+//	return NULL;
 }
 
 void* f_hiloPLP()
@@ -185,8 +221,24 @@ void* f_hiloPLP()
 	socketServidor = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketServidor, BACKLOG);
+	printf("SocketServidor: %d\n",socketServidor);
 
-	while(1)
+	int socketllegado = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
+	printf("SocketLlegado: %d\n",socketllegado);
+
+	status = recv(socketllegado,(void*)package, PACKAGESIZE, 0);
+	printf("status: %d\n",status);
+
+	t_pcb* nuevoPCB;
+	nuevoPCB = crearPcb(package);
+	if(nuevoPCB != NULL)
+	{
+		printf("Nuevo PCB Creado\n");
+		encolarEnNew(nuevoPCB);
+	}
+
+
+	/*while(1)
 	{
 		FD_ZERO(&readfds);
 		FD_SET (socketServidor, &readfds);
@@ -232,7 +284,7 @@ void* f_hiloPLP()
 			socketCliente[maximo] = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
 		}
 	}
-	return NULL;
+	return NULL;*/
 }
 
 	/*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
@@ -464,7 +516,7 @@ void encolarEnNew(t_pcb* pcb)
 	}
 }
 
-void conexionCPU(void)
+/*void conexionCPU(void)
 {
 		struct addrinfo hintsCPU;
 		struct addrinfo *cpuInfo;
@@ -484,7 +536,7 @@ void conexionCPU(void)
 		//ENVIAR DATOS AL CPU
 
 		return;
-}
+}*/
 
 void conexionUMV(void)
 {
@@ -501,8 +553,8 @@ void conexionUMV(void)
 
 		socketUMV = socket(umvInfo->ai_family, umvInfo->ai_socktype, umvInfo->ai_protocol);
 
-		connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
-		printf("Conexión con la UMV: %d", socketUMV);
+		int a = connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
+		printf("Conexión con la UMV: %d", a);
 		freeaddrinfo(umvInfo);	// No lo necesitamos mas
 		send(socketUMV, &id, sizeof(char), 0);
 		recv(socketUMV, &conf, sizeof(char), 0);
@@ -544,4 +596,48 @@ void* f_hiloMostrarNew()
 	}
 	free(ingreso);
 	return 0;
+}
+
+void serializarPcb(t_pcb* pcb, void* package)
+{
+	int offset = 0;
+	//void* package = malloc(sizeof(t_pcb));
+
+	memcpy(package, &(pcb->pid), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->programCounter), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->tamanioIndiceEtiquetas), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->cursorStack), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->tamanioContextoActual), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->siguiente), sizeof(t_pcb*));
+	offset += sizeof(t_pcb*);
+
+	memcpy(package, &(pcb->tamanioIndiceCodigo), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->segmentoStack), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->segmentoCodigo), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->indiceCodigo), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->indiceEtiquetas), sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(package, &(pcb->peso), sizeof(int));
+	offset += sizeof(int);
+
+	return;
 }

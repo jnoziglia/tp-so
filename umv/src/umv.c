@@ -326,7 +326,7 @@ void* mainEsperarConexiones()
 	struct addrinfo *serverInfo;
 	int escucharConexiones;
 	char id = -1;
-	int confirmacion;
+	char confirmacion;
 	printf("Inicio del UMV.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6

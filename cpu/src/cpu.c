@@ -27,7 +27,7 @@
 /* Definiciones y variables para la conexión por Sockets */
 #define PUERTOUMV "6668"
 #define IPUMV "127.0.0.1"
-#define PUERTOKERNEL "6669"
+#define PUERTOKERNEL "6680"
 #define IPKERNEL "127.0.0.1"
 #define BACKLOG 3	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define PACKAGESIZE 1024 	// Define cual va a ser el size maximo del paquete a enviar
@@ -49,28 +49,7 @@ typedef struct pcb
 	struct pcb *siguiente;
 }t_pcb;
 
-typedef struct misFunciones
-{
-	t_puntero (*AnSISOP_definirVariable)(t_nombre_variable identificador_variable);
-	t_puntero (*AnSISOP_obtenerPosicionVariable)(t_nombre_variable identificador_variable);
-	t_valor_variable (*AnSISOP_dereferenciar)(t_puntero direccion_variable);
-	void (*AnSISOP_asignar)(t_puntero direccion_variable, t_valor_variable valor);
-	t_valor_variable (*AnSISOP_obtenerValorCompartida)(t_nombre_compartida variable);
-	t_valor_variable (*AnSISOP_asignarValorCompartida)(t_nombre_compartida variable, t_valor_variable valor);
-	void (*AnSISOP_irAlLabel)(t_nombre_etiqueta t_nombre_etiqueta);
-	void (*AnSISOP_llamarSinRetorno)(t_nombre_etiqueta etiqueta);
-	void (*AnSISOP_llamarConRetorno)(t_nombre_etiqueta etiqueta, t_puntero donde_retornar);
-	void (*AnSISOP_finalizar)(void);
-	void (*AnSISOP_retornar)(t_valor_variable retorno);
-	void (*primitiva_signal)(char* nombre_semaforo);
-	void (*wait) (char* nombre_semaforo);
-}t_misFunciones;
 
-typedef struct funcionesKernel
-{
-	void (*AnSISOP_wait)(t_nombre_semaforo identificador_semaforo);
-	void (*AnSISOP_signal)(t_nombre_semaforo identificador_semaforo);
-}t_funcionesKernel;
 
 /* Funciones */
 void conectarConKernel();
@@ -79,6 +58,8 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void dejarDeDarServicio();
+t_pcb* deserializarPcb(void* package);
+
 /* Primitivas*/
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable);
 t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable);
@@ -106,30 +87,54 @@ t_pcb* pcb;
 //todo:Primitivas, Hot Plug.
 
 int main(){
-	t_misFunciones* funciones;
-	t_funcionesKernel* kernel;
+	AnSISOP_funciones* funciones;
+	AnSISOP_kernel* kernel;
 
-	pcb = malloc(sizeof(pcb));
+	void* package = malloc(sizeof(t_pcb));
 	t_intructions* indiceCodigo;
 	t_intructions instruccionABuscar;
 	int quantumUtilizado = 1;
 	signal(SIGUSR1,dejarDeDarServicio);
-	conectarConKernel();
 	conectarConUMV();
+	conectarConKernel();
+	printf("socketK: %d\n", kernelSocket);
+	printf("socketU: %d\n", socketUMV);
 	printf("Conexiones establecidas.\n");
+	t_pcb* pcb = malloc (sizeof(t_pcb));
 	while(1)
 	{
-		recv(kernelSocket,pcb,sizeof(pcb),0);
+		printf("Espero pcb\n");
+		int superMensaje[11];
+
+		int recibido = recv(kernelSocket,superMensaje,sizeof(t_pcb),0);
+		pcb->pid = superMensaje[0];
+		pcb->segmentoCodigo = superMensaje[1];
+		pcb->segmentoStack=	superMensaje[2] ;
+		pcb->cursorStack	=superMensaje[3]  ;
+		pcb->indiceCodigo=	superMensaje[4] ;
+		pcb->indiceEtiquetas=	superMensaje[5]  ;
+		pcb->programCounter=superMensaje[6] ;
+		pcb->tamanioContextoActual=superMensaje[7] ;
+		pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
+		pcb->tamanioIndiceCodigo=superMensaje[9] ;
+		pcb->peso=superMensaje[10] ;
+
+
+		printf("%d",recibido);
 		printf("PCB recibido.\n");
+		//pcb = deserializarPcb(package);
+		printf("Deserializo\n");
 		printf("pid: %d\n", pcb->pid);
+		printf("peso: %d\n", pcb->peso);
 
 		while(quantumUtilizado<=quantum)
 		{
-
+			printf("PCB recibido865222.\n");
 			indiceCodigo = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,0,pcb->tamanioIndiceCodigo);
 			instruccionABuscar = indiceCodigo[pcb->programCounter];
 			char* instruccionAEjecutar = malloc(instruccionABuscar.offset);
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar.start,instruccionABuscar.offset);
+			printf("instruccion %s\n",instruccionAEjecutar);
 			if(instruccionAEjecutar == NULL)
 			{
 				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
@@ -164,14 +169,18 @@ void conectarConKernel()
 	struct addrinfo hintsKernel;
 	struct addrinfo *kernelInfo;
 
+	int a = -1;
+
 	memset(&hintsKernel, 0, sizeof(hintsKernel));
 	hintsKernel.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
 	hintsKernel.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
 
 	getaddrinfo(IPKERNEL, PUERTOKERNEL, &hintsKernel, &kernelInfo);	// Carga en serverInfo los datos de la conexion
 	kernelSocket = socket(kernelInfo->ai_family, kernelInfo->ai_socktype, kernelInfo->ai_protocol);
-
-	connect(kernelSocket, kernelInfo->ai_addr, kernelInfo->ai_addrlen);
+while (a == -1){
+	a = connect(kernelSocket, kernelInfo->ai_addr, kernelInfo->ai_addrlen);
+}
+	printf("A: %d\n", a);
 	freeaddrinfo(kernelInfo);	// No lo necesitamos mas
 
 }
@@ -200,6 +209,51 @@ void conectarConUMV()
 void dejarDeDarServicio()
 {
 	matarCPU = 1;
+}
+
+t_pcb* deserializarPcb(void* package)
+{
+	t_pcb* pcb = malloc(sizeof(t_pcb));
+	int offset = 0;
+	memcpy(&(pcb->pid),package,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->programCounter),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->tamanioIndiceEtiquetas),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->cursorStack),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->tamanioContextoActual),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->siguiente),package+offset,sizeof(t_pcb*));
+	offset += sizeof(t_pcb*);
+
+	memcpy(&(pcb->tamanioIndiceCodigo),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->segmentoStack),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->segmentoCodigo),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->indiceCodigo),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->indiceEtiquetas),package+offset,sizeof(int));
+	offset += sizeof(int);
+
+	memcpy(&(pcb->peso),package+offset,sizeof(int));
+
+	pcb->siguiente= NULL;
+	//free(package);
+
+	return pcb;
 }
 
 void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
@@ -397,3 +451,4 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo)
 {
 	return;
 }
+
