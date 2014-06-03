@@ -804,7 +804,8 @@ void mostrarContenidoDeMemoria(int offset, int tamanio)
 	printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
 	for (i=0; i<tamanio; i++)
 	{
-		printf("%p --- %d\n",contador+i,*(contador+i));
+		printf("%p --- %d\t",contador+i,*(contador+i));
+		printf("%c\n",*(contador+i));
 	}
 }
 

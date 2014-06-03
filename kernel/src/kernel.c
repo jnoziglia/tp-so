@@ -33,7 +33,7 @@ typedef struct pcb
 	int pid;						//Lo creamos nosotros
 	int segmentoCodigo;				//Direccion al inicio de segmento de codigo (base)
 	int segmentoStack;				//Direccion al inicio de segmento de stack
-	int cursorStack;				//Cursor actual del stack (contexto actual)
+	int cursorStack;				//Cursor actual del stack (contexto actual) Es el offset con respecto al stack.
 	int indiceCodigo;				//Direccion al inicio de indice de codigo
 	int indiceEtiquetas;			//
 	int programCounter;
@@ -215,7 +215,7 @@ t_pcb* crearPcb(char* codigo)
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
-	pcbAux->cursorStack = pcbAux->segmentoStack;
+	pcbAux->cursorStack = 0;
 	pcbAux->tamanioContextoActual = 0;
 	pcbAux->siguiente = NULL;
 	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
