@@ -91,8 +91,8 @@ int main(){
 	AnSISOP_kernel* kernel;
 
 	void* package = malloc(sizeof(t_pcb));
-	t_intructions* indiceCodigo;
-	t_intructions* instruccionABuscar;
+	void* indiceCodigo;
+	t_intructions instruccionABuscar;
 	int quantumUtilizado = 1;
 	signal(SIGUSR1,dejarDeDarServicio);
 	conectarConUMV();
@@ -137,15 +137,15 @@ int main(){
 		while(quantumUtilizado<=quantum)
 		{
 			printf("Antes deSolicitar.\n");
-			sleep(2);
-			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
+			indiceCodigo = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
 			//instruccionABuscar = *(indiceCodigo + );
-			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
-			printf("offset: %d\n", instruccionABuscar->offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
+			memcpy(&(instruccionABuscar.start), indiceCodigo, sizeof(int));
+			memcpy(&(instruccionABuscar.offset), indiceCodigo+sizeof(int), sizeof(int));
+			printf("instruccionABuscar: %d\n", instruccionABuscar.start);
+			printf("offset: %d\n", instruccionABuscar.offset);
+			char* instruccionAEjecutar = malloc(instruccionABuscar.offset);
 			printf("Antes desolicitar malloc 0.\n");
-			sleep(30);
-			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
+			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar.start,instruccionABuscar.offset);
 			printf("instruccion %s\n",instruccionAEjecutar);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -154,6 +154,7 @@ int main(){
 				return 0;
 			}
 			printf("%s\n", instruccionAEjecutar);
+			sleep(30);
 			analizadorLinea(instruccionAEjecutar,funciones,kernel); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			pcb->programCounter++;
 			quantumUtilizado++;

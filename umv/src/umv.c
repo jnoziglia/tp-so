@@ -454,7 +454,9 @@ void* f_hiloCpu(void* socketCliente)
 				printf("MEnsaje %d: %d\n", i, mensaje[i]);
 			}
 			buffer = solicitarBytes(mensaje[1], mensaje[2], mensaje[3]);
-
+			int aux;
+			memcpy(&aux, buffer, sizeof(int));
+			printf("AUX: %d\n", aux);
 			send(socketCPU, buffer, mensaje[3], 0);
 			free(buffer);
 		}

@@ -389,9 +389,9 @@ t_pcb* crearPcb(char* codigo)
 	printf("codigo: %d\n", strlen(codigo));
 	UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
 	printf("Creado segmento Codigo con el tamaño %d\n",strlen(codigo));
-	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,&(metadataAux->etiquetas));
+	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
 	printf("Creado indiceEtiquetas de tamaño %d\n", metadataAux->etiquetas_size);
-	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,&(metadataAux->instrucciones_serializado));
+	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
 	for (i=0; i<=pcbAux->tamanioIndiceCodigo;i++){
 		printf("instruccion: %d\n", metadataAux->instrucciones_serializado[i].start);
