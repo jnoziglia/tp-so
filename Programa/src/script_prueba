@@ -1,18 +1,20 @@
 #!./Programa
 begin
-	f
-end
+variables f, i, t
 
-function f
-	variables a
-	a=1
-	print a
-	g
-end
+	#`f`: Hasta donde contar
+	f=20
+	:inicio
 
-function g
-	variables a
-	a=0
-	print a
-	f
+	#`i`: Iterador
+	i=i+1
+
+	#Imprimir el contador
+	print i
+
+	#`t`: Comparador entre `i` y `f`
+	t=f-i
+	#De no ser iguales, salta a inicio
+	jnz t inicio
+
 end

@@ -92,7 +92,7 @@ int main(){
 
 	void* package = malloc(sizeof(t_pcb));
 	t_intructions* indiceCodigo;
-	t_intructions instruccionABuscar;
+	t_intructions* instruccionABuscar;
 	int quantumUtilizado = 1;
 	signal(SIGUSR1,dejarDeDarServicio);
 	conectarConUMV();
@@ -101,6 +101,8 @@ int main(){
 	printf("socketU: %d\n", socketUMV);
 	printf("Conexiones establecidas.\n");
 	t_pcb* pcb = malloc (sizeof(t_pcb));
+
+	int i;
 	while(1)
 	{
 		printf("Espero pcb\n");
@@ -113,27 +115,37 @@ int main(){
 		pcb->cursorStack	=superMensaje[3]  ;
 		pcb->indiceCodigo=	superMensaje[4] ;
 		pcb->indiceEtiquetas=	superMensaje[5]  ;
-		pcb->programCounter=superMensaje[6] ;
+		pcb->programCounter= superMensaje[6] ;
 		pcb->tamanioContextoActual=superMensaje[7] ;
 		pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
 		pcb->tamanioIndiceCodigo=superMensaje[9] ;
 		pcb->peso=superMensaje[10] ;
 
+		for(i=0; i<11; i++){
+			printf("pcb: %d\n", superMensaje[i]);
+		}
+
 
 		printf("%d",recibido);
 		printf("PCB recibido.\n");
 		//pcb = deserializarPcb(package);
-		printf("Deserializo\n");
+		printf("prog counter: %d\n",pcb->programCounter);
+		printf("indice codigo: %d\n",pcb->indiceCodigo);
 		printf("pid: %d\n", pcb->pid);
 		printf("peso: %d\n", pcb->peso);
 
 		while(quantumUtilizado<=quantum)
 		{
-			printf("PCB recibido865222.\n");
-			indiceCodigo = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,0,pcb->tamanioIndiceCodigo);
-			instruccionABuscar = indiceCodigo[pcb->programCounter];
-			char* instruccionAEjecutar = malloc(instruccionABuscar.offset);
-			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar.start,instruccionABuscar.offset);
+			printf("Antes deSolicitar.\n");
+			sleep(2);
+			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
+			//instruccionABuscar = *(indiceCodigo + );
+			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
+			printf("offset: %d\n", instruccionABuscar->offset);
+			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
+			printf("Antes desolicitar malloc 0.\n");
+			sleep(30);
+			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			printf("instruccion %s\n",instruccionAEjecutar);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -261,17 +273,18 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 	char operacion = 0;
 	char confirmacion;
 	void* buffer = malloc(tamanio);
-	int mensaje[4];
+	int mensaje[4], status;
 	mensaje[0] = pid;
 	mensaje[1] = base;
 	mensaje[2] = offset;
 	mensaje[3] = tamanio;
 	send(socketUMV, &operacion, sizeof(char), 0);
-	recv(socketUMV, &confirmacion, sizeof(char), 0);
-	if(confirmacion == 0)
+	status = recv(socketUMV, &confirmacion, sizeof(char), 0);
+	if(confirmacion != 0)
 	{
 		send(socketUMV, mensaje, 4*sizeof(int), 0);
-		recv(socketUMV, buffer, tamanio, 0);
+		status = recv(socketUMV, buffer, tamanio, 0);
+		printf("recibo datos segmento\n");
 	}
 	return buffer;
 }

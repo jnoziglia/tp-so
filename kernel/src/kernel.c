@@ -145,7 +145,7 @@ void* f_hiloPCP()
 	//serializarPcb(pcbAux, package)
 
 	status = send(socketpiola, superMensaje, sizeof(t_pcb), 0);
-	l_new = NULL;
+	//l_new = NULL;
 
 
 //	while(1)
@@ -327,14 +327,14 @@ t_pcb* crearPcb(char* codigo)
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
 	int mensaje[2];
-	int respuesta;
+	int respuesta, i;
 	pcbAux->pid = generarPid();
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
 	pcbAux->cursorStack = 0;
 	pcbAux->tamanioContextoActual = 0;
 	pcbAux->siguiente = NULL;
-	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size*sizeof(t_intructions));
 	mensaje[0] = pcbAux->pid;
 	mensaje[1] = tamanioStack;
 	respuesta = UMV_crearSegmentos(mensaje);
@@ -360,7 +360,7 @@ t_pcb* crearPcb(char* codigo)
 		return NULL;
 	}
 	pcbAux->segmentoCodigo = respuesta;
-	mensaje[1] = (metadataAux->instrucciones_size)*(sizeof(t_intructions));
+	mensaje[1] = (metadataAux->instrucciones_size*sizeof(t_intructions));
 	respuesta = UMV_crearSegmentos(mensaje);
 	if(respuesta == -1)
 	{
@@ -383,12 +383,20 @@ t_pcb* crearPcb(char* codigo)
 		free (pcbAux);
 		return NULL;
 	}
-	pcbAux->indiceEtiquetas = respuesta;;
+	pcbAux->indiceEtiquetas = respuesta;
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
-	printf("Se crea el pcb");
+	printf("Se crea el pcb\n");
+	printf("codigo: %d\n", strlen(codigo));
 	UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
-	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
+	printf("Creado segmento Codigo con el tamaño %d\n",strlen(codigo));
+	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,&(metadataAux->etiquetas));
+	printf("Creado indiceEtiquetas de tamaño %d\n", metadataAux->etiquetas_size);
+	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,&(metadataAux->instrucciones_serializado));
+	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
+	for (i=0; i<=pcbAux->tamanioIndiceCodigo;i++){
+		printf("instruccion: %d\n", metadataAux->instrucciones_serializado[i].start);
+		printf("tamanio: %d\n\n", metadataAux->instrucciones_serializado[i].offset);
+	}
 	return pcbAux;
 }
 
@@ -433,7 +441,7 @@ int generarPid(void)
 
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 {
-	//int status = 1;
+	int status;
 	char operacion = 3;
 	char confirmacion;
 	char* package;
@@ -444,6 +452,13 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 		package = serializarEnvioBytes(pid, base, offset, tamanio, buffer);
 		send(socketUMV, package, 4*sizeof(int) + tamanio, 0);
 	}
+	status = recv(socketUMV,&confirmacion, sizeof(char),0);
+	if(status==0)
+	{
+		printf("Cerró\n");
+		return;
+	}
+	return;
 }
 
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer)

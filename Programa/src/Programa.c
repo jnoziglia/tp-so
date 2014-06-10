@@ -80,28 +80,34 @@ int main(int cantArgs, char **args) {
 	else
 	{
 		fscanf(script,"%s", buffer);//borro el shellbag
-	    while (feof(script) == 0)
+		fgetc(script);
+	    while (!feof(script))
 	    {
 	    	caracter = fgetc(script);
 	    	codigo[num]=caracter;
 	    	num++;
 	    }
 
-	    int tamanio=sizeof(char) * num;
+	    int tamanio=sizeof(char) * num-1;
 	    printf("tamanio = %d", tamanio);
-	    printf("\nEl código es \n\n");
+	    printf("tamanio-1 = %d", num-1);
+	    printf("\nEl código es:");
 	    printf("%s", codigo);
 	    char mensaje[tamanio+1];
-	    strcpy(mensaje, codigo);
+	    memcpy(mensaje, codigo, tamanio);
+	    mensaje[tamanio+1] = '\0';
 	    //printf("socket %d\n",serverSocket);
-	    send(serverSocket, mensaje,tamanio+1, 0);
+	    send(serverSocket, mensaje,tamanio, 0);
 	    printf("Código enviado\n");
-	    recv(serverSocket, mensaje, tamanio, 0);
-	    close(serverSocket);
+	    int status = recv(serverSocket, mensaje, tamanio+1, 0);
+	    if (status == 0)
+	    {
+	    	close(serverSocket);
+	    }
     }
 	free(buffer);
 	fclose(script);
-
+	close(serverSocket);
 
 	return 0;
 }

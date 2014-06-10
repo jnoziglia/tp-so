@@ -404,11 +404,13 @@ void* f_hiloKernel(void* socketCliente)
 			status = recv(socketKernel, &base, sizeof(int), 0);
 			status = recv(socketKernel, &offset, sizeof(int), 0);
 			status = recv(socketKernel, &tamanio, sizeof(int), 0);
+			printf("El tamaño es: %d\n", tamanio);
 			buffer = malloc(tamanio);
 			status = recv(socketKernel, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
 			enviarBytes(base, offset, tamanio, buffer);
 			free(buffer);
+			send(socketKernel,&confirmacion,sizeof(char),0);
 		}
 		else if(operacion == operDestruirSegmentos)
 		{
@@ -420,23 +422,9 @@ void* f_hiloKernel(void* socketCliente)
 				destruirSegmentos(pid);
 			}
 		}
-
-		/*if(status != 0)
-		{
-			printf("Status: %d %d\n",status, mensaje[0]);
-			respuesta[0] = crearSegmento(mensaje[0], mensaje[1]);
-		}
-		if(respuesta[0] != -1)
-		{
-			send(socket, respuesta, sizeof(int), 0);
-		}
-		else
-		{
-			send(socket, NULL, 0, 0);
-			destruirSegmentos(mensaje[0]);
-		}*/
 	}
-	return NULL;
+	//exit(0);
+	return 0;
 }
 
 void* f_hiloCpu(void* socketCliente)
@@ -448,9 +436,12 @@ void* f_hiloCpu(void* socketCliente)
 	char confirmacion;
 	int pid, base, offset, tamanio;
 	void* buffer;
+	int i;
 	while(status != 0)
 	{
+		printf("Recibo operacion\n");
 		recv(socketCPU, &operacion, sizeof(char), 0);
+		printf("La operacion es: %d\n", operacion);
 		if (operacion == operSolicitarBytes)
 		{
 			confirmacion = 1;
@@ -458,8 +449,13 @@ void* f_hiloCpu(void* socketCliente)
 			status = recv(socketCPU, mensaje, 4*sizeof(int), 0);
 			buffer = malloc(mensaje[3]);
 			cambioProcesoActivo(mensaje[0]);
+			for(i=0; i<4; i++)
+			{
+				printf("MEnsaje %d: %d\n", i, mensaje[i]);
+			}
 			buffer = solicitarBytes(mensaje[1], mensaje[2], mensaje[3]);
-			send(socketCPU, buffer, sizeof(int), 0);
+
+			send(socketCPU, buffer, mensaje[3], 0);
 			free(buffer);
 		}
 		else if(operacion == operEnviarBytes)
@@ -491,7 +487,8 @@ void* f_hiloCpu(void* socketCliente)
 			printf("ERROR");
 		}
 	}
-	return NULL;
+	//exit(0);
+	return 0;
 }
 
 int handshake(int id)
