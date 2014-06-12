@@ -556,6 +556,7 @@ void enviarBytes(int base, int offset, int tamanio, void* buffer)
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
 		printf("Segmentation Fault");
+		sleep(10);
 		return;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;

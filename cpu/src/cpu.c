@@ -49,205 +49,6 @@ typedef struct pcb
 	struct pcb *siguiente;
 }t_pcb;
 
-typedef struct {
-	/*
-	 * DEFINIR VARIABLE
-	 *
-	 * Reserva en el Contexto de Ejecución Actual el espacio necesario para una variable llamada identificador_variable y la registra tanto en el Stack como en el Diccionario de Variables. Retornando la posición del valor de esta nueva variable del stack
-	 * El valor de la variable queda indefinido: no deberá inicializarlo con ningún valor default.
-	 * Esta función se invoca una vez por variable, a pesar que este varias veces en una línea.
-	 * Ej: Evaluar "variables a, b, c" llamará tres veces a esta función con los parámetros "a", "b" y "c"
-	 *
-	 * @sintax	TEXT_VARIABLE (variables identificador[,identificador]*)
-	 * @param	identificador_variable	Nombre de variable a definir
-	 * @return	Puntero a la variable recien asignada
-	 */
-	t_puntero (*AnSISOP_definirVariable)(t_nombre_variable identificador_variable);
-
-	/*
-	 * OBTENER POSICION de una VARIABLE
-	 *
-	 * Devuelve el desplazamiento respecto al inicio del segmento Stacken que se encuentra el valor de la variable identificador_variable del contexto actual.
-	 * En caso de error, retorna -1.
-	 *
-	 * @sintax	TEXT_REFERENCE_OP (&)
-	 * @param	identificador_variable 		Nombre de la variable a buscar (De ser un parametro, se invocara sin el '$')
-	 * @return	Donde se encuentre la variable buscada
-	 */
-	t_puntero (*AnSISOP_obtenerPosicionVariable)(t_nombre_variable identificador_variable);
-
-	/*
-	 * DEREFERENCIAR
-	 *
-	 * Obtiene el valor resultante de leer a partir de direccion_variable, sin importar cual fuera el contexto actual
-	 *
-	 * @sintax	TEXT_DEREFERENCE_OP (*)
-	 * @param	direccion_variable	Lugar donde buscar
-	 * @return	Valor que se encuentra en esa posicion
-	 */
-	t_valor_variable (*AnSISOP_dereferenciar)(t_puntero direccion_variable);
-
-	/*
-	 * ASIGNAR
-	 *
-	 * Inserta una copia del valor en la variable ubicada en direccion_variable.
-	 *
-	 * @sintax	TEXT_ASSIGNATION (=)
-	 * @param	direccion_variable	lugar donde insertar el valor
-	 * @param	valor	Valor a insertar
-	 * @return	void
-	 */
-	void (*AnSISOP_asignar)(t_puntero direccion_variable, t_valor_variable valor);
-
-	/*
-	 * OBTENER VALOR de una variable COMPARTIDA
-	 *
-	 * Pide al kernel el valor (copia, no puntero) de la variable compartida por parametro.
-	 *
-	 * @sintax	TEXT_VAR_START_GLOBAL (!)
-	 * @param	variable	Nombre de la variable compartida a buscar
-	 * @return	El valor de la variable compartida
-	 */
-	t_valor_variable (*AnSISOP_obtenerValorCompartida)(t_nombre_compartida variable);
-
-	/*
-	 * ASIGNAR VALOR a variable COMPARTIDA
-	 *
-	 * Pide al kernel asignar el valor a la variable compartida.
-	 * Devuelve el valor asignado.
-	 *
-	 * @sintax	TEXT_VAR_START_GLOBAL (!) IDENTIFICADOR TEXT_ASSIGNATION (=) EXPRESION
-	 * @param	variable	Nombre (sin el '!') de la variable a pedir
-	 * @param	valor	Valor que se le quire asignar
-	 * @return	Valor que se asigno
-	 */
-	t_valor_variable (*AnSISOP_asignarValorCompartida)(t_nombre_compartida variable, t_valor_variable valor);
-
-
-	/*
-	 * IR a la ETIQUETA
-	 *
-	 * Cambia la linea de ejecucion a la correspondiente de la etiqueta buscada.
-	 *
-	 * @sintax	TEXT_GOTO (goto )
-	 * @param	t_nombre_etiqueta	Nombre de la etiqueta
-	 * @return	void
-	 */
-	void (*AnSISOP_irAlLabel)(t_nombre_etiqueta t_nombre_etiqueta);
-
-	/*
-	 * LLAMAR SIN RETORNO
-	 *
-	 * Preserva el contexto de ejecución actual para poder retornar luego al mismo.
-	 * Modifica las estructuras correspondientes para mostrar un nuevo contexto vacío.
-	 *
-	 * Los parámetros serán definidos luego de esta instrucción de la misma manera que una variable local, con identificadores numéricos empezando por el 0.
-	 *
-	 * @sintax	Sin sintaxis particular, se invoca cuando no coresponde a ninguna de las otras reglas sintacticas
-	 * @param	etiqueta	Nombre de la funcion
-	 * @return	void
-	 */
-	void (*AnSISOP_llamarSinRetorno)(t_nombre_etiqueta etiqueta);
-
-	/*
-	 * LLAMAR CON RETORNO
-	 *
-	 * Preserva el contexto de ejecución actual para poder retornar luego al mismo, junto con la posicion de la variable entregada por donde_retornar.
-	 * Modifica las estructuras correspondientes para mostrar un nuevo contexto vacío.
-	 *
-	 * Los parámetros serán definidos luego de esta instrucción de la misma manera que una variable local, con identificadores numéricos empezando por el 0.
-	 *
-	 * @sintax	TEXT_CALL (<-)
-	 * @param	etiqueta	Nombre de la funcion
-	 * @param	donde_retornar	Posicion donde insertar el valor de retorno
-	 * @return	void
-	 */
-	void (*AnSISOP_llamarConRetorno)(t_nombre_etiqueta etiqueta, t_puntero donde_retornar);
-
-
-	/*
-	 * FINALIZAR
-	 *
-	 * Cambia el Contexto de Ejecución Actual para volver al Contexto anterior al que se está ejecutando, recuperando el Cursor de Contexto Actual y el Program Counter previamente apilados en el Stack.
-	 * En caso de estar finalizando el Contexto principal (el ubicado al inicio del Stack), deberá finalizar la ejecución del programa.
-	 *
-	 * @sintax	TEXT_END (end )
-	 * @param	void
-	 * @return	void
-	 */
-	void (*AnSISOP_finalizar)(void);
-
-	/*
-	 * RETORNAR
-	 *
-	 * Cambia el Contexto de Ejecución Actual para volver al Contexto anterior al que se está ejecutando, recuperando el Cursor de Contexto Actual, el Program Counter y la direccion donde retornar, asignando el valor de retorno en esta, previamente apilados en el Stack.
-	 *
-	 * @sintax	TEXT_RETURN (return )
-	 * @param	retorno	Valor a ingresar en la posicion corespondiente
-	 * @return	void
-	 */
-	void (*AnSISOP_retornar)(t_valor_variable retorno);
-
-	/*
-	 * IMPRIMIR
-	 *
-	 * Envía valor_mostrar al Kernel, para que termine siendo mostrado en la consola del Programa en ejecución.
-	 *
-	 * @sintax	TEXT_PRINT (print )
-	 * @param	valor_mostrar	Dato que se quiere imprimir
-	 * @return	void
-	 */
-	void (*AnSISOP_imprimir)(t_valor_variable valor_mostrar);
-
-	/*
-	 * IMPRIMIR TEXTO
-	 *
-	 * Envía mensaje al Kernel, para que termine siendo mostrado en la consola del Programa en ejecución. mensaje no posee parámetros, secuencias de escape, variables ni nada.
-	 *
-	 * @sintax TEXT_PRINT_TEXT (textPrint )
-	 * @param	texto	Texto a imprimir
-	 * @return void
-	 */
-	void (*AnSISOP_imprimirTexto)(char* texto);
-
-	/*
-	 *	ENTRADA y SALIDA
-	 *
-	 *
-	 *	@sintax TEXT_IO (io )
-	 *	@param	dispositivo	Nombre del dispositivo a pedir
-	 *	@param	tiempo	Tiempo que se necesitara el dispositivo
-	 *	@return	void
-	 */
-	void (*AnSISOP_entradaSalida)(t_nombre_dispositivo dispositivo, int tiempo);
-} misfunciones;
-
-typedef struct {
-	/*
-	 * WAIT
-	 *
-	 * Informa al kernel que ejecute la función wait para el semáforo con el nombre identificador_semaforo.
-	 * El kernel deberá decidir si bloquearlo o no.
-	 *
-	 * @sintax	TEXT_WAIT (wait )
-	 * @param	identificador_semaforo	Semaforo a aplicar WAIT
-	 * @return	void
-	 */
-	void (*AnSISOP_wait)(t_nombre_semaforo identificador_semaforo);
-
-	/*
-	 * SIGNAL
-	 *
-	 * Informa al kernel que ejecute la función signal para el semáforo con el nombre identificador_semaforo.
-	 * El kernel deberá decidir si desbloquear otros procesos o no.
-	 *
-	 * @sintax	TEXT_SIGNAL (signal )
-	 * @param	identificador_semaforo	Semaforo a aplicar SIGNAL
-	 * @return	void
-	 */
-	void (*AnSISOP_signal)(t_nombre_semaforo identificador_semaforo);
-} t_func_kernel;
-
 
 /* Funciones */
 void conectarConKernel();
@@ -277,6 +78,25 @@ void AnSISOP_entradaSalida(t_nombre_dispositivo dispositivo, int tiempo);
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo);
 void AnSISOP_signal(t_nombre_semaforo identificador_semaforo);
 
+AnSISOP_funciones funciones = {
+		.AnSISOP_asignar				= AnSISOP_asignar,
+		.AnSISOP_asignarValorCompartida = AnSISOP_asignarValorCompartida,
+		.AnSISOP_definirVariable		= AnSISOP_definirVariable,
+		.AnSISOP_dereferenciar			= AnSISOP_dereferenciar,
+		.AnSISOP_entradaSalida 			= AnSISOP_entradaSalida,
+		.AnSISOP_finalizar				= AnSISOP_finalizar,
+		.AnSISOP_imprimir				= AnSISOP_imprimir,
+		.AnSISOP_imprimirTexto			= AnSISOP_imprimirTexto,
+		.AnSISOP_irAlLabel 				= AnSISOP_irAlLabel,
+		.AnSISOP_llamarConRetorno 		= AnSISOP_llamarConRetorno,
+		.AnSISOP_llamarSinRetorno 		= AnSISOP_llamarSinRetorno,
+		.AnSISOP_obtenerPosicionVariable= AnSISOP_obtenerPosicionVariable,
+		.AnSISOP_obtenerValorCompartida = AnSISOP_obtenerValorCompartida,
+		.AnSISOP_retornar 				= AnSISOP_retornar,
+
+};
+AnSISOP_kernel kernel_functions = { };
+
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
@@ -290,21 +110,21 @@ t_pcb* pcb;
 int main(){
 	//t_puntero (*funciontest)(t_nombre_variable) = AnSISOP_definirVariable;
 
-	AnSISOP_funciones funciones;
-	funciones.AnSISOP_asignar = (*AnSISOP_asignar);
-	funciones.AnSISOP_asignarValorCompartida = (*AnSISOP_asignarValorCompartida);
-	funciones.AnSISOP_definirVariable = (*AnSISOP_definirVariable);
-	funciones.AnSISOP_dereferenciar = (*AnSISOP_dereferenciar);
-	funciones.AnSISOP_entradaSalida = (*AnSISOP_entradaSalida);
-	funciones.AnSISOP_finalizar = (*AnSISOP_finalizar);
-	funciones.AnSISOP_imprimir = (*AnSISOP_imprimir);
-	funciones.AnSISOP_imprimirTexto = (*AnSISOP_imprimirTexto);
-	funciones.AnSISOP_irAlLabel = (*AnSISOP_irAlLabel);
-	funciones.AnSISOP_llamarConRetorno = (*AnSISOP_llamarConRetorno);
-	funciones.AnSISOP_llamarSinRetorno = (*AnSISOP_llamarSinRetorno);
-	funciones.AnSISOP_obtenerPosicionVariable = (*AnSISOP_obtenerPosicionVariable);
-	funciones.AnSISOP_obtenerValorCompartida = (*AnSISOP_obtenerValorCompartida);
-	funciones.AnSISOP_retornar = (*AnSISOP_retornar);
+//	AnSISOP_funciones funciones;
+//	funciones.AnSISOP_asignar = (*AnSISOP_asignar);
+//	funciones.AnSISOP_asignarValorCompartida = (*AnSISOP_asignarValorCompartida);
+//	funciones.AnSISOP_definirVariable = (*AnSISOP_definirVariable);
+//	funciones.AnSISOP_dereferenciar = (*AnSISOP_dereferenciar);
+//	funciones.AnSISOP_entradaSalida = (*AnSISOP_entradaSalida);
+//	funciones.AnSISOP_finalizar = (*AnSISOP_finalizar);
+//	funciones.AnSISOP_imprimir = (*AnSISOP_imprimir);
+//	funciones.AnSISOP_imprimirTexto = (*AnSISOP_imprimirTexto);
+//	funciones.AnSISOP_irAlLabel = (*AnSISOP_irAlLabel);
+//	funciones.AnSISOP_llamarConRetorno = (*AnSISOP_llamarConRetorno);
+//	funciones.AnSISOP_llamarSinRetorno = (*AnSISOP_llamarSinRetorno);
+//	funciones.AnSISOP_obtenerPosicionVariable = (*AnSISOP_obtenerPosicionVariable);
+//	funciones.AnSISOP_obtenerValorCompartida = (*AnSISOP_obtenerValorCompartida);
+//	funciones.AnSISOP_retornar = (*AnSISOP_retornar);
 
 	AnSISOP_kernel fkernel;
 //	fkernel.AnSISOP_signal = (*AnSISOP_signal);
@@ -553,12 +373,12 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
 	printf("Definir variable %c\n",identificador_variable);
 	sleep(10);
-	void* buffer = malloc(5);
-	memcpy(buffer,&identificador_variable,1);
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),5,buffer);
+	char buffer;
+	memcpy(&buffer,&identificador_variable,1);
+	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),1,&buffer);
 	pcb->tamanioContextoActual++;
 	//todo:Diccionario de variables. ??? ???
-	free(buffer);
+	//free(buffer);
 	return (pcb->cursorStack + pcb->tamanioContextoActual * 5)+1;
 }
 

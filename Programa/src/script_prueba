@@ -8,7 +8,7 @@ variables f, i, t
 
 	#`i`: Iterador
 	i=i+1
-
+	
 	#Imprimir el contador
 	print i
 
