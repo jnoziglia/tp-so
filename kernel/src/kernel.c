@@ -69,7 +69,7 @@ t_pcb* l_ready = NULL;
 t_pcb* l_exec = NULL;
 t_pcb* l_exit = NULL;
 t_medatada_program* metadata;
-int tamanioStack = 5;
+int tamanioStack = 10;
 int ultimoPid = 0;
 int socketUMV;
 //int socketCPU; //VER
@@ -373,24 +373,30 @@ t_pcb* crearPcb(char* codigo)
 	}
 	pcbAux->indiceCodigo = respuesta;
 	mensaje[1] = metadataAux->etiquetas_size;
-	respuesta = UMV_crearSegmentos(mensaje);
-	if(respuesta == -1)
+	if(mensaje[1] != 0)
 	{
-		//avisar al programa :D
-		Programa_imprimirTexto("Holis, No se pudo crear el programa");
-		UMV_destruirSegmentos(pcbAux->pid);
-		printf("no se creo el pcb\n");
-		free (pcbAux);
-		return NULL;
+		respuesta = UMV_crearSegmentos(mensaje);
+		if(respuesta == -1)
+		{
+			//avisar al programa :D
+			Programa_imprimirTexto("Holis, No se pudo crear el programa");
+			UMV_destruirSegmentos(pcbAux->pid);
+			printf("no se creo el pcb\n");
+			free (pcbAux);
+			return NULL;
+		}
+		pcbAux->indiceEtiquetas = respuesta;
 	}
-	pcbAux->indiceEtiquetas = respuesta;
 	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
 	printf("Se crea el pcb\n");
 	printf("codigo: %d\n", strlen(codigo));
 	UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
 	printf("Creado segmento Codigo con el tamaño %d\n",strlen(codigo));
-	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-	printf("Creado indiceEtiquetas de tamaño %d\n", metadataAux->etiquetas_size);
+	if(metadataAux->etiquetas_size != 0)
+	{
+		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
+		printf("Creado indiceEtiquetas de tamaño %d\n", metadataAux->etiquetas_size);
+	}
 	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
 	for (i=0; i<=pcbAux->tamanioIndiceCodigo;i++){
