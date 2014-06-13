@@ -143,7 +143,7 @@ int main(){
 	printf("Conexiones establecidas.\n");
 	t_pcb* pcb = malloc (sizeof(t_pcb));
 
-	int i;
+	int i,a;
 	while(1)
 	{
 		printf("Espero pcb\n");
@@ -192,7 +192,9 @@ int main(){
 			}
 			printf("%s\n", instruccionAEjecutar);
 			//sleep(30);
+			scanf("%d", &a);
 			analizadorLinea(instruccionAEjecutar,&funciones,&fkernel); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
+			//AnSISOP_definirVariable('a');
 			pcb->programCounter++;
 			quantumUtilizado++;
 		}
@@ -371,11 +373,22 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
-	printf("Definir variable %c\n",identificador_variable);
-	sleep(10);
-	char buffer;
-	memcpy(&buffer,&identificador_variable,1);
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),1,&buffer);
+	int a;
+	char variable = (char) identificador_variable;
+	scanf("%d", &a);
+	//printf("Definir variable %c\n",variable);
+//	scanf("%d", &a);
+//	printf("base: %d\n", pcb->segmentoStack);
+//	scanf("%d", &a);
+//	printf("cursorStack: %d\n", pcb->cursorStack);
+//	scanf("%d", &a);
+//	printf("contexto-actual: %d\n", pcb->tamanioContextoActual);
+//	scanf("%d", &a);
+//	printf("variable: %c\n", variable);
+//	sleep(30);
+	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),1,&variable);
+//	UMV_enviarBytes(1,8973,0,1,&variable);
+	scanf("%d", &a);
 	pcb->tamanioContextoActual++;
 	//todo:Diccionario de variables. ??? ???
 	//free(buffer);
