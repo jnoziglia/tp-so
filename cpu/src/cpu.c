@@ -95,7 +95,10 @@ AnSISOP_funciones funciones = {
 		.AnSISOP_retornar 				= AnSISOP_retornar,
 
 };
-AnSISOP_kernel kernel_functions = { };
+AnSISOP_kernel kernel_functions = {
+		.AnSISOP_signal 				= AnSISOP_signal,
+		.AnSISOP_wait					= AnSISOP_wait,
+};
 
 /* Variables Globales */
 int kernelSocket;
@@ -108,28 +111,6 @@ t_pcb* pcb;
 //todo:Primitivas, Hot Plug.
 
 int main(){
-	//t_puntero (*funciontest)(t_nombre_variable) = AnSISOP_definirVariable;
-
-//	AnSISOP_funciones funciones;
-//	funciones.AnSISOP_asignar = (*AnSISOP_asignar);
-//	funciones.AnSISOP_asignarValorCompartida = (*AnSISOP_asignarValorCompartida);
-//	funciones.AnSISOP_definirVariable = (*AnSISOP_definirVariable);
-//	funciones.AnSISOP_dereferenciar = (*AnSISOP_dereferenciar);
-//	funciones.AnSISOP_entradaSalida = (*AnSISOP_entradaSalida);
-//	funciones.AnSISOP_finalizar = (*AnSISOP_finalizar);
-//	funciones.AnSISOP_imprimir = (*AnSISOP_imprimir);
-//	funciones.AnSISOP_imprimirTexto = (*AnSISOP_imprimirTexto);
-//	funciones.AnSISOP_irAlLabel = (*AnSISOP_irAlLabel);
-//	funciones.AnSISOP_llamarConRetorno = (*AnSISOP_llamarConRetorno);
-//	funciones.AnSISOP_llamarSinRetorno = (*AnSISOP_llamarSinRetorno);
-//	funciones.AnSISOP_obtenerPosicionVariable = (*AnSISOP_obtenerPosicionVariable);
-//	funciones.AnSISOP_obtenerValorCompartida = (*AnSISOP_obtenerValorCompartida);
-//	funciones.AnSISOP_retornar = (*AnSISOP_retornar);
-
-	AnSISOP_kernel fkernel;
-//	fkernel.AnSISOP_signal = (*AnSISOP_signal);
-//	fkernel.AnSISOP_wait = (*AnSISOP_wait);
-
 
 	void* package = malloc(sizeof(t_pcb));
 	void* indiceCodigo;
@@ -141,7 +122,7 @@ int main(){
 	printf("socketK: %d\n", kernelSocket);
 	printf("socketU: %d\n", socketUMV);
 	printf("Conexiones establecidas.\n");
-	t_pcb* pcb = malloc (sizeof(t_pcb));
+	pcb = malloc (sizeof(t_pcb));
 
 	int i,a;
 	while(1)
@@ -153,10 +134,10 @@ int main(){
 		pcb->pid = superMensaje[0];
 		pcb->segmentoCodigo = superMensaje[1];
 		pcb->segmentoStack=	superMensaje[2] ;
-		pcb->cursorStack	=superMensaje[3]  ;
-		pcb->indiceCodigo=	superMensaje[4] ;
-		pcb->indiceEtiquetas=	superMensaje[5]  ;
-		pcb->programCounter= superMensaje[6] ;
+		pcb->cursorStack=superMensaje[3]  ;
+		pcb->indiceCodigo=superMensaje[4] ;
+		pcb->indiceEtiquetas=superMensaje[5]  ;
+		pcb->programCounter=superMensaje[6] ;
 		pcb->tamanioContextoActual=superMensaje[7] ;
 		pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
 		pcb->tamanioIndiceCodigo=superMensaje[9] ;
@@ -192,8 +173,8 @@ int main(){
 			}
 			printf("%s\n", instruccionAEjecutar);
 			//sleep(30);
-			scanf("%d", &a);
-			analizadorLinea(instruccionAEjecutar,&funciones,&fkernel); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
+//			scanf("%d", &a);
+			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			//AnSISOP_definirVariable('a');
 			pcb->programCounter++;
 			quantumUtilizado++;
@@ -375,7 +356,7 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
 	int a;
 	char variable = (char) identificador_variable;
-	scanf("%d", &a);
+
 	//printf("Definir variable %c\n",variable);
 //	scanf("%d", &a);
 //	printf("base: %d\n", pcb->segmentoStack);
@@ -384,7 +365,9 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 //	scanf("%d", &a);
 //	printf("contexto-actual: %d\n", pcb->tamanioContextoActual);
 //	scanf("%d", &a);
-//	printf("variable: %c\n", variable);
+//	scanf("%d", &a);
+	printf("definir variable: %c\n", variable);
+//	scanf("%d", &a);
 //	sleep(30);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),1,&variable);
 //	UMV_enviarBytes(1,8973,0,1,&variable);
