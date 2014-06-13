@@ -42,7 +42,7 @@ typedef struct datosPrograma{
 typedef struct nodoReady{
 	t_datosPrograma datosProgramas;
 	int *siguiente;
-
+	int prioridad;
 }t_nodoReady;
 
 typedef struct nodoExit{
@@ -73,6 +73,7 @@ void planificacionRoundRobin(t_nodoReady inicioReady);
 void llegaUnPrograma(pcb pcbProceso){
 	t_nodoReady proceso = crearNodoReady(pcbProceso);
 	encolarAReady(proceso);
+	proceso -> prioridad = 3; //un proceso nuevo tiene la menor prioridad
 }
 
 t_nodoReady crearNodoReady(pcb pcbProceso){
@@ -86,6 +87,9 @@ t_nodoReady crearNodoReady(pcb pcbProceso){
 
 
 void encolarAReady(t_nodoReady proceso){
+	//hay que tener en cuenta si llegan dos o mas procesos al mismo tiempo.
+	//comparar prioridades
+
 
 	//si hay algo en la lista
 	if(inicioReady != NULL){
@@ -129,20 +133,38 @@ void planificacionRoundRobin(t_nodoReady inicioReady){
 
     int cantProcesosEnReady = getElementsCount(inicioReady);
 
+    /*//recibo conexion de un CPU disponible
+    int socketCPU;
+    int confirmacion;
+    if(recv(socketCPU, &confirmacion, sizeof(int), 0)){
+    cpuDisponibles ++;
+    }
+    */
+
     while(cantProcesosEnReady>=0)//Hay procesos en la lista
     {
     	t_nodoReady procesoActual = inicioReady;
+    	int datosPrograma = procesoActual-> datosProgramas;
     	int usoCPU = procesoActual-> datosProgramas -> usoDelCPU;
-
+    	pcb pcbPrograma = procesoActual-> datosProgramas -> pcbPrograma;
 
     	if(cpuDisponibles >=0){
+    		//lo asigno a un CPU
+    		send(socketCPU,&datosPrograma,sizeof(pcbPrograma),0);
     		cpuDisponibles -- ;
-    		//le asigno cpu, le mando pbc y usoDelCPU
-    		//sacar su quantum
+    		//recibe del cpu, el pcb del programa, su quantum y si se ejecuto correctamente
+    		if(1/*no tira error el cpu*/){
+    		//si hay un error y se suspende el proceso en ejecucion
+    			int quantum;
+    			cpuDisponibles ++ ;
+    			usoCPU -= quantum;
+    		}
+    		//si hay un error y se suspende el proceso en ejecucion
     		//libera al proceso
-    		int quantum;
-    		cpuDisponibles ++ ;
-    		usoCPU -= quantum;
+    		else{
+    			//avisar que se interrumpio
+    		}
+
 
     	}
 
