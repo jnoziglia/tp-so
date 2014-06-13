@@ -69,7 +69,7 @@ t_pcb* l_ready = NULL;
 t_pcb* l_exec = NULL;
 t_pcb* l_exit = NULL;
 t_medatada_program* metadata;
-int tamanioStack = 5;
+int tamanioStack = 10;
 int ultimoPid = 0;
 int socketUMV;
 //int socketCPU; //VER

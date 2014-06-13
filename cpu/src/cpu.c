@@ -106,6 +106,7 @@ int socketUMV;
 int quantum = 10; //todo:quantum que lee de archivo de configuración
 int estadoCPU;
 bool matarCPU = 0;
+bool terminarPrograma = 0;
 t_pcb* pcb;
 
 //todo:Primitivas, Hot Plug.
@@ -158,6 +159,17 @@ int main(){
 
 		while(quantumUtilizado<=quantum)
 		{
+			if(matarCPU == 1)
+			{
+				int estadoCPU = 0;
+				send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
+				send(socketUMV,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
+				close(kernelSocket);
+				close(socketUMV);
+				free(pcb);
+				return 0;
+			}
+			printf("Program counter: %d\n", pcb->programCounter);
 			indiceCodigo = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
 			memcpy(&(instruccionABuscar.start), indiceCodigo, sizeof(int));
 			memcpy(&(instruccionABuscar.offset), indiceCodigo+sizeof(int), sizeof(int));
@@ -175,24 +187,20 @@ int main(){
 			//sleep(30);
 //			scanf("%d", &a);
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
+			if(terminarPrograma)
+			{
+				printf("Se termina el programa \n");
+				scanf("%d", &i);
+				return 0;
+			}
 			//AnSISOP_definirVariable('a');
-			pcb->programCounter++;
+			pcb->programCounter += 8;
 			quantumUtilizado++;
 		}
-		if(matarCPU == 1)
-		{
-			int estadoCPU = 0;
-			send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
-			send(socketUMV,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
-			close(kernelSocket);
-			close(socketUMV);
-			free(pcb);
-			return 0;
-		}
+
 		estadoCPU = 1;
 		send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se termina el quantum
 	}
-
 
 	return 0;
 }
@@ -463,6 +471,7 @@ void AnSISOP_finalizar(void)
 	printf("finalizar\n");
 	if(pcb->cursorStack == 0)
 	{
+		terminarPrograma = 1;
 		return;
 	}
 	else
