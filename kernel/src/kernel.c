@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 /* Definiciones y variables para la conexión por Sockets */
-#define PUERTO "6667"
+#define PUERTOPROGRAMA "6667"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 #define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
 #define PUERTOUMV "6668"
@@ -48,8 +48,7 @@ typedef struct pcb
 /* Funciones */
 void* f_hiloPCP();
 void* f_hiloPLP();
-t_pcb* crearPcb(char* codigo);
-int generarPid(void);
+t_pcb* crearPcb(char* codigo, int pid);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
@@ -70,10 +69,12 @@ t_pcb* l_exec = NULL;
 t_pcb* l_exit = NULL;
 t_medatada_program* metadata;
 int tamanioStack = 50;
-int ultimoPid = 0;
 int socketUMV;
 //int socketCPU; //VER
-//fd_set readfds;
+fd_set readPCP;
+fd_set writePCP;
+fd_set readPLP;
+fd_set writePLP;
 
 
 /* Semáforos */
@@ -204,9 +205,8 @@ void* f_hiloPLP()
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int socketServidor;
-	int socketCliente[10];
-	fd_set readfds;
-	int i, status, maximo = -1;
+	int socketAux;
+	int i, status, maximo = 0;
 	int j = 1;
 	char package[PACKAGESIZE];
 	printf("Inicio del PLP.\n");
@@ -214,77 +214,80 @@ void* f_hiloPLP()
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
 	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
-	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+	getaddrinfo(NULL, PUERTOPROGRAMA, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
 	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 	socklen_t addrlen = sizeof(programa);
 
 	socketServidor = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	maximo = socketServidor;
 	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketServidor, BACKLOG);
 	printf("SocketServidor: %d\n",socketServidor);
+//
+//	int socketllegado = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
+//	printf("SocketLlegado: %d\n",socketllegado);
+//
+//	status = recv(socketllegado,(void*)package, PACKAGESIZE, 0);
+//	printf("status: %d\n",status);
+//
+//	t_pcb* nuevoPCB;
+//	nuevoPCB = crearPcb(package);
+//	if(nuevoPCB != NULL)
+//	{
+//		printf("Nuevo PCB Creado\n");
+//		encolarEnNew(nuevoPCB);
+//	}
 
-	int socketllegado = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
-	printf("SocketLlegado: %d\n",socketllegado);
 
-	status = recv(socketllegado,(void*)package, PACKAGESIZE, 0);
-	printf("status: %d\n",status);
+	FD_ZERO(&readPLP);
+	FD_ZERO(&writePLP);
 
-	t_pcb* nuevoPCB;
-	nuevoPCB = crearPcb(package);
-	if(nuevoPCB != NULL)
+	FD_SET (socketServidor, &readPLP);
+
+	while(1)
 	{
-		printf("Nuevo PCB Creado\n");
-		encolarEnNew(nuevoPCB);
-	}
-
-
-	/*while(1)
-	{
-		FD_ZERO(&readfds);
-		FD_SET (socketServidor, &readfds);
-		for (i=0; i<=maximo; i++)
+		select(maximo + 1, &readPLP, &writePLP, NULL, NULL);
+		for(i=3; i<=maximo; i++)
 		{
-			FD_SET (socketCliente[i], &readfds);
-			printf("socket %d\n",socketCliente[i]);
-		}
-
-		select(socketServidor + j, &readfds, NULL, NULL, NULL);
-
-		for(i=0; i<=maximo; i++)
-		{
-			if(FD_ISSET(socketCliente[i], &readfds))
+			if(FD_ISSET(i, &readPLP))
 			{
-				status = recv(socketCliente[i], (void*)package, PACKAGESIZE, 0);
-				printf("Codigo Recibido. %d\n", status);
-				if (status != 0)
+				FD_SET(i, &readPLP);
+				if(i == socketServidor)
 				{
-					t_pcb* nuevoPCB;
-					//printf("%s", package);
-					nuevoPCB = crearPcb(package);
-					if(nuevoPCB != NULL)
-					{
-						printf("Nuevo PCB Creado\n");
-						encolarEnNew(nuevoPCB);
-
-					}
-
+					printf("conecto program %d\n", socketServidor);
+					socketAux = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
+					FD_SET(socketAux, &readPLP);
+					if (socketAux > maximo) maximo = socketAux;
 				}
 				else
 				{
-					maximo--;
+					status = recv(i, (void*)package, PACKAGESIZE, 0);
+					printf("Codigo Recibido. %d\n", status);
+					if (status != 0)
+					{
+						t_pcb* nuevoPCB;
+						//printf("%s", package);
+						nuevoPCB = crearPcb(package, i);
+						if(nuevoPCB != NULL)
+						{
+							printf("Nuevo PCB Creado\n");
+							encolarEnNew(nuevoPCB);
+						}
+					}
+					else
+					{
+						FD_CLR(i, &readPLP);
+						close(i);
+						if (i == maximo)
+						{
+							maximo--;
+						}
+					}
 				}
 			}
 		}
-
-		if(FD_ISSET(socketServidor, &readfds))
-		{
-			printf("socket serv %d\n", socketServidor);
-			maximo++;
-			j++;
-			socketCliente[maximo] = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
-		}
 	}
-	return NULL;*/
+	return NULL;
 }
 
 	/*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
@@ -322,13 +325,13 @@ void* f_hiloPLP()
 
 
 
-t_pcb* crearPcb(char* codigo)
+t_pcb* crearPcb(char* codigo, int pid)
 {
 	t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(codigo);
 	int mensaje[2];
 	int respuesta, i;
-	pcbAux->pid = generarPid();
+	pcbAux->pid = pid;
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
 	pcbAux->cursorStack = 0;
@@ -438,11 +441,6 @@ void UMV_destruirSegmentos(int pid)
 	return;
 }
 
-int generarPid(void)
-{
-	ultimoPid++;
-	return ultimoPid;
-}
 
 
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
