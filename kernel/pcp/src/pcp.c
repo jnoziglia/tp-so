@@ -1,7 +1,7 @@
 /*
  ============================================================================
- Name        : plp.c
- Author      : tu macho
+ Name        : pcp.c
+ Author      :
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
@@ -16,8 +16,8 @@
 #include <string.h>
 #include <stdbool.h>    // boolean datatype
 
-/*{
-    }*/
+
+//Estructuras de datos
 
 typedef struct pcb
 {
@@ -33,18 +33,10 @@ typedef struct pcb
 }pcb;
 
 
-
-
-//llega un PCB, cargo estos datos
-
 typedef struct datosPrograma{
 	int finish;
-	int arribo;
-	int waitAverage;
-	int lastSchedulerActiveTime;
-	int stopCounter;
-	int processTime;
-	int pid;
+	int usoDelCPU;
+	pcb *pcbPrograma;
 }t_datosPrograma;
 
 typedef struct nodoReady{
@@ -53,79 +45,120 @@ typedef struct nodoReady{
 
 }t_nodoReady;
 
-t_nodoReady *readyList;
-t_nodoReady *inicioLista;
-t_nodoReady *finLista;
+typedef struct nodoExit{
+	pcb *pcbPrograma;
+	int *siguiente;
+}t_nodoExit;
+
+//variables globales
+
+t_nodoReady *inicioReady;
+t_nodoReady *finReady;
+t_nodoExit *inicioExit;
+t_nodoExit *finExit;
+int cantidadCPU;
+int cpuDisponibles = 10 ;
+
+//Definicion de funciones
+void llegaUnPrograma(pcb pcbProceso);
+t_nodoReady crearNodoReady(pcb pcbProceso);
+void encolarAReady(t_nodoReady proceso);
+void encolarAExit(t_nodoReady proceso);
+void planificacionRoundRobin(t_nodoReady inicioReady);
+
+
+
+//funciones
 
 void llegaUnPrograma(pcb pcbProceso){
-	//encolarlo a ready
-	t_nodoReady proceso;
-	proceso -> datosProgramas -> finish = 0;
-	//proceso -> datosProgramas -> arribo = ;
-	proceso -> datosProgramas -> waitAverage = 0;
-	proceso -> datosProgramas -> lastSchedulerActiveTime = 0;
-	proceso -> datosProgramas -> stopCounter = 0;
-	proceso -> datosProgramas -> processTime ;
-	proceso -> datosProgramas -> pid = pcbProceso -> pid;
-	agregarAListaReady(proceso);
+	t_nodoReady proceso = crearNodoReady(pcbProceso);
+	encolarAReady(proceso);
 }
 
-*t_nodoReady agregarAListaReady(t_nodoReady){
+t_nodoReady crearNodoReady(pcb pcbProceso){
+	t_nodoReady proceso;
+	proceso -> datosProgramas -> finish = 0;
+	proceso -> datosProgramas -> usoDelCPU = sizeof(pcbProceso -> indiceCodigo);
+	proceso -> datosProgramas -> pcbPrograma = pcbProceso;
+	proceso -> siguiente = NULL;
+	return proceso;
+}
+
+
+void encolarAReady(t_nodoReady proceso){
+
+	//si hay algo en la lista
+	if(inicioReady != NULL){
+		finReady -> siguiente = proceso;
+		finReady = proceso;
+
 	}
 
-//Global Variables
-struct customList;//the element of the list where we will placed
+	//si la lista esta vacia
+	if(inicioReady == NULL){
+		inicioReady = proceso;
+		finReady = proceso;
+	}
+
+}
+
+void encolarAExit(t_nodoReady proceso){
+	t_nodoExit procesoAFinalizar;
+
+	//verificar que haya terminado de ejecutar
+	if(proceso -> datosProgramas -> finish == 1){
+		procesoAFinalizar->	pcbPrograma = proceso -> datosProgramas -> pcbPrograma;
+
+		//si hay algo en la lista
+		if(inicioExit != NULL){
+			finExit -> siguiente = procesoAFinalizar;
+			procesoAFinalizar-> siguiente = finExit;
+		}
+
+		//si la lista esta vacia
+		if(inicioExit == NULL){
+				inicioExit = proceso;
+				finExit = proceso;
+		}
+	}
+
+}
 
 
-//contextchange tiempo que tarda en cambiar de contexto
+void planificacionRoundRobin(t_nodoReady inicioReady){
 
-
-void roundRobin(struct customList *readyList, int quantum, int contextchangue)
-    {
-    int actualTime = 0; //tiempo que va pasando, tiempo actual
-    int cantProcesosEnReady;
-    cantProcesosEnReady = getElementsCount(readyList);
-    //printf("We have %d process\n",elements);
+    int cantProcesosEnReady = getElementsCount(inicioReady);
 
     while(cantProcesosEnReady>=0)//Hay procesos en la lista
-        {
-        //actualTime+=contextchangue; si consideramos el tiempo que tarda en cambiar de contexto lo ponemos, si no no.
+    {
+    	t_nodoReady procesoActual = inicioReady;
+    	int usoCPU = procesoActual-> datosProgramas -> usoDelCPU;
 
 
-    	if (readyList->finished==0 && readyList->arrivetime<=actualTime)//process can be accepted by the round robin policy
-    		//si el proceso no termino y el tiempo de arribo es menor o igual al tiempo actual
-    		{
-            //verificar waitaverange
-            if (readyList->waitaverange == 0)
-                {
-                readyList->waitaverange = actualTime-readyList->arrivetime;
-                }
-            else//Gets CPU
-                {
-                readyList->waitaverange=(readyList->waitaverange+(actualTime-readyList->lastScheculerActiveTime))/2;
-                }
-            readyList->stopCounter++;
-            readyList->processtime=(readyList->processtime)-quantum;
+    	if(cpuDisponibles >=0){
+    		cpuDisponibles -- ;
+    		//le asigno cpu, le mando pbc y usoDelCPU
+    		//sacar su quantum
+    		//libera al proceso
+    		int quantum;
+    		cpuDisponibles ++ ;
+    		usoCPU -= quantum;
 
-            //printf("processtime == %d\n",readyList->processtime);
-            if (readyList->processtime<=0)//The process has ended
-                {
-                actualTime-=readyList->processtime;
-                //readyList->processtime=0;
-                readyList->finished=1;
-                cantProcesosEnReady--;
-                printf("Process %d ended\n",readyList->pid);
-                }
-            else//The process need more cpu time
-                {
-                actualTime+=quantum;
-                readyList->lastScheculerActiveTime = actualTime;
-                }
-            }
-            //Move next element
-            readyList=getCustomListPointer((readyList->list).next);
-        }
+    	}
 
+    	//si termino de ejecutarse
+    	if(usoCPU <= 0){
+    		inicioReady->datosProgramas->finish = 1;
+    		encolarEnExit(procesoActual);
 
- }
+    	}
+    	//si no termino de ejecutarse
+    	else{
+    		encolarAReady(procesoActual);
+    	}
 
+    	int *aux = inicioReady -> siguiente;
+    	inicioReady = aux;
+    }
+
+}
