@@ -57,7 +57,8 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void dejarDeDarServicio();
-t_pcb* deserializarPcb(void* package);
+void recibirSuperMensaje ( int* superMensaje );
+void generarSuperMensaje(void);
 
 /* Primitivas*/
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable);
@@ -104,10 +105,11 @@ AnSISOP_kernel kernel_functions = {
 int kernelSocket;
 int socketUMV;
 int quantum = 10; //todo:quantum que lee de archivo de configuración
-int estadoCPU;
+char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
 t_pcb* pcb;
+int superMensaje[11];
 
 //todo:Primitivas, Hot Plug.
 
@@ -129,25 +131,10 @@ int main(){
 	while(1)
 	{
 		printf("Espero pcb\n");
-		int superMensaje[11];
+		terminarPrograma = 0;
 
 		int recibido = recv(kernelSocket,superMensaje,sizeof(t_pcb),0);
-		pcb->pid = superMensaje[0];
-		pcb->segmentoCodigo = superMensaje[1];
-		pcb->segmentoStack=	superMensaje[2] ;
-		pcb->cursorStack=superMensaje[3]  ;
-		pcb->indiceCodigo=superMensaje[4] ;
-		pcb->indiceEtiquetas=superMensaje[5]  ;
-		pcb->programCounter=superMensaje[6] ;
-		pcb->tamanioContextoActual=superMensaje[7] ;
-		pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
-		pcb->tamanioIndiceCodigo=superMensaje[9] ;
-		pcb->peso=superMensaje[10] ;
-
-		for(i=0; i<11; i++){
-			printf("pcb: %d\n", superMensaje[i]);
-		}
-
+		recibirSuperMensaje(superMensaje);
 
 		printf("%d",recibido);
 		printf("PCB recibido.\n");
@@ -161,9 +148,9 @@ int main(){
 		{
 			if(matarCPU == 1)
 			{
-				int estadoCPU = 0;
-				send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
-				send(socketUMV,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
+				estadoCPU = 0;
+				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
+				//send(socketUMV,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
 				close(kernelSocket);
 				close(socketUMV);
 				free(pcb);
@@ -180,23 +167,32 @@ int main(){
 			if(instruccionAEjecutar == NULL)
 			{
 				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
-				AnSISOP_finalizar(); // Es una primitiva.
-				return 0;
+				estadoCPU = 0;
+				send(kernelSocket,&estadoCPU,sizeof(char),0);
+				generarSuperMensaje();
+				send(kernelSocket,superMensaje, sizeof(superMensaje),0);
+				//AnSISOP_finalizar(); // Es una primitiva.
+				break;
 			}
-			printf("%s\n", instruccionAEjecutar);
+			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			if(terminarPrograma)
 			{
 				printf("Se termina el programa \n");
-				scanf("%d", &i);
-				return 0;
+				estadoCPU = 0;
+				send(kernelSocket,&estadoCPU,sizeof(char),0);
+				generarSuperMensaje();
+				send(kernelSocket,superMensaje, sizeof(superMensaje),0);
+				break;
 			}
 			pcb->programCounter += 8;
 			quantumUtilizado++;
 		}
 
 		estadoCPU = 1;
-		send(kernelSocket,(int*)estadoCPU,sizeof(int),0); //avisar que se termina el quantum
+		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
+		generarSuperMensaje();
+		send(kernelSocket,superMensaje, sizeof(superMensaje),0);
 	}
 
 	return 0;
@@ -352,6 +348,42 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 	return package;
 }
 
+void recibirSuperMensaje ( int* superMensaje )
+{
+	int i;
+	pcb->pid = superMensaje[0];
+	pcb->segmentoCodigo = superMensaje[1];
+	pcb->segmentoStack=	superMensaje[2] ;
+	pcb->cursorStack=superMensaje[3]  ;
+	pcb->indiceCodigo=superMensaje[4] ;
+	pcb->indiceEtiquetas=superMensaje[5]  ;
+	pcb->programCounter=superMensaje[6] ;
+	pcb->tamanioContextoActual=superMensaje[7] ;
+	pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
+	pcb->tamanioIndiceCodigo=superMensaje[9] ;
+	pcb->peso=superMensaje[10] ;
+
+	for(i=0; i<11; i++){
+		printf("pcb: %d\n", superMensaje[i]);
+	}
+	return;
+}
+
+void generarSuperMensaje(void)
+{
+	superMensaje[0] = pcb->pid;
+	superMensaje[1] = pcb->segmentoCodigo;
+	superMensaje[2] = pcb->segmentoStack;
+	superMensaje[3] = pcb->cursorStack;
+	superMensaje[4] = pcb->indiceCodigo;
+	superMensaje[5] = pcb->indiceEtiquetas;
+	superMensaje[6] = pcb->programCounter;
+	superMensaje[7] = pcb->tamanioContextoActual;
+	superMensaje[8] = pcb->tamanioIndiceEtiquetas;
+	superMensaje[9] = pcb->tamanioIndiceCodigo;
+	superMensaje[10] = pcb->peso;
+	return;
+}
 
 /*
  * PRIMITVAS

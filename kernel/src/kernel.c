@@ -59,6 +59,7 @@ int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
+void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb);
 
 
 
@@ -101,13 +102,11 @@ void* f_hiloPCP()
 {
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
-	int socketPCP;
-	int socketCliente[10];
-	fd_set writefds;
-	fd_set readfds;
-	int i, maximo = -1;
+	int socketPCP, socketAux;
+	int i, maximo = 0;
+	int superMensaje[11];
 	int status = 1;
-	int j = 1;
+	char mensaje;
 	void* package = malloc(sizeof(t_pcb));
 	printf("Inicio del PCP.\n");
 	memset(&hints, 0, sizeof(hints));
@@ -119,85 +118,80 @@ void* f_hiloPCP()
 	socklen_t addrlen = sizeof(conexioncpu);
 
 	socketPCP = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	maximo = socketPCP;
 	bind(socketPCP,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketPCP, BACKLOG);
 
-	int socketpiola = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
+	FD_ZERO(&readPCP);
+	FD_ZERO(&writePCP);
 
-	while(l_new == NULL)
+	FD_SET (socketPCP, &readPCP);
+
+	while(1)
 	{
+		select(maximo + 1, &readPCP, &writePCP, NULL, NULL);
+		for(i=3; i<=maximo; i++)
+		{
+			if(FD_ISSET(i, &readPCP))
+			{
+				FD_SET(i, &readPCP);
+				if(i == socketPCP)
+				{
+					printf("Nueva CPU: %d\n", socketPCP);
+					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
+					FD_SET(socketAux, &writePCP);
+					if (socketAux > maximo) maximo = socketAux;
+				}
+				else
+				{
+					//Cuando no es un CPU, recibe el PCB o se muere el programa;
+					recv(i,&mensaje,sizeof(char),0);
+					recv(i,&superMensaje,sizeof(superMensaje),0);
+					t_pcb* pcb = malloc(sizeof(t_pcb));
+					recibirSuperMensaje(superMensaje, pcb);
+					if(mensaje == 0) //todo:podria ser ENUM
+					{
+						//Se muere el programa
 
+						printf("Llegó un programa para encolar en Exit\n");
+						//encolarEnExit
+						l_exit = pcb;
+					}
+					else
+					{
+						//Se termina el quantum o va a block
+						printf("Llegó un programa para encolar en Ready\n");
+						l_ready = pcb;
+
+					}
+				}
+			}
+			else if(FD_ISSET(i, &writePCP))
+			{
+				FD_SET(i, &writePCP);
+				//Sacar de Ready
+				if(l_new != NULL)	//TODO: PONER SEMAFORO!!!
+				{
+					t_pcb* pcbAux;
+					pcbAux = l_new;
+					superMensaje[0] = pcbAux->pid;
+					superMensaje[1] = pcbAux->segmentoCodigo;
+					superMensaje[2] = pcbAux->segmentoStack;
+					superMensaje[3] = pcbAux->cursorStack;
+					superMensaje[4] = pcbAux->indiceCodigo;
+					superMensaje[5] = pcbAux->indiceEtiquetas;
+					superMensaje[6] = pcbAux->programCounter;
+					superMensaje[7] = pcbAux->tamanioContextoActual;
+					superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
+					superMensaje[9] = pcbAux->tamanioIndiceCodigo;
+					superMensaje[10] = pcbAux->peso;
+					l_new = NULL;
+					status = send(i, superMensaje, sizeof(t_pcb), 0);
+				}
+
+			}
+		}
 	}
-
-	t_pcb* pcbAux;
-	pcbAux = l_new;
-	int superMensaje[11];
-	superMensaje[0] = pcbAux->pid;
-	superMensaje[1] = pcbAux->segmentoCodigo;
-	superMensaje[2] = pcbAux->segmentoStack;
-	superMensaje[3] = pcbAux->cursorStack;
-	superMensaje[4] = pcbAux->indiceCodigo;
-	superMensaje[5] = pcbAux->indiceEtiquetas;
-	superMensaje[6] = pcbAux->programCounter;
-	superMensaje[7] = pcbAux->tamanioContextoActual;
-	superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
-	superMensaje[9] = pcbAux->tamanioIndiceCodigo;
-	superMensaje[10] = pcbAux->peso;
-	//serializarPcb(pcbAux, package)
-
-	status = send(socketpiola, superMensaje, sizeof(t_pcb), 0);
-	//l_new = NULL;
-
-
-//	while(1)
-//	{
-//		FD_ZERO(&writefds);
-//		FD_ZERO(&readfds);
-//		FD_SET (socketPCP, &readfds);
-//		for (i=0; i<=maximo; i++)
-//		{
-//			FD_SET (socketCliente[i], &writefds);
-//			//printf("socketkernCPU %d\n",socketCliente[i]);
-//		}
-//
-//		select(socketPCP + j, &readfds, &writefds, NULL, NULL);
-//
-//		for(i=0; i<=maximo; i++)
-//		{
-//			if(FD_ISSET(socketCliente[i], &writefds))
-//			{
-//				//printf("entre al if.\n");
-//				if (status != 0)
-//				{
-//					//printf("entre al if2.\n");
-//					if(l_new != NULL)
-//					{
-//						//printf("entre al if3.\n");
-//						t_pcb* pcbAux;
-//						pcbAux = l_new;
-//						serializarPcb(pcbAux, package);
-//						status = send(socketCliente[i], package, sizeof(t_pcb), 0);
-//						l_new = NULL;
-//						//printf("PCB Enviado.\n");
-//					}
-//
-//				}
-//				else
-//				{
-//					maximo--;
-//				}
-//			}
-//		}
-//
-//		if(FD_ISSET(socketPCP, &readfds))
-//		{
-//			//printf("socket CPU %d\n", socketPCP);
-//			maximo++;
-//			j++;
-//			socketCliente[maximo] = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
-//		}
-//	}
-//	return NULL;
 }
 
 void* f_hiloPLP()
@@ -280,7 +274,7 @@ void* f_hiloPLP()
 						close(i);
 						if (i == maximo)
 						{
-							maximo--;
+							maximo--;	//TODO: revisar como reasignar maximo
 						}
 					}
 				}
@@ -658,5 +652,26 @@ void serializarPcb(t_pcb* pcb, void* package)
 	memcpy(package, &(pcb->peso), sizeof(int));
 	offset += sizeof(int);
 
+	return;
+}
+
+void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb )
+{
+	int i;
+	pcb->pid = superMensaje[0];
+	pcb->segmentoCodigo = superMensaje[1];
+	pcb->segmentoStack=	superMensaje[2] ;
+	pcb->cursorStack=superMensaje[3]  ;
+	pcb->indiceCodigo=superMensaje[4] ;
+	pcb->indiceEtiquetas=superMensaje[5]  ;
+	pcb->programCounter=superMensaje[6] ;
+	pcb->tamanioContextoActual=superMensaje[7] ;
+	pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
+	pcb->tamanioIndiceCodigo=superMensaje[9] ;
+	pcb->peso=superMensaje[10] ;
+
+	for(i=0; i<11; i++){
+		printf("pcb: %d\n", superMensaje[i]);
+	}
 	return;
 }
