@@ -67,7 +67,7 @@ void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor);
 //todo:ObtenerValorCompartida, AsignarValorCompartida,
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable);
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor);
-void AnSISOP_irAlLabel(t_nombre_etiqueta t_nombre_etiqueta);
+void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta);
 void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta);
 void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar);
 void AnSISOP_finalizar(void);
@@ -184,8 +184,6 @@ int main(){
 				return 0;
 			}
 			printf("%s\n", instruccionAEjecutar);
-			//sleep(30);
-//			scanf("%d", &a);
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			if(terminarPrograma)
 			{
@@ -193,7 +191,6 @@ int main(){
 				scanf("%d", &i);
 				return 0;
 			}
-			//AnSISOP_definirVariable('a');
 			pcb->programCounter += 8;
 			quantumUtilizado++;
 		}
@@ -362,32 +359,18 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
+	printf("Primitiva Definir Variable\n");
 	int a;
 	char variable = (char) identificador_variable;
-
-	//printf("Definir variable %c\n",variable);
-//	scanf("%d", &a);
-//	printf("base: %d\n", pcb->segmentoStack);
-//	scanf("%d", &a);
-//	printf("cursorStack: %d\n", pcb->cursorStack);
-//	scanf("%d", &a);
-//	printf("contexto-actual: %d\n", pcb->tamanioContextoActual);
-//	scanf("%d", &a);
-//	scanf("%d", &a);
-	printf("definir variable: %c\n", variable);
-//	scanf("%d", &a);
-//	sleep(30);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),1,&variable);
-//	UMV_enviarBytes(1,8973,0,1,&variable);
-	scanf("%d", &a);
 	pcb->tamanioContextoActual++;
 	//todo:Diccionario de variables. ??? ???
-	//free(buffer);
 	return (pcb->cursorStack + pcb->tamanioContextoActual * 5)+1;
 }
 
 t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable)
 {
+	printf("Primitiva Obtener Posicion Variable\n");
 	int offset = -1;
 	int aux = 0;
 	char* buffer = malloc(pcb->tamanioContextoActual * 5);
@@ -408,7 +391,7 @@ t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variab
 
 t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable)
 {
-	printf("dereferenciar\n");
+	printf("Primitiva Dereferenciar Variable\n");
 	int* valor;
 	valor = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4);
 	return *valor;
@@ -416,6 +399,7 @@ t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable)
 
 void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor)
 {
+	printf("Primitiva Asignar Variable\n");
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4,&valor);
 }
 
@@ -430,24 +414,37 @@ t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_
 	return 0;
 }
 
-void AnSISOP_irAlLabel(t_nombre_etiqueta t_nombre_etiqueta)
+void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
 {
-	printf("irallabel\n");
-	void* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
-	etiquetas = UMV_solicitarBytes(pcb->pid,pcb->indiceEtiquetas,0,pcb->tamanioIndiceEtiquetas);
-	metadata_buscar_etiqueta(t_nombre_etiqueta,etiquetas,pcb->tamanioIndiceEtiquetas);
-	free(etiquetas);
+	printf("Primitiva Ir al Label\n");
+	void* buffer = malloc(pcb->tamanioIndiceEtiquetas);
+//	char* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
+	printf("tamanio indice etiquetas: %d\n", pcb->tamanioIndiceEtiquetas);
+	t_puntero_instruccion instruccion;
+	memcpy(buffer, UMV_solicitarBytes(pcb->pid,pcb->indiceEtiquetas,0,pcb->tamanioIndiceEtiquetas), pcb->tamanioIndiceEtiquetas);
+//	memcpy(etiquetas,buffer,pcb->tamanioIndiceEtiquetas);
+	instruccion = metadata_buscar_etiqueta(nombre_etiqueta,buffer,pcb->tamanioIndiceEtiquetas);
+	//char* n = etiquetas;
+	//printf("etiquetas: \n");
+	//printf("%s \n", etiquetas);
+//	printf("largo etiquetas: %d\n", strlen(etiquetas));
+	printf("etiqueta: %s\n", nombre_etiqueta);
+	printf("instruccion: %d\n", instruccion);
+	scanf("%d", &instruccion);
+
+//	free(etiquetas);
 	return;
 }
 
 void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta)
 {
-	printf("llamarsinretorno\n");
+	printf("Primitiva Llamar Sin Retorno\n");
+	printf("Etiqueta: %s\n", etiqueta);
 	void* buffer = malloc(8);
 	memcpy(buffer,&(pcb->cursorStack),4);
 	memcpy((buffer+4),&(pcb->programCounter),4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),8,buffer);
-	pcb->cursorStack = pcb->cursorStack + 8;
+	AnSISOP_irAlLabel(etiqueta);
 	free(buffer);
 	return;
 }
@@ -455,7 +452,7 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta)
 
 void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar)
 {
-	printf("llamarconretorno\n");
+	printf("Primitiva Llamar Con Retorno\n");
 	void* buffer = malloc(12);
 	memcpy(buffer,&(pcb->cursorStack),4);
 	memcpy((buffer+4),&donde_retornar,4);
@@ -468,14 +465,16 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retorn
 
 void AnSISOP_finalizar(void)
 {
-	printf("finalizar\n");
+	printf("Primitiva Finalizar. ");
 	if(pcb->cursorStack == 0)
 	{
+		printf("El programa termina\n");
 		terminarPrograma = 1;
 		return;
 	}
 	else
 	{
+		printf("Termina la funcion\n");
 		int contexto_anterior, instruccion_a_ejecutar;
 		void* buffer = malloc(8);
 		buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 8),8);

@@ -1,7 +1,18 @@
 #!./Programa
 begin
-	variables a, b
-	a = 3
-	b = 5
-	a = b + 12
+	f
+end
+
+function f
+	variables a
+	a=1
+	print a
+	g
+end
+
+function g
+	variables a
+	a=0
+	print a
+	f
 end
