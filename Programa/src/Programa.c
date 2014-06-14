@@ -14,14 +14,15 @@
 #include <parser/parser.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <commons/config.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 
-#define IP "127.0.0.1"//falta leer el archivo de configuracion y sacar estos datos de ahi
-#define PUERTO "6667"
+//#define IP "127.0.0.1"//falta leer el archivo de configuracion y sacar estos datos de ahi
+//#define PUERTO "6667"
 
 
 typedef struct {
@@ -29,6 +30,9 @@ typedef struct {
 	char puerto[4];
 } t_regConfig;//definicion de la estructura del archivo de configuracion para q sea mas facil leerlo
 char *ANSISOP_CONFIG;
+
+char* IP;
+char* PUERTO;
 
 
 int main(int cantArgs, char **args) {
@@ -38,6 +42,11 @@ int main(int cantArgs, char **args) {
 	char codigo[100000];
 	int num=0;
 	char* buffer = malloc(1000);
+
+	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/Programa/src/config.txt");
+	IP = config_get_string_value(configuracion, "IP");
+	PUERTO = config_get_string_value(configuracion, "PUERTO");
+
 
 	//Muestro cuantos argumentos se pasan
 	printf("%d\n", cantArgs);

@@ -25,12 +25,12 @@
 #include <signal.h>
 
 /* Definiciones y variables para la conexión por Sockets */
-#define PUERTOUMV "6668"
-#define IPUMV "127.0.0.1"
-#define PUERTOKERNEL "6680"
-#define IPKERNEL "127.0.0.1"
-#define BACKLOG 3	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
-#define PACKAGESIZE 1024 	// Define cual va a ser el size maximo del paquete a enviar
+//#define PUERTOUMV "6668"
+//#define IPUMV "127.0.0.1"
+//#define PUERTOKERNEL "6680"
+//#define IPKERNEL "127.0.0.1"
+//#define BACKLOG 3	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+//#define PACKAGESIZE 1024 	// Define cual va a ser el size maximo del paquete a enviar
 
 /* Estructuras de datos */
 typedef struct pcb
@@ -110,6 +110,12 @@ bool matarCPU = 0;
 bool terminarPrograma = 0;
 t_pcb* pcb;
 int superMensaje[11];
+char* PUERTOUMV;
+char* IPUMV;
+char* PUERTOKERNEL;
+char* IPKERNEL;
+int BACKLOG;	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+int PACKAGESIZE;
 
 //todo:Primitivas, Hot Plug.
 
@@ -117,6 +123,13 @@ int main(){
 
 	void* package = malloc(sizeof(t_pcb));
 	void* indiceCodigo;
+	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/cpu/src/config.txt");
+	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
+	PUERTOUMV = config_get_string_value(configuracion, "PUERTOUMV");
+	IPUMV = config_get_string_value(configuracion, "IPUMV");
+	PUERTOKERNEL = config_get_string_value(configuracion, "PUERTOKERNEL");
+	IPKERNEL = config_get_string_value(configuracion, "IPKERNEL");
 	t_intructions instruccionABuscar;
 	int quantumUtilizado = 1;
 	signal(SIGUSR1,dejarDeDarServicio);

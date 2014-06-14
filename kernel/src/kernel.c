@@ -13,19 +13,20 @@
 #include <pthread.h>
 #include <parser/metadata_program.h>
 #include <commons/string.h>
+#include <commons/config.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 
 /* Definiciones y variables para la conexión por Sockets */
-#define PUERTOPROGRAMA "6667"
-#define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
-#define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
-#define PUERTOUMV "6668"
-#define IPUMV "127.0.0.1"
-#define PUERTOCPU "6680"
-#define IPCPU "127.0.0.1"
+//#define PUERTOPROGRAMA "6667"
+//#define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+//#define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
+//#define PUERTOUMV "6668"
+//#define IPUMV "127.0.0.1"
+//#define PUERTOCPU "6680"
+//#define IPCPU "127.0.0.1"
 
 /* Estructuras de datos */
 typedef struct pcb
@@ -69,13 +70,20 @@ t_pcb* l_ready = NULL;
 t_pcb* l_exec = NULL;
 t_pcb* l_exit = NULL;
 t_medatada_program* metadata;
-int tamanioStack = 50;
+int tamanioStack;
 int socketUMV;
 //int socketCPU; //VER
 fd_set readPCP;
 fd_set writePCP;
 fd_set readPLP;
 fd_set writePLP;
+char* PUERTOPROGRAMA;
+int BACKLOG;			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+int	PACKAGESIZE;	// Define cual va a ser el size maximo del paquete a enviar
+char* PUERTOUMV;
+char* IPUMV;
+char* PUERTOCPU;
+char* IPCPU;
 
 
 /* Semáforos */
@@ -84,6 +92,16 @@ int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew;
 	int rhPCP, rhPLP, rhMostrarNew;
+	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
+	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
+	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
+	PUERTOUMV = config_get_string_value(configuracion, "PUERTOUMV");
+	IPUMV = config_get_string_value(configuracion, "IPUMV");
+	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
+	IPCPU = config_get_string_value(configuracion, "IPCPU");
+	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
+	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
 	rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
