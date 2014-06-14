@@ -39,21 +39,37 @@ typedef struct datosPrograma{
 	pcb *pcbPrograma;
 }t_datosPrograma;
 
+typedef struct datosIO{
+	int idIO;
+	int tiempoIO;
+	int semaforo;
+}t_datosIO;
+
 typedef struct nodoReady{
 	t_datosPrograma datosProgramas;
-	int *siguiente;
 	int prioridad;
+	int *siguiente;
 }t_nodoReady;
+
+typedef struct nodoBlock{
+	t_datosPrograma datosProgramas;
+	int prioridad;
+	int datosIO;
+	int *siguiente;
+}t_nodoBlock;
 
 typedef struct nodoExit{
 	pcb *pcbPrograma;
 	int *siguiente;
 }t_nodoExit;
 
+
 //variables globales
 
 t_nodoReady *inicioReady;
 t_nodoReady *finReady;
+t_nodoBlock *inicioBlock;
+t_nodoBlock *finBlock;
 t_nodoExit *inicioExit;
 t_nodoExit *finExit;
 int cantidadCPU;
@@ -63,6 +79,7 @@ int cpuDisponibles = 10 ;
 void llegaUnPrograma(pcb pcbProceso);
 t_nodoReady crearNodoReady(pcb pcbProceso);
 void encolarAReady(t_nodoReady proceso);
+void encolarABlock(pcb pcbProceso); //encolar el proceso que me mando CPU
 void encolarAExit(t_nodoReady proceso);
 void planificacionRoundRobin(t_nodoReady inicioReady);
 
@@ -133,14 +150,6 @@ void planificacionRoundRobin(t_nodoReady inicioReady){
 
     int cantProcesosEnReady = getElementsCount(inicioReady);
 
-    /*//recibo conexion de un CPU disponible
-    int socketCPU;
-    int confirmacion;
-    if(recv(socketCPU, &confirmacion, sizeof(int), 0)){
-    cpuDisponibles ++;
-    }
-    */
-
     while(cantProcesosEnReady>=0)//Hay procesos en la lista
     {
     	t_nodoReady procesoActual = inicioReady;
@@ -152,31 +161,6 @@ void planificacionRoundRobin(t_nodoReady inicioReady){
     		//lo asigno a un CPU
     		send(socketCPU,&datosPrograma,sizeof(pcbPrograma),0);
     		cpuDisponibles -- ;
-    		//recibe del cpu, el pcb del programa, su quantum y si se ejecuto correctamente
-    		if(1/*no tira error el cpu*/){
-    		//si hay un error y se suspende el proceso en ejecucion
-    			int quantum;
-    			cpuDisponibles ++ ;
-    			usoCPU -= quantum;
-    		}
-    		//si hay un error y se suspende el proceso en ejecucion
-    		//libera al proceso
-    		else{
-    			//avisar que se interrumpio
-    		}
-
-
-    	}
-
-    	//si termino de ejecutarse
-    	if(usoCPU <= 0){
-    		inicioReady->datosProgramas->finish = 1;
-    		encolarEnExit(procesoActual);
-
-    	}
-    	//si no termino de ejecutarse
-    	else{
-    		encolarAReady(procesoActual);
     	}
 
     	int *aux = inicioReady -> siguiente;
@@ -184,3 +168,49 @@ void planificacionRoundRobin(t_nodoReady inicioReady){
     }
 
 }
+
+//suponemos estados, en realidad habria que ver cual fue la ultima instruccion
+//que se ejecuto.
+//estado 1 no hubieron errores, termino su quantum
+//estado 2 se interrumpio
+//estado 3 vuelve de un IO
+
+
+void reciboSeñaldeCPU(t_nodoReady proceso,int estado){
+	//el cpu termino su quantum, no hubieron errores
+	if(1){
+		int quantum;
+		proceso ->datosProgramas ->usoDelCPU -= quantum;
+
+		//si termino de ejecutarse
+		if(proceso ->datosProgramas ->usoDelCPU <= 0){
+		proceso ->datosProgramas ->finish = 1;
+		encolarAExit(proceso);
+		}
+
+		//si no termino de ejecutarse
+		else{
+		proceso->prioridad = 1;
+		encolarAReady(proceso);
+		}
+	}
+	//se interrumpio el proceso, error.
+	if(2){
+		//se suspende el programa
+		printf("se interrumpio el proceso");
+	}
+
+	//el proceso se mando a un I/O
+	if(3){
+		t_nodoBlock bloquearProceso;
+		bloquearProceso-> datosProgramas = proceso-> datosProgramas;
+		bloquearProceso-> datosProgramas -> usoDelCPU = 0;
+		bloquearProceso-> prioridad = 2;
+		bloquearProceso-> datosIO = estado; //ahi me tendria que mandar un array con los flags, estado,idIO, tiempoen iO, semaforo
+		bloquearProceso-> siguiente = NULL;
+		encolarABlock(bloquearProceso);
+	}
+
+	cpuDisponibles ++ ;
+}
+
