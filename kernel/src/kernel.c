@@ -61,6 +61,7 @@ void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
 void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb);
+void cargarConfig(void);
 
 
 
@@ -73,8 +74,11 @@ t_medatada_program* metadata;
 int tamanioStack;
 int socketUMV;
 //int socketCPU; //VER
+fd_set fdWPCP;
+fd_set fdRPCP;
 fd_set readPCP;
 fd_set writePCP;
+fd_set fdPLP;
 fd_set readPLP;
 fd_set writePLP;
 char* PUERTOPROGRAMA;
@@ -92,15 +96,9 @@ int s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew;
 	int rhPCP, rhPLP, rhMostrarNew;
-	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
-	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
-	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
-	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
-	PUERTOUMV = config_get_string_value(configuracion, "PUERTOUMV");
-	IPUMV = config_get_string_value(configuracion, "IPUMV");
-	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
-	IPCPU = config_get_string_value(configuracion, "IPCPU");
-	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
+
+	cargarConfig();
+
 	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
 	rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
@@ -140,28 +138,33 @@ void* f_hiloPCP()
 	bind(socketPCP,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketPCP, BACKLOG);
 
+	FD_ZERO(&fdRPCP);
+	FD_ZERO(&fdWPCP);
 	FD_ZERO(&readPCP);
 	FD_ZERO(&writePCP);
 
-	FD_SET (socketPCP, &readPCP);
+	FD_SET (socketPCP, &fdRPCP);
 
 	while(1)
 	{
+		readPCP = fdRPCP;
+		writePCP = fdWPCP;
 		select(maximo + 1, &readPCP, &writePCP, NULL, NULL);
 		for(i=3; i<=maximo; i++)
 		{
 			if(FD_ISSET(i, &readPCP))
 			{
-				FD_SET(i, &readPCP);
 				if(i == socketPCP)
 				{
 					printf("Nueva CPU: %d\n", socketPCP);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
-					FD_SET(socketAux, &writePCP);
+					FD_SET(socketAux, &fdWPCP);
 					if (socketAux > maximo) maximo = socketAux;
 				}
 				else
 				{
+					FD_CLR(i, &fdRPCP);
+					FD_SET(i, &fdWPCP);
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
 					recv(i,&superMensaje,sizeof(superMensaje),0);
@@ -179,17 +182,19 @@ void* f_hiloPCP()
 					{
 						//Se termina el quantum o va a block
 						printf("Llegó un programa para encolar en Ready\n");
-						l_ready = pcb;
+						l_new = pcb;
 
 					}
 				}
 			}
 			else if(FD_ISSET(i, &writePCP))
 			{
-				FD_SET(i, &writePCP);
+				//FD_SET(i, &writePCP);
 				//Sacar de Ready
 				if(l_new != NULL)	//TODO: PONER SEMAFORO!!!
 				{
+					FD_CLR(i, &fdWPCP);
+					FD_SET(i, &fdRPCP);
 					t_pcb* pcbAux;
 					pcbAux = l_new;
 					superMensaje[0] = pcbAux->pid;
@@ -692,4 +697,17 @@ void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb )
 		printf("pcb: %d\n", superMensaje[i]);
 	}
 	return;
+}
+
+void cargarConfig(void)
+{
+	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
+	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
+	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
+	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
+	PUERTOUMV = config_get_string_value(configuracion, "PUERTOUMV");
+	IPUMV = config_get_string_value(configuracion, "IPUMV");
+	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
+	IPCPU = config_get_string_value(configuracion, "IPCPU");
+	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
 }

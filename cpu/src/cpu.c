@@ -104,7 +104,7 @@ AnSISOP_kernel kernel_functions = {
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 10; //todo:quantum que lee de archivo de configuración
+int quantum = 1; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -188,6 +188,7 @@ int main(){
 				break;
 			}
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
+			sleep(2);
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			if(terminarPrograma)
 			{
@@ -195,17 +196,17 @@ int main(){
 				estadoCPU = 0;
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
-				send(kernelSocket,superMensaje, sizeof(superMensaje),0);
+				send(kernelSocket,superMensaje, sizeof(int)*11,0);
 				break;
 			}
 			pcb->programCounter += 8;
 			quantumUtilizado++;
 		}
-
+		quantumUtilizado = 1;
 		estadoCPU = 1;
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
-		send(kernelSocket,superMensaje, sizeof(superMensaje),0);
+		send(kernelSocket,superMensaje, sizeof(int)*11,0);
 	}
 
 	return 0;
