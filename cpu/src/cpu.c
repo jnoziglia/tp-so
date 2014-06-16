@@ -183,7 +183,7 @@ int main(){
 				estadoCPU = 0;
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
-				send(kernelSocket,superMensaje, sizeof(superMensaje),0);
+				send(kernelSocket,superMensaje, 11*sizeof(int),0);
 				//AnSISOP_finalizar(); // Es una primitiva.
 				break;
 			}

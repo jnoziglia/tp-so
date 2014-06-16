@@ -45,6 +45,12 @@ typedef struct pcb
 	struct pcb *siguiente;
 }t_pcb;
 
+typedef struct new
+{
+	int pid;						//Lo creamos nosotros
+	struct new *siguiente;
+}t_new;
+
 
 /* Funciones */
 void* f_hiloPCP();
@@ -62,6 +68,7 @@ void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
 void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb);
 void cargarConfig(void);
+void destruirPCB(int pid);
 
 
 
@@ -78,7 +85,8 @@ fd_set fdWPCP;
 fd_set fdRPCP;
 fd_set readPCP;
 fd_set writePCP;
-fd_set fdPLP;
+fd_set fdRPLP;
+fd_set fdWPLP;
 fd_set readPLP;
 fd_set writePLP;
 char* PUERTOPROGRAMA;
@@ -183,7 +191,6 @@ void* f_hiloPCP()
 						//Se termina el quantum o va a block
 						printf("Llegó un programa para encolar en Ready\n");
 						l_new = pcb;
-
 					}
 				}
 			}
@@ -208,6 +215,7 @@ void* f_hiloPCP()
 					superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
 					superMensaje[9] = pcbAux->tamanioIndiceCodigo;
 					superMensaje[10] = pcbAux->peso;
+					free(l_new);
 					l_new = NULL;
 					status = send(i, superMensaje, sizeof(t_pcb), 0);
 				}
@@ -223,9 +231,10 @@ void* f_hiloPLP()
 	struct addrinfo *serverInfo;
 	int socketServidor;
 	int socketAux;
-	int i, status, maximo = 0;
-	int j = 1;
-	char package[PACKAGESIZE];
+	int i, j, status, maximo = 0;
+	int maximoAnterior;
+	char package[PACKAGESIZE], mensajePrograma;
+	t_pcb* listaExit = l_exit;
 	printf("Inicio del PLP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -258,22 +267,27 @@ void* f_hiloPLP()
 
 	FD_ZERO(&readPLP);
 	FD_ZERO(&writePLP);
+	FD_ZERO(&fdRPLP);
+	FD_ZERO(&fdWPLP);
 
-	FD_SET (socketServidor, &readPLP);
+	FD_SET (socketServidor, &fdRPLP);
 
 	while(1)
 	{
+		listaExit = l_exit;
+		maximoAnterior = 2;
+		readPLP = fdRPLP;
+		writePLP = fdWPLP;
 		select(maximo + 1, &readPLP, &writePLP, NULL, NULL);
 		for(i=3; i<=maximo; i++)
 		{
 			if(FD_ISSET(i, &readPLP))
 			{
-				FD_SET(i, &readPLP);
 				if(i == socketServidor)
 				{
 					printf("conecto program %d\n", socketServidor);
 					socketAux = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
-					FD_SET(socketAux, &readPLP);
+					FD_SET(socketAux, &fdRPLP);
 					if (socketAux > maximo) maximo = socketAux;
 				}
 				else
@@ -282,6 +296,8 @@ void* f_hiloPLP()
 					printf("Codigo Recibido. %d\n", status);
 					if (status != 0)
 					{
+						FD_CLR(i, &fdRPLP);
+						FD_SET(i, &fdWPLP);
 						t_pcb* nuevoPCB;
 						//printf("%s", package);
 						nuevoPCB = crearPcb(package, i);
@@ -293,12 +309,43 @@ void* f_hiloPLP()
 					}
 					else
 					{
-						FD_CLR(i, &readPLP);
+						FD_CLR(i, &fdRPLP);
 						close(i);
 						if (i == maximo)
 						{
-							maximo--;	//TODO: revisar como reasignar maximo
+							maximo = maximoAnterior;	//TODO: revisar como reasignar maximo
 						}
+					}
+				}
+			}
+			else if (FD_ISSET(i, &writePLP))
+			{
+				while(listaExit != NULL)
+				{
+					if(i == listaExit->pid)
+					{
+						mensajePrograma = 2;
+						send(i, &mensajePrograma, sizeof(char), 0);
+						UMV_destruirSegmentos(i);
+						FD_CLR(i, &fdWPLP);
+						close(i);
+						if (i == maximo)
+						{
+							for(j=3; j<maximo; j++)
+							{
+								if(FD_ISSET(j, &fdRPLP) || FD_ISSET(j, &fdWPLP))
+								{
+									printf("baje maximo\n");
+									maximo = j;
+								}
+							}
+						}
+						destruirPCB(i);
+						break;
+					}
+					else
+					{
+						listaExit = listaExit->siguiente;
 					}
 				}
 			}
@@ -407,7 +454,7 @@ t_pcb* crearPcb(char* codigo, int pid)
 		}
 		pcbAux->indiceEtiquetas = respuesta;
 	}
-	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones);
+	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones) + (metadataAux->instrucciones_size);
 	printf("Se crea el pcb\n");
 	printf("codigo: %d\n", strlen(codigo));
 	UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(codigo),codigo);
@@ -710,4 +757,31 @@ void cargarConfig(void)
 	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
 	IPCPU = config_get_string_value(configuracion, "IPCPU");
 	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
+}
+
+void destruirPCB(int pid)
+{
+	t_pcb* listaExit = l_exit;
+	t_pcb* listaAux = NULL;
+	if(listaExit->siguiente == NULL)
+	{
+		printf("destruyo pcb\n");
+		free(listaExit);
+		l_exit = NULL;
+		return;
+	}
+	listaAux = listaExit;
+	listaExit = listaExit->siguiente;
+	while(listaExit != NULL)
+	{
+		if(listaExit->pid == pid)
+		{
+			printf("destruyo pcb\n");
+			listaAux->siguiente = listaExit->siguiente;
+			free(listaExit);
+			return;
+		}
+		listaAux = listaExit;
+		listaExit = listaExit->siguiente;
+	}
 }

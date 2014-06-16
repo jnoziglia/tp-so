@@ -38,9 +38,9 @@ char* PUERTO;
 int main(int cantArgs, char **args) {
 	//FILE *archivoConfig;
 	FILE *script;
-	char caracter;
+	char caracter, operacion = -1;
 	char codigo[100000];
-	int num=0;
+	int num=0, status = 1;
 	char* buffer = malloc(1000);
 
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/Programa/src/config.txt");
@@ -108,10 +108,9 @@ int main(int cantArgs, char **args) {
 	    //printf("socket %d\n",serverSocket);
 	    send(serverSocket, mensaje,tamanio, 0);
 	    printf("Código enviado\n");
-	    int status = recv(serverSocket, mensaje, tamanio+1, 0);
-	    if (status == 0)
+	    while (operacion != 2 || status != 0)
 	    {
-	    	close(serverSocket);
+	    	status = recv(serverSocket, &operacion, sizeof(char), 0);
 	    }
     }
 	free(buffer);
