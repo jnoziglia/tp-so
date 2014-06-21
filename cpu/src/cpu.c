@@ -180,11 +180,12 @@ int main(){
 			if(instruccionAEjecutar == NULL)
 			{
 				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
-				estadoCPU = 0;
-				send(kernelSocket,&estadoCPU,sizeof(char),0);
-				generarSuperMensaje();
-				send(kernelSocket,superMensaje, 11*sizeof(int),0);
-				//AnSISOP_finalizar(); // Es una primitiva.
+//				estadoCPU = 0;
+//				send(kernelSocket,&estadoCPU,sizeof(char),0);
+//				generarSuperMensaje();
+//				send(kernelSocket,superMensaje, 11*sizeof(int),0);
+//				AnSISOP_finalizar(); // Es una primitiva.
+				instruccionAEjecutar = "end\0";
 				break;
 			}
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);

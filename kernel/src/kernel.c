@@ -231,7 +231,6 @@ void* f_hiloPCP()
 						//Se termina el quantum o va a block
 						printf("Llegó un programa para encolar en Ready\n");
 						encolarEnReady(pcb);
-						int z;
 						t_pcb* aux = l_ready;
 						while(aux != NULL)
 						{
@@ -534,10 +533,6 @@ t_pcb* crearPcb(t_new programa)
 	}
 	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
-	for (i=0; i<=pcbAux->tamanioIndiceCodigo;i++){
-		printf("instruccion: %d\n", metadataAux->instrucciones_serializado[i].start);
-		printf("tamanio: %d\n\n", metadataAux->instrucciones_serializado[i].offset);
-	}
 	return pcbAux;
 }
 
@@ -627,6 +622,7 @@ void Programa_imprimirTexto(char* texto)
 void encolarEnNew(t_new* programa)
 {
 	t_new* aux = l_new;
+	printf("Encolando %d\n",programa->pid);
 	if(aux == NULL)
 	{
 		l_new = programa;
@@ -673,27 +669,6 @@ void encolarEnNew(t_new* programa)
 //		}
 }
 
-/*void conexionCPU(void)
-{
-		struct addrinfo hintsCPU;
-		struct addrinfo *cpuInfo;
-
-		memset(&hintsCPU, 0, sizeof(hintsCPU));
-		hintsCPU.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
-		hintsCPU.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
-
-		getaddrinfo(IPCPU, PUERTOCPU, &hintsCPU, &cpuInfo);	// Carga en umvInfo los datos de la conexion
-
-		socketCPU = socket(cpuInfo->ai_family, cpuInfo->ai_socktype, cpuInfo->ai_protocol);
-
-		connect(socketCPU, cpuInfo->ai_addr, cpuInfo->ai_addrlen);
-		printf("Conexión con la CPU: %d", socketCPU);
-		freeaddrinfo(cpuInfo);	// No lo necesitamos mas
-
-		//ENVIAR DATOS AL CPU
-
-		return;
-}*/
 
 void conexionUMV(void)
 {
@@ -721,7 +696,6 @@ void conexionUMV(void)
 //		printf("Enviado Tipo:Kernel\n");
 //		recv(socketUMV, (void*)confirmacion, sizeof(int),0);
 //		printf("Confirmación: %d \n",confirmacion);
-
 		return;
 }
 
@@ -843,11 +817,18 @@ void destruirPCB(int pid)
 {
 	t_pcb* listaExit = l_exit;
 	t_pcb* listaAux = NULL;
-	if(listaExit->siguiente == NULL)
+	t_pcb* aux = l_exit;
+	while(aux != NULL)
 	{
-		printf("destruyo pcb\n");
-		free(listaExit);
-		l_exit = NULL;
+		printf("PID en Exit: %d\n",aux->pid);
+		aux = aux->siguiente;
+	}
+	if(listaExit->siguiente == NULL && listaExit->pid == pid)
+	{
+		listaAux = l_exit;
+		l_exit = l_exit->siguiente;
+		free(listaAux);
+		printf("Destrui unico PCB\n");
 		return;
 	}
 	listaAux = listaExit;
@@ -864,6 +845,7 @@ void destruirPCB(int pid)
 		listaAux = listaExit;
 		listaExit = listaExit->siguiente;
 	}
+	printf("Salgo del Destruir Segmento\n");
 }
 
 t_new desencolarNew(void)
@@ -986,6 +968,7 @@ void encolarExit(t_pcb* pcb)
 	if(l_exit == NULL)
 	{
 		l_exit = pcb;
+		pcb->siguiente = NULL;
 		return;
 	}
 	else
