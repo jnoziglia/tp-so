@@ -77,7 +77,7 @@ int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
-void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb);
+t_pcb* recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
@@ -215,8 +215,8 @@ void* f_hiloPCP()
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
 					recv(i,&superMensaje,sizeof(superMensaje),0);
-					t_pcb* pcb = malloc(sizeof(t_pcb));
-					recibirSuperMensaje(superMensaje, pcb);
+					//t_pcb* pcb = malloc(sizeof(t_pcb));
+					t_pcb* pcb = recibirSuperMensaje(superMensaje);
 					desencolarExec(pcb);
 					if(mensaje == 0) //todo:podria ser ENUM
 					{
@@ -231,6 +231,15 @@ void* f_hiloPCP()
 						//Se termina el quantum o va a block
 						printf("Llegó un programa para encolar en Ready\n");
 						encolarEnReady(pcb);
+						int z;
+						t_pcb* aux = l_ready;
+						while(aux != NULL)
+						{
+							printf("PID en Ready: %d\n",aux->pid);
+							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
+							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
+							aux = aux->siguiente;
+						}
 					}
 				}
 			}
@@ -790,9 +799,15 @@ void serializarPcb(t_pcb* pcb, void* package)
 	return;
 }
 
-void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb )
+t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 {
 	int i;
+	t_pcb* pcb = l_exec;
+	while(pcb->pid != superMensaje[0] && pcb != NULL)
+	{
+		pcb= pcb->siguiente;
+	}
+	if(pcb == NULL) printf("El PCB no existe\n");
 	pcb->pid = superMensaje[0];
 	pcb->segmentoCodigo = superMensaje[1];
 	pcb->segmentoStack=	superMensaje[2] ;
@@ -808,7 +823,7 @@ void recibirSuperMensaje ( int* superMensaje, t_pcb* pcb )
 	for(i=0; i<11; i++){
 		printf("pcb: %d\n", superMensaje[i]);
 	}
-	return;
+	return pcb;
 }
 
 void cargarConfig(void)
@@ -947,7 +962,7 @@ void desencolarExec(t_pcb* pcb)
 	if(aux->siguiente == NULL)
 	{
 		l_exec = NULL;
-		free(aux);
+		//free(aux);
 		return;
 	}
 	auxAnt = aux;
@@ -957,7 +972,7 @@ void desencolarExec(t_pcb* pcb)
 		if(aux->pid == pcb->pid)
 		{
 			auxAnt->siguiente = aux->siguiente;
-			free(aux);
+			//free(aux);
 			return;
 		}
 		auxAnt = aux;
