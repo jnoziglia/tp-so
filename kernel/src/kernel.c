@@ -86,6 +86,7 @@ void encolarEnReady(t_pcb* pcb);
 t_pcb* desencolarReady(void);
 void encolarExec(t_pcb* pcb);
 void desencolarExec(t_pcb* pcb);
+void encolarExit(t_pcb* pcb);
 
 
 /* Variables Globales */
@@ -223,7 +224,7 @@ void* f_hiloPCP()
 
 						printf("Llegó un programa para encolar en Exit\n");
 						//encolarEnExit
-						l_exit = pcb;
+						encolarExit(pcb);
 					}
 					else
 					{
@@ -908,6 +909,7 @@ void encolarEnReady(t_pcb* pcb)
 		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
+		return;
 	}
 }
 
@@ -934,6 +936,7 @@ void encolarExec(t_pcb* pcb)
 		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
+		return;
 	}
 }
 
@@ -959,5 +962,25 @@ void desencolarExec(t_pcb* pcb)
 		}
 		auxAnt = aux;
 		aux = aux->siguiente;
+	}
+}
+
+void encolarExit(t_pcb* pcb)
+{
+	t_pcb* aux = l_exit;
+	if(l_exit == NULL)
+	{
+		l_exit = pcb;
+		return;
+	}
+	else
+	{
+		while(aux->siguiente != NULL)
+		{
+			aux = aux->siguiente;
+		}
+		aux->siguiente = pcb;
+		pcb->siguiente = NULL;
+		return;
 	}
 }

@@ -202,8 +202,8 @@ int main(){
 			pcb->programCounter += 8;
 			quantumUtilizado++;
 		}
-		if(terminarPrograma) continue;
 		quantumUtilizado = 1;
+		if(terminarPrograma) continue;
 		estadoCPU = 1;
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
