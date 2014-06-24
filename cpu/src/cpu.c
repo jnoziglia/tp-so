@@ -104,7 +104,7 @@ AnSISOP_kernel kernel_functions = {
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 83; //todo:quantum que lee de archivo de configuración
+int quantum = 1; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;

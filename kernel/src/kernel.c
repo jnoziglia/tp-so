@@ -145,7 +145,7 @@ void* f_hiloColaReady()
 	t_new programa;
 	while(1)
 	{
-		wait(&s_Multiprogramacion);
+		//wait(&s_Multiprogramacion);
 		if(l_new != NULL)
 		{
 			programa = desencolarNew();
@@ -218,6 +218,7 @@ void* f_hiloPCP()
 					//t_pcb* pcb = malloc(sizeof(t_pcb));
 					t_pcb* pcb = recibirSuperMensaje(superMensaje);
 					desencolarExec(pcb);
+					pcb->siguiente = NULL;
 					if(mensaje == 0) //todo:podria ser ENUM
 					{
 						//Se muere el programa
@@ -283,7 +284,7 @@ void* f_hiloPLP()
 	int i, j, status, maximo = 0;
 	int maximoAnterior;
 	char package[PACKAGESIZE], mensajePrograma;
-	t_pcb* listaExit = l_exit;
+	t_pcb* listaExit;
 	printf("Inicio del PLP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -323,11 +324,12 @@ void* f_hiloPLP()
 
 	while(1)
 	{
-		listaExit = l_exit;
-		maximoAnterior = 2;
+		//maximoAnterior = 2;
 		readPLP = fdRPLP;
 		writePLP = fdWPLP;
+		//if(FD_ISSET(7, &writePLP)) printf("HOLA %d\n", maximo);
 		select(maximo + 1, &readPLP, &writePLP, NULL, NULL);
+		//printf("salio del select\n");
 		for(i=3; i<=maximo; i++)
 		{
 			if(FD_ISSET(i, &readPLP))
@@ -355,11 +357,13 @@ void* f_hiloPLP()
 //							printf("Nuevo PCB Creado\n");
 //							encolarEnNew(nuevoPCB, new);
 //						}
+						package[status+1] = '\0';
 						t_new* nodoNew = malloc(sizeof(t_new));
 						nodoNew->pid = i;
 						nodoNew->codigo = package;
 						nodoNew->siguiente = NULL;
 						encolarEnNew(nodoNew);
+
 					}
 					else
 					{
@@ -372,19 +376,23 @@ void* f_hiloPLP()
 								if(FD_ISSET(j, &fdRPLP) || FD_ISSET(j, &fdWPLP))
 								{
 									printf("baje maximo\n");
-									maximo = j;
+									maximoAnterior = j;
 								}
 							}
+							maximo = maximoAnterior;
 						}
 					}
 				}
 			}
 			else if (FD_ISSET(i, &writePLP))
 			{
+				printf("entro al isset %d\n", i);
+				listaExit = l_exit;
 				while(listaExit != NULL)
 				{
 					if(i == listaExit->pid)
 					{
+						printf("entro al exit %d\n", i);
 						mensajePrograma = 2;
 						send(i, &mensajePrograma, sizeof(char), 0);
 						UMV_destruirSegmentos(i);
@@ -396,9 +404,10 @@ void* f_hiloPLP()
 								if(FD_ISSET(j, &fdWPLP) || FD_ISSET(j, &fdRPLP))
 								{
 									printf("baje maximo\n");
-									maximo = j;
+									maximoAnterior = j;
 								}
 							}
+							maximo = maximoAnterior;
 						}
 						FD_CLR(i, &fdWPLP);
 						destruirPCB(i);
@@ -923,6 +932,7 @@ void encolarExec(t_pcb* pcb)
 	if(l_exec == NULL)
 	{
 		l_exec = pcb;
+		l_exec->siguiente = NULL;
 		return;
 	}
 	else
@@ -965,10 +975,12 @@ void desencolarExec(t_pcb* pcb)
 void encolarExit(t_pcb* pcb)
 {
 	t_pcb* aux = l_exit;
+
 	if(l_exit == NULL)
 	{
 		l_exit = pcb;
 		pcb->siguiente = NULL;
+		printf("Encolando PRIMERO en exit %d\n", pcb->pid);
 		return;
 	}
 	else
@@ -979,6 +991,7 @@ void encolarExit(t_pcb* pcb)
 		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
+		printf("Encolando ULTIMO en exit %d\n", pcb->pid);
 		return;
 	}
 }
