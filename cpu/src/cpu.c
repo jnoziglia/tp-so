@@ -104,7 +104,7 @@ AnSISOP_kernel kernel_functions = {
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 1; //todo:quantum que lee de archivo de configuración
+int quantum = 83; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -130,7 +130,7 @@ int main(){
 	IPUMV = config_get_string_value(configuracion, "IPUMV");
 	PUERTOKERNEL = config_get_string_value(configuracion, "PUERTOKERNEL");
 	IPKERNEL = config_get_string_value(configuracion, "IPKERNEL");
-	t_intructions instruccionABuscar;
+	t_intructions* instruccionABuscar;
 	int quantumUtilizado = 1;
 	signal(SIGUSR1,dejarDeDarServicio);
 	conectarConUMV();
@@ -170,13 +170,13 @@ int main(){
 				return 0;
 			}
 			printf("Program counter: %d\n", pcb->programCounter);
-			indiceCodigo = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
-			memcpy(&(instruccionABuscar.start), indiceCodigo, sizeof(int));
-			memcpy(&(instruccionABuscar.offset), indiceCodigo+sizeof(int), sizeof(int));
-			printf("instruccionABuscar: %d\n", instruccionABuscar.start);
-			printf("offset: %d\n", instruccionABuscar.offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar.offset);
-			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar.start,instruccionABuscar.offset);
+			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
+			//memcpy(&(instruccionABuscar.start), indiceCodigo, sizeof(int));
+			//memcpy(&(instruccionABuscar.offset), indiceCodigo+sizeof(int), sizeof(int));
+			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
+			printf("offset: %d\n", instruccionABuscar->offset);
+			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
+			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
 				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
@@ -187,6 +187,7 @@ int main(){
 				//AnSISOP_finalizar(); // Es una primitiva.
 				break;
 			}
+			instruccionAEjecutar[instruccionABuscar->offset] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
 			sleep(2);
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
@@ -465,6 +466,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
 {
 	printf("Primitiva Ir al Label\n");
 	void* buffer = malloc(pcb->tamanioIndiceEtiquetas);
+	string_trim(&nombre_etiqueta);
 //	char* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
 	printf("tamanio indice etiquetas: %d\n", pcb->tamanioIndiceEtiquetas);
 	t_puntero_instruccion instruccion;
@@ -477,7 +479,9 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
 //	printf("largo etiquetas: %d\n", strlen(etiquetas));
 	printf("etiqueta: %s\n", nombre_etiqueta);
 	printf("instruccion: %d\n", instruccion);
-	scanf("%d", &instruccion);
+	//scanf("%d", &instruccion);
+
+	pcb->programCounter = instruccion*8 - 8;
 
 //	free(etiquetas);
 	return;
@@ -491,6 +495,7 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta)
 	memcpy(buffer,&(pcb->cursorStack),4);
 	memcpy((buffer+4),&(pcb->programCounter),4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),8,buffer);
+	pcb->cursorStack = pcb->cursorStack + 8 + (pcb->tamanioContextoActual*5);
 	AnSISOP_irAlLabel(etiqueta);
 	free(buffer);
 	return;
@@ -505,7 +510,8 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retorn
 	memcpy((buffer+4),&donde_retornar,4);
 	memcpy((buffer+8),&(pcb->programCounter),4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),12,buffer);
-	pcb->cursorStack = pcb->cursorStack + 12;
+	pcb->cursorStack = pcb->cursorStack + 12 + (pcb->tamanioContextoActual*5);
+	AnSISOP_irAlLabel(etiqueta);
 	free(buffer);
 	return;
 }
@@ -527,6 +533,7 @@ void AnSISOP_finalizar(void)
 		buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 8),8);
 		memcpy(&instruccion_a_ejecutar,(buffer+4),4);
 		memcpy(&contexto_anterior,buffer,4);
+		pcb->programCounter = instruccion_a_ejecutar;
 		pcb->cursorStack = contexto_anterior;
 		free(buffer);
 		return;

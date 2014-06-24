@@ -116,7 +116,7 @@ char* IPCPU;
 
 
 /* Semáforos */
-int s_Multiprogramacion = 10; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
+int s_Multiprogramacion = 1; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
 
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
@@ -145,9 +145,9 @@ void* f_hiloColaReady()
 	t_new programa;
 	while(1)
 	{
+		wait(&s_Multiprogramacion);
 		if(l_new != NULL)
 		{
-			//wait(&s_Multiprogramacion);
 			programa = desencolarNew();
 			t_pcb* nuevoPCB;
 			nuevoPCB = crearPcb(programa);

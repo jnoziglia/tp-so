@@ -14,5 +14,4 @@ function g
 	variables a
 	a=0
 	print a
-	f
 end
