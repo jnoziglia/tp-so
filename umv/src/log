@@ -1,0 +1,1256 @@
+[INFO] 19:01:16:129 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 8 	 Segmento: 0 
+ Base: 8973
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 8 	 Segmento: 1 
+ Base: 6202
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 8 	 Segmento: 2 
+ Base: 4625
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 5469
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 2038
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 5916
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3405
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 5533
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 7004
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:16:129 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:16:130 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:16:130 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 5469
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 2038
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 5916
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3405
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 5533
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 7004
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:16:130 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:16:130 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:26:373 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 5469
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 2038
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 5916
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3405
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 5533
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 7004
+[INFO] 19:01:26:373 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:26:374 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:26:374 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3405
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 5533
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 7004
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:26:374 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:26:374 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:28:413 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3405
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 5533
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 7004
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:28:413 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:28:414 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:28:414 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:28:414 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:28:414 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:30:453 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:30:453 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 2469
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 9853
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 4992
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:30:454 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:30:454 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:30:454 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:30:454 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:57:133 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3294
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:01:57:133 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 361
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9819
+[INFO] 19:01:57:134 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:01:57:134 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:01:57:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:01:57:134 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:05:312 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 7195
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 4036
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 9404
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:02:05:312 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:05:312 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:02:05:312 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:02:05:312 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:07:349 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:07:349 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8767
+[INFO] 19:02:07:349 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 5404
+[INFO] 19:02:07:349 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1711
+[INFO] 19:02:07:349 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:02:07:349 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:02:07:349 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:02:07:349 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:07:350 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:07:350 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:02:07:350 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:02:07:350 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:02:07:350 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:09:402 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:09:402 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 3214
+[INFO] 19:02:09:402 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 3100
+[INFO] 19:02:09:402 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 3751
+[INFO] 19:02:09:402 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:09:402 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:09:402 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:47:30 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 8 	 Segmento: 0 
+ Base: 2139
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 8 	 Segmento: 1 
+ Base: 5437
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 8 	 Segmento: 2 
+ Base: 4993
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 1759
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 9572
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 6270
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3789
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 9623
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 2472
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:47:30 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:47:30 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 1759
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 9572
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 6270
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3789
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 9623
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 2472
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:47:30 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:47:30 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:49:73 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 1759
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 9572
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 6270
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3789
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 9623
+[INFO] 19:02:49:73 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 2472
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:02:49:74 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:49:74 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3789
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 9623
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 2472
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:02:49:74 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:02:49:74 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:51:114 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 3789
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 9623
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 2472
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:02:51:114 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:51:114 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:02:51:114 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:02:51:114 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:53:154 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 9493
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 6170
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 5589
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:02:53:154 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:02:53:154 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:02:53:154 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:02:53:154 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:28:50 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 2200
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 5408
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 9576
+[INFO] 19:03:28:50 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:28:50 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:28:50 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:28:50 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:30:92 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 2411
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3123
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 2052
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:30:92 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:30:92 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:30:92 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:30:92 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:32:133 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:32:133 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 8482
+[INFO] 19:03:32:133 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 3484
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 2949
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:32:134 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:32:134 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:32:134 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:32:134 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:34:181 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:34:181 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2855
+[INFO] 19:03:34:181 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1758
+[INFO] 19:03:34:181 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 6985
+[INFO] 19:03:34:181 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:03:34:181 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:03:34:181 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:47:205 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 8 	 Segmento: 0 
+ Base: 3337
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 8 	 Segmento: 1 
+ Base: 524
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 8 	 Segmento: 2 
+ Base: 3468
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 5048
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 4818
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 6568
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 8800
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 6957
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 3083
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:47:205 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:47:205 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 5048
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 4818
+[INFO] 19:04:47:205 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 6568
+[INFO] 19:04:47:206 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 8800
+[INFO] 19:04:47:206 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 6957
+[INFO] 19:04:47:206 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 3083
+[INFO] 19:04:47:206 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:47:206 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:47:206 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:47:206 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:49:246 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 9 	 Segmento: 0 
+ Base: 5048
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 9 	 Segmento: 1 
+ Base: 4818
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 9 	 Segmento: 2 
+ Base: 6568
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 8800
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 6957
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 3083
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:04:49:246 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:49:246 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 8800
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 6957
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 3083
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:04:49:246 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:04:49:246 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:51:285 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 10 	 Segmento: 0 
+ Base: 8800
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 10 	 Segmento: 1 
+ Base: 6957
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 10 	 Segmento: 2 
+ Base: 3083
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:04:51:285 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:51:285 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:51:285 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:04:51:286 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:04:51:286 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:53:325 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 11 	 Segmento: 0 
+ Base: 4871
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 11 	 Segmento: 1 
+ Base: 8716
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 11 	 Segmento: 2 
+ Base: 3733
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:04:53:325 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:04:53:325 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:04:53:325 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:04:53:326 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:04:53:326 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:28:165 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 12 	 Segmento: 2 
+ Base: 3356
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 12 	 Segmento: 0 
+ Base: 1140
+[INFO] 19:05:28:165 UMV/(7598:7604): Proceso: 12 	 Segmento: 1 
+ Base: 2504
+[INFO] 19:05:28:166 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:28:166 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:28:166 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:28:166 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:30:206 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 13 	 Segmento: 0 
+ Base: 3612
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 13 	 Segmento: 1 
+ Base: 3076
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 13 	 Segmento: 2 
+ Base: 604
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:30:206 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:05:30:207 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:30:207 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:05:30:207 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:05:30:207 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:32:246 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 14 	 Segmento: 0 
+ Base: 279
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 14 	 Segmento: 1 
+ Base: 8484
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 14 	 Segmento: 2 
+ Base: 1258
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:05:32:246 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:32:246 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:05:32:246 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:05:32:247 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:05:32:247 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:05:32:247 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:05:32:247 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:34:285 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:34:285 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:05:34:285 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:05:34:285 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:05:34:285 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:05:34:285 UMV/(7598:7604): Proceso: 15 	 Segmento: 0 
+ Base: 2479
+[INFO] 19:05:34:285 UMV/(7598:7604): Proceso: 15 	 Segmento: 1 
+ Base: 1974
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 15 	 Segmento: 2 
+ Base: 5461
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:05:34:286 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:05:34:286 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:05:34:286 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:05:34:286 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:09:333 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:09:333 UMV/(7598:7604): Proceso: 16 	 Segmento: 0 
+ Base: 5610
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 16 	 Segmento: 1 
+ Base: 455
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 16 	 Segmento: 2 
+ Base: 8945
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:06:09:334 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:09:334 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:06:09:334 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:06:09:334 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:11:374 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 17 	 Segmento: 1 
+ Base: 4389
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 17 	 Segmento: 0 
+ Base: 8560
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 17 	 Segmento: 2 
+ Base: 1781
+[INFO] 19:06:11:374 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:11:374 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:06:11:374 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:11:375 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:11:375 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:11:375 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:11:375 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:11:375 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:11:375 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:13:414 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 18 	 Segmento: 0 
+ Base: 6623
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 18 	 Segmento: 1 
+ Base: 7727
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 18 	 Segmento: 2 
+ Base: 3385
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:13:414 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:13:414 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:13:414 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:13:414 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:15:457 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 19 	 Segmento: 0 
+ Base: 1169
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 19 	 Segmento: 1 
+ Base: 2774
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 19 	 Segmento: 2 
+ Base: 8203
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:15:457 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:15:458 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:15:458 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:15:458 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:15:458 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:50:322 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 20 	 Segmento: 0 
+ Base: 7737
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 20 	 Segmento: 1 
+ Base: 2652
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 20 	 Segmento: 2 
+ Base: 6238
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:50:322 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:50:322 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:50:322 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:50:322 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:52:362 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 21 	 Segmento: 0 
+ Base: 820
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 21 	 Segmento: 1 
+ Base: 7523
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 21 	 Segmento: 2 
+ Base: 4953
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:52:362 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:52:362 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:52:362 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:52:362 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:54:401 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:54:401 UMV/(7598:7604): Proceso: 22 	 Segmento: 0 
+ Base: 4553
+[INFO] 19:06:54:401 UMV/(7598:7604): Proceso: 22 	 Segmento: 2 
+ Base: 8536
+[INFO] 19:06:54:401 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:54:401 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:54:402 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:54:402 UMV/(7598:7604): Proceso: 22 	 Segmento: 1 
+ Base: 8664
+[INFO] 19:06:54:402 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:54:402 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:54:402 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:54:402 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:54:402 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:54:402 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:56:449 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:56:449 UMV/(7598:7604): Proceso: 23 	 Segmento: 0 
+ Base: 8988
+[INFO] 19:06:56:449 UMV/(7598:7604): Proceso: 23 	 Segmento: 1 
+ Base: 3354
+[INFO] 19:06:56:449 UMV/(7598:7604): Proceso: 23 	 Segmento: 2 
+ Base: 1611
+[INFO] 19:06:56:449 UMV/(7598:7604): ----------------------------------------------
+[INFO] 19:06:56:449 UMV/(7598:7604): Tabla de Segmentos:
+[INFO] 19:06:56:449 UMV/(7598:7604): ----------------------------------------------

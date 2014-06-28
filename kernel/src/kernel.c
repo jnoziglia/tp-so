@@ -120,6 +120,8 @@ sem_t s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pas
 sem_t s_ColaReady;
 sem_t s_ColaExit;
 sem_t s_ColaNew;
+sem_t s_ComUmv;
+
 
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
@@ -128,6 +130,7 @@ int main(void) {
 	sem_init(&s_ColaReady,0,1);
 	sem_init(&s_ColaExit,0,1);
 	sem_init(&s_ColaNew,0,1);
+	sem_init(&s_ComUmv,0,1);
 	cargarConfig();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
@@ -482,12 +485,15 @@ t_pcb* crearPcb(t_new programa)
 	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size*sizeof(t_intructions));
 	mensaje[0] = pcbAux->pid;
 	mensaje[1] = tamanioStack;
+	printf("PID: %d\n", pcbAux->pid);
+	printf("STACK: %d\n", tamanioStack);
 	respuesta = UMV_crearSegmentos(mensaje);
 	if(respuesta == -1)
 	{
+		printf("NO SE CREO EL SEGMENTO\n");
 		//avisar al programa :D
 		Programa_imprimirTexto("Holis, No se pudo crear el programa");
-		UMV_destruirSegmentos(pcbAux->pid);
+		//UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
 		return NULL;
@@ -554,6 +560,7 @@ t_pcb* crearPcb(t_new programa)
 
 int UMV_crearSegmentos(int mensaje[2])
 {
+	sem_wait(&s_ComUmv);
 	int status = 1;
 	char operacion = 1;
 	char confirmacion;
@@ -565,13 +572,16 @@ int UMV_crearSegmentos(int mensaje[2])
 		send(socketUMV, mensaje, 2*sizeof(int), 0);
 		status = recv(socketUMV, &respuesta, sizeof(int), 0);
 		printf("CONFIRMACION : %d\n",respuesta);
+		sem_post(&s_ComUmv);
 		return respuesta;
 	}
+	sem_post(&s_ComUmv);
 	return -1;
 }
 
 void UMV_destruirSegmentos(int pid)
 {
+	sem_wait(&s_ComUmv);
 	char operacion = 2;
 	char confirmacion;
 	send (socketUMV, &operacion, sizeof(char), 0);
@@ -579,8 +589,10 @@ void UMV_destruirSegmentos(int pid)
 	if (confirmacion ==  1)
 	{
 		send(socketUMV, &pid, sizeof(int), 0);
+		sem_post(&s_ComUmv);
 		return;
 	}
+	sem_post(&s_ComUmv);
 	return;
 }
 
@@ -588,6 +600,7 @@ void UMV_destruirSegmentos(int pid)
 
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 {
+	sem_wait(&s_ComUmv);
 	int status;
 	char operacion = 3;
 	char confirmacion;
@@ -603,8 +616,10 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	if(status==0)
 	{
 		printf("Cerró\n");
+		sem_post(&s_ComUmv);
 		return;
 	}
+	sem_post(&s_ComUmv);
 	return;
 }
 
@@ -644,6 +659,7 @@ void encolarEnNew(t_new* programa)
 	{
 		l_new = programa;
 		l_new->siguiente = NULL;
+		sem_post(&s_ColaNew);
 		return;
 	}
 	else
@@ -653,6 +669,7 @@ void encolarEnNew(t_new* programa)
 			aux = aux->siguiente;
 		}
 		aux->siguiente = programa;
+		sem_post(&s_ColaNew);
 		return;
 	}
 
@@ -870,6 +887,7 @@ void destruirPCB(int pid)
 
 t_new desencolarNew(void)
 {
+	sem_wait(&s_ColaNew);
 	int peso, pesoMax;
 	t_new* aux = l_new;
 	t_new* auxAnt;

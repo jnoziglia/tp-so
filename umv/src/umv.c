@@ -81,13 +81,14 @@ void* f_hiloCpu(void* socketCliente);
 void* memPpal;
 void* finMemPpal;
 t_segmento* tablaSegmentos = NULL;
-int algoritmo = 1;
+int algoritmo = 1;	// 0 = FirstFit
 int procesoActivo = 2;
 int retardo = 0;
 t_log* logi;
 
 /* Semaforos */
 sem_t s_cambioProcesoActivo;
+sem_t s_TablaSegmentos;
 
 
 int main (void)
@@ -96,6 +97,7 @@ int main (void)
 	int rhConsola, rhEsperarConexiones;
 	int i;
 	sem_init(&s_cambioProcesoActivo,0,1);
+	sem_init(&s_TablaSegmentos,0,1);
 
 	logi = log_create("/home/utnso/tp-2014-1c-unnamed/umv/src/log", "UMV", 0, LOG_LEVEL_INFO);
 
@@ -393,6 +395,7 @@ void* f_hiloKernel(void* socketCliente)
 	while(status != 0)
 	{
 		recv(socketKernel, &operacion, sizeof(char), 0);
+		printf("OPERACION: %d\n", operacion);
 		if (operacion == operCrearSegmento)
 		{
 			confirmacion = 1;
@@ -512,6 +515,8 @@ int handshake(int id)
 }
 
 void destruirSegmentos( int id){
+	mostrarEstructuras();
+	sem_wait(&s_TablaSegmentos);
 	t_segmento* aux = NULL;
 	t_segmento* auxSiguiente = tablaSegmentos;
 	while (auxSiguiente != NULL)
@@ -522,6 +527,7 @@ void destruirSegmentos( int id){
 			{
 				tablaSegmentos = auxSiguiente->siguiente;
 				free(auxSiguiente);
+				auxSiguiente = tablaSegmentos;
 			}
 			else
 			{
@@ -535,33 +541,44 @@ void destruirSegmentos( int id){
 					aux->siguiente = auxSiguiente->siguiente;
 					free(auxSiguiente);
 				}
+				auxSiguiente = aux->siguiente;
 			}
 		}
-		aux = auxSiguiente;
-		auxSiguiente = auxSiguiente->siguiente;
+		else
+		{
+			aux = auxSiguiente;
+			auxSiguiente = auxSiguiente->siguiente;
+		}
 	}
+	sem_post(&s_TablaSegmentos);
+	mostrarEstructuras();
+	return;
 }
 
 /* Funcion solicitar bytes */
 void* solicitarBytes(int base, int offset, int tamanio)
 {
+	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
 		printf("Segmentation Fault");
 		sem_post(&s_cambioProcesoActivo);
+		sem_post(&s_TablaSegmentos);
 		return NULL;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	void* buffer= malloc(tamanio);
 	memcpy(buffer,pComienzo,tamanio);
 	sem_post(&s_cambioProcesoActivo);
+	sem_post(&s_TablaSegmentos);
 	return buffer;
 }
 
 void enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
+	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
@@ -569,20 +586,24 @@ void enviarBytes(int base, int offset, int tamanio, void* buffer)
 		printf("Segmentation Fault");
 		sleep(10);
 		sem_post(&s_cambioProcesoActivo);
+		sem_post(&s_TablaSegmentos);
 		return;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	memcpy(pComienzo,buffer,tamanio);
 	sem_post(&s_cambioProcesoActivo);
+	sem_post(&s_TablaSegmentos);
 }
 
 int crearSegmento(int idProceso, int tamanio)
 {
+	sem_wait(&s_TablaSegmentos);
 	void* inicioNuevo = posicionarSegmento(algoritmo,tamanio);
 	t_segmento* segmentoNuevo;
 	if(inicioNuevo == NULL)
 	{
 		printf("No pudo posicionarse el segmento nuevo\n");
+		sem_post(&s_TablaSegmentos);
 		return -1;
 	}
 	segmentoNuevo = malloc(sizeof(t_segmento));
@@ -592,6 +613,7 @@ int crearSegmento(int idProceso, int tamanio)
 	segmentoNuevo->tamanio = tamanio;
 	segmentoNuevo->dirInicio = inicioNuevo;
 	insertarSegmento(segmentoNuevo);
+	sem_post(&s_TablaSegmentos);
 	return segmentoNuevo->base;
 }
 
@@ -806,9 +828,11 @@ void* compactar(void)
 
 void dump(void)
 {
+	sem_wait(&s_TablaSegmentos);
 	mostrarEstructuras();
 	//mostrarMemoria();
 	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
+	sem_post(&s_TablaSegmentos);
 }
 
 void mostrarEstructuras(void)
@@ -821,6 +845,7 @@ void mostrarEstructuras(void)
 			imprimirSegmento(auxSegmento);
 			auxSegmento = auxSegmento->siguiente;
 		}
+	log_info(logi, "----------------------------------------------");
 	//printf("--------------------\n");
 }
 
@@ -874,13 +899,17 @@ void mostrarContenidoDeMemoria(int offset, int tamanio)
 
 void imprimirSegmento(t_segmento* segmento)
 {
-	log_info(logi, "holis");
-	printf("\nProceso: %d \n",segmento->idProceso);
-	printf("Segmento: %d \n",segmento->idSegmento);
-	printf("Base: %d \n",segmento->base);
-	printf("Tamaño: %d \n",segmento->tamanio);
-	printf("Direccion fisica: %p \n",segmento->dirInicio);
-	printf("-----------------------------------\n");
+	log_info(logi, "Proceso: %d \t Segmento: %d \n Base: %d" ,segmento->idProceso, segmento->idSegmento, segmento->base);
+	//log_info(logi, "Segmento: %d" ,segmento->idSegmento);
+	//log_info(logi, "Base: %d" ,segmento->base);
+	//log_info(logi, "Tamaño: %d" ,segmento->tamanio);
+	//log_info(logi, "Direccion fisica: %p" ,segmento->dirInicio);
+//	printf("\nProceso: %d \n",segmento->idProceso);
+//	printf("Segmento: %d \n",segmento->idSegmento);
+//	printf("Base: %d \n",segmento->base);
+//	printf("Tamaño: %d \n",segmento->tamanio);
+//	printf("Direccion fisica: %p \n",segmento->dirInicio);
+//	printf("-----------------------------------\n");
 }
 
 int cambioProcesoActivo(int idProceso)
