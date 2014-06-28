@@ -119,6 +119,7 @@ char* IPCPU;
 sem_t s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
 sem_t s_ColaReady;
 sem_t s_ColaExit;
+sem_t s_ColaNew;
 
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
@@ -126,6 +127,7 @@ int main(void) {
 	sem_init(&s_Multiprogramacion,0,4);
 	sem_init(&s_ColaReady,0,1);
 	sem_init(&s_ColaExit,0,1);
+	sem_init(&s_ColaNew,0,1);
 	cargarConfig();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
@@ -635,6 +637,7 @@ void Programa_imprimirTexto(char* texto)
 
 void encolarEnNew(t_new* programa)
 {
+	sem_wait(&s_ColaNew);
 	t_new* aux = l_new;
 	printf("Encolando %d\n",programa->pid);
 	if(aux == NULL)
@@ -880,6 +883,7 @@ t_new desencolarNew(void)
 		l_new = NULL;
 		max = *maximo;
 		free(maximo);
+		sem_post(&s_ColaNew);
 		return max;
 	}
 	else
@@ -904,11 +908,13 @@ t_new desencolarNew(void)
 			l_new = l_new->siguiente;
 			max = (*maximo);
 			free(maximo);
+			sem_post(&s_ColaNew);
 			return max;
 		}
 		maxAnt->siguiente = maximo->siguiente;
 		max = *maximo;
 		free(maximo);
+		sem_post(&s_ColaNew);
 		return max;
 	}
 }
