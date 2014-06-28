@@ -117,11 +117,15 @@ char* IPCPU;
 
 /* Semáforos */
 sem_t s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
+sem_t s_ColaReady;
+sem_t s_ColaExit;
 
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady;
-	sem_init(&s_Multiprogramacion,0,1);
+	sem_init(&s_Multiprogramacion,0,4);
+	sem_init(&s_ColaReady,0,1);
+	sem_init(&s_ColaExit,0,1);
 	cargarConfig();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
@@ -145,9 +149,9 @@ void* f_hiloColaReady()
 	t_new programa;
 	while(1)
 	{
-		sem_wait(&s_Multiprogramacion);
 		if(l_new != NULL)
 		{
+			sem_wait(&s_Multiprogramacion);
 			programa = desencolarNew();
 			t_pcb* nuevoPCB;
 			nuevoPCB = crearPcb(programa);
@@ -386,7 +390,7 @@ void* f_hiloPLP()
 			}
 			else if (FD_ISSET(i, &writePLP))
 			{
-				printf("entro al isset %d\n", i);
+				//printf("entro al isset %d\n", i);
 				listaExit = l_exit;
 				while(listaExit != NULL)
 				{
@@ -720,11 +724,11 @@ void* f_hiloMostrarNew()
 			printf("Procesos encolados en New\n");
 			printf("PID: \t\tPeso:\n");
 			printf("-----------------------\n");
-			t_pcb* aux = l_ready;
+			t_new* aux = l_new;
 			while(aux != NULL)
 			{
 				printf("%d\t\t",aux->pid);
-				printf("%d\n",aux->peso);
+				//printf("%d\n",aux->peso);
 				aux = aux->siguiente;
 			}
 			continue;
@@ -825,6 +829,7 @@ void cargarConfig(void)
 
 void destruirPCB(int pid)
 {
+	sem_wait(&s_ColaExit);
 	t_pcb* listaExit = l_exit;
 	t_pcb* listaAux = NULL;
 	t_pcb* aux = l_exit;
@@ -839,6 +844,7 @@ void destruirPCB(int pid)
 		l_exit = l_exit->siguiente;
 		free(listaAux);
 		printf("Destrui unico PCB\n");
+		sem_post(&s_ColaExit);
 		return;
 	}
 	listaAux = listaExit;
@@ -850,6 +856,7 @@ void destruirPCB(int pid)
 			printf("destruyo pcb\n");
 			listaAux->siguiente = listaExit->siguiente;
 			free(listaExit);
+			sem_post(&s_ColaExit);
 			return;
 		}
 		listaAux = listaExit;
@@ -892,6 +899,13 @@ t_new desencolarNew(void)
 			auxAnt = aux;
 			aux = aux->siguiente;
 		}
+		if(maximo == l_new)
+		{
+			l_new = l_new->siguiente;
+			max = (*maximo);
+			free(maximo);
+			return max;
+		}
 		maxAnt->siguiente = maximo->siguiente;
 		max = *maximo;
 		free(maximo);
@@ -902,10 +916,12 @@ t_new desencolarNew(void)
 
 void encolarEnReady(t_pcb* pcb)
 {
+	sem_wait(&s_ColaReady);
 	t_pcb* aux = l_ready;
 	if(l_ready == NULL)
 	{
 		l_ready = pcb;
+		sem_post(&s_ColaReady);
 		return;
 	}
 	else
@@ -916,14 +932,17 @@ void encolarEnReady(t_pcb* pcb)
 		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
+		sem_post(&s_ColaReady);
 		return;
 	}
 }
 
 t_pcb* desencolarReady(void)
 {
+	sem_wait(&s_ColaReady);
 	t_pcb* aux = l_ready;
 	l_ready = aux->siguiente;
+	sem_post(&s_ColaReady);
 	return aux;
 }
 
@@ -975,6 +994,7 @@ void desencolarExec(t_pcb* pcb)
 
 void encolarExit(t_pcb* pcb)
 {
+	sem_wait(&s_ColaExit);
 	t_pcb* aux = l_exit;
 
 	if(l_exit == NULL)
@@ -982,6 +1002,7 @@ void encolarExit(t_pcb* pcb)
 		l_exit = pcb;
 		pcb->siguiente = NULL;
 		printf("Encolando PRIMERO en exit %d\n", pcb->pid);
+		sem_post(&s_ColaExit);
 		return;
 	}
 	else
@@ -993,6 +1014,7 @@ void encolarExit(t_pcb* pcb)
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
 		printf("Encolando ULTIMO en exit %d\n", pcb->pid);
+		sem_post(&s_ColaExit);
 		return;
 	}
 }

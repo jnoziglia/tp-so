@@ -20,6 +20,8 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <semaphore.h>
+#include <commons/log.h>
 
 #define PUERTO "6668"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
@@ -82,6 +84,10 @@ t_segmento* tablaSegmentos = NULL;
 int algoritmo = 1;
 int procesoActivo = 2;
 int retardo = 0;
+t_log* logi;
+
+/* Semaforos */
+sem_t s_cambioProcesoActivo;
 
 
 int main (void)
@@ -89,6 +95,9 @@ int main (void)
 	pthread_t consola, esperarConexiones;
 	int rhConsola, rhEsperarConexiones;
 	int i;
+	sem_init(&s_cambioProcesoActivo,0,1);
+
+	logi = log_create("/home/utnso/tp-2014-1c-unnamed/umv/src/log", "UMV", 0, LOG_LEVEL_INFO);
 
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/umv/src/config.txt");
 	int sizeMem = config_get_int_value(configuracion, "sizeMemoria");
@@ -196,10 +205,10 @@ void* mainConsola()
 				if (pid != 0 || tamanio != 0)
 				{
 					char* buffer = malloc(atoi(tamanio));
-					int procesoAux = cambioProcesoActivo(atoi(pid));
+					cambioProcesoActivo(atoi(pid));
 					buffer = solicitarBytes(atoi(base), atoi(offset), atoi(tamanio));
 					printf("%s",buffer);
-					cambioProcesoActivo(procesoAux);
+					//cambioProcesoActivo(procesoAux);
 					free(buffer);
 				}
 				else
@@ -225,10 +234,10 @@ void* mainConsola()
 					//TODO: tratar de cambiar el 128
 					void* buffer = malloc (128);
 					gets(buffer);
-					int procesoAux = cambioProcesoActivo(atoi(pid));
+					cambioProcesoActivo(atoi(pid));
 					enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
 					free(buffer);
-					cambioProcesoActivo(procesoAux);
+					//cambioProcesoActivo(procesoAux);
 				}
 				else
 				{
@@ -541,11 +550,13 @@ void* solicitarBytes(int base, int offset, int tamanio)
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
 		printf("Segmentation Fault");
+		sem_post(&s_cambioProcesoActivo);
 		return NULL;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	void* buffer= malloc(tamanio);
 	memcpy(buffer,pComienzo,tamanio);
+	sem_post(&s_cambioProcesoActivo);
 	return buffer;
 }
 
@@ -557,10 +568,12 @@ void enviarBytes(int base, int offset, int tamanio, void* buffer)
 	{
 		printf("Segmentation Fault");
 		sleep(10);
+		sem_post(&s_cambioProcesoActivo);
 		return;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	memcpy(pComienzo,buffer,tamanio);
+	sem_post(&s_cambioProcesoActivo);
 }
 
 int crearSegmento(int idProceso, int tamanio)
@@ -793,9 +806,11 @@ void* compactar(void)
 
 void dump(void)
 {
+	int aux = 0;
 	mostrarEstructuras();
 	//mostrarMemoria();
 	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
+	log_info(logi, "holis %d", aux);
 }
 
 void mostrarEstructuras(void)
@@ -857,6 +872,7 @@ void mostrarContenidoDeMemoria(int offset, int tamanio)
 
 void imprimirSegmento(t_segmento* segmento)
 {
+	log_info(logi, "holis");
 	printf("\nProceso: %d \n",segmento->idProceso);
 	printf("Segmento: %d \n",segmento->idSegmento);
 	printf("Base: %d \n",segmento->base);
@@ -867,6 +883,7 @@ void imprimirSegmento(t_segmento* segmento)
 
 int cambioProcesoActivo(int idProceso)
 {
+	sem_wait(&s_cambioProcesoActivo);
 	int aux = procesoActivo;
 	procesoActivo = idProceso;
 	return aux;
