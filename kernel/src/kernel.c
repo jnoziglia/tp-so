@@ -19,7 +19,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <signal.h>
-#include <wait.h>
+#include <semaphore.h>
 
 /* Definiciones y variables para la conexión por Sockets */
 //#define PUERTOPROGRAMA "6667"
@@ -116,12 +116,12 @@ char* IPCPU;
 
 
 /* Semáforos */
-int s_Multiprogramacion = 1; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
+sem_t s_Multiprogramacion; //Semáforo del grado de Multiprogramación. Deja pasar a Ready los PCB Disponibles.
 
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady;
-
+	sem_init(&s_Multiprogramacion,0,1);
 	cargarConfig();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
@@ -145,7 +145,7 @@ void* f_hiloColaReady()
 	t_new programa;
 	while(1)
 	{
-		//wait(&s_Multiprogramacion);
+		sem_wait(&s_Multiprogramacion);
 		if(l_new != NULL)
 		{
 			programa = desencolarNew();
@@ -411,6 +411,7 @@ void* f_hiloPLP()
 						}
 						FD_CLR(i, &fdWPLP);
 						destruirPCB(i);
+						sem_post(&s_Multiprogramacion);
 						break;
 					}
 					else
