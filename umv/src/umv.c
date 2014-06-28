@@ -806,23 +806,22 @@ void* compactar(void)
 
 void dump(void)
 {
-	int aux = 0;
 	mostrarEstructuras();
 	//mostrarMemoria();
 	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
-	log_info(logi, "holis %d", aux);
 }
 
 void mostrarEstructuras(void)
 {
 	t_segmento* auxSegmento = tablaSegmentos;
-	printf("\nTabla de Segmentos:\n\n");
+	log_info(logi, "Tabla de Segmentos:");
+	//printf("\nTabla de Segmentos:\n\n");
 		while (auxSegmento != NULL)
 		{
 			imprimirSegmento(auxSegmento);
 			auxSegmento = auxSegmento->siguiente;
 		}
-	printf("--------------------\n");
+	//printf("--------------------\n");
 }
 
 void mostrarMemoria(void)
@@ -862,11 +861,14 @@ void mostrarContenidoDeMemoria(int offset, int tamanio)
 {
 	char* contador = memPpal + offset;
 	int i;
-	printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
+	log_info(logi, "Contenido de la memoria desde %p hasta %p:", contador,contador+tamanio-1);
+	//printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
 	for (i=0; i<tamanio; i++)
 	{
-		printf("%p --- %d\t",contador+i,*(contador+i));
-		printf("%c\n",*(contador+i));
+		log_info(logi, "%p --- %d\t",contador+i,*(contador+i));
+		log_info(logi, "%c",*(contador+i));
+//		printf("%p --- %d\t",contador+i,*(contador+i));
+//		printf("%c\n",*(contador+i));
 	}
 }
 
