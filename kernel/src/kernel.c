@@ -77,7 +77,7 @@ int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
-t_pcb* recibirSuperMensaje ( int superMensaje[11] );
+t_pcb recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
@@ -88,6 +88,9 @@ void encolarExec(t_pcb* pcb);
 void desencolarExec(t_pcb* pcb);
 void encolarExit(t_pcb* pcb);
 
+t_pcb readyAExec(void);
+void execAReady(t_pcb pcb);
+void execAExit(t_pcb pcb);
 
 /* Variables Globales */
 t_new* l_new = NULL;
@@ -179,7 +182,8 @@ void* f_hiloPCP()
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
-	void* package = malloc(sizeof(t_pcb));
+	t_pcb pcbAEnviar;
+	t_pcb pcbRecibido;
 	printf("Inicio del PCP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -215,68 +219,70 @@ void* f_hiloPCP()
 					printf("Nueva CPU: %d\n", socketPCP);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 					FD_SET(socketAux, &fdWPCP);
+					FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximo) maximo = socketAux;
 				}
 				else
 				{
-					FD_CLR(i, &fdRPCP);
-					FD_SET(i, &fdWPCP);
+//					FD_CLR(i, &fdRPCP);
+//					FD_SET(i, &fdWPCP);
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
 					recv(i,&superMensaje,sizeof(superMensaje),0);
 					//t_pcb* pcb = malloc(sizeof(t_pcb));
-					t_pcb* pcb = recibirSuperMensaje(superMensaje);
-					desencolarExec(pcb);
-					pcb->siguiente = NULL;
+					pcbRecibido = recibirSuperMensaje(superMensaje);
+					//desencolarExec(pcb);
+					//pcb->siguiente = NULL;
 					if(mensaje == 0) //todo:podria ser ENUM
 					{
 						//Se muere el programa
 
 						printf("Llegó un programa para encolar en Exit\n");
 						//encolarEnExit
-						encolarExit(pcb);
+						execAExit(pcbRecibido);
 					}
 					else
 					{
 						//Se termina el quantum o va a block
 						printf("Llegó un programa para encolar en Ready\n");
-						encolarEnReady(pcb);
-						t_pcb* aux = l_ready;
-						while(aux != NULL)
-						{
-							printf("PID en Ready: %d\n",aux->pid);
-							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
-							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
-							aux = aux->siguiente;
-						}
+						execAReady(pcbRecibido);
+//						t_pcb* aux = l_ready;
+//						while(aux != NULL)
+//						{
+//							printf("PID en Ready: %d\n",aux->pid);
+//							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
+//							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
+//							aux = aux->siguiente;
+//						}
 					}
 				}
 			}
 			else if(FD_ISSET(i, &writePCP))
 			{
-				//FD_SET(i, &writePCP);
-				//Sacar de Ready
+//				//FD_SET(i, &writePCP);
+//				//Sacar de Ready
 				if(l_ready != NULL)	//TODO: PONER SEMAFORO!!!
 				{
-					FD_CLR(i, &fdWPCP);
-					FD_SET(i, &fdRPCP);
-					t_pcb* pcbAux;
-					pcbAux = desencolarReady();
-					superMensaje[0] = pcbAux->pid;
-					superMensaje[1] = pcbAux->segmentoCodigo;
-					superMensaje[2] = pcbAux->segmentoStack;
-					superMensaje[3] = pcbAux->cursorStack;
-					superMensaje[4] = pcbAux->indiceCodigo;
-					superMensaje[5] = pcbAux->indiceEtiquetas;
-					superMensaje[6] = pcbAux->programCounter;
-					superMensaje[7] = pcbAux->tamanioContextoActual;
-					superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
-					superMensaje[9] = pcbAux->tamanioIndiceCodigo;
-					superMensaje[10] = pcbAux->peso;
-					//free(l_new);
-					//l_new = NULL;
-					status = send(i, superMensaje, sizeof(t_pcb), 0);
-					encolarExec(pcbAux);
+////					FD_CLR(i, &fdWPCP);
+////					FD_SET(i, &fdRPCP);
+					pcbAEnviar = readyAExec();
+//					t_pcb* pcbAux;
+//					pcbAux = desencolarReady();
+					superMensaje[0] = pcbAEnviar.pid;
+					superMensaje[1] = pcbAEnviar.segmentoCodigo;
+					superMensaje[2] = pcbAEnviar.segmentoStack;
+					superMensaje[3] = pcbAEnviar.cursorStack;
+					superMensaje[4] = pcbAEnviar.indiceCodigo;
+					superMensaje[5] = pcbAEnviar.indiceEtiquetas;
+					superMensaje[6] = pcbAEnviar.programCounter;
+					superMensaje[7] = pcbAEnviar.tamanioContextoActual;
+					superMensaje[8] = pcbAEnviar.tamanioIndiceEtiquetas;
+					superMensaje[9] = pcbAEnviar.tamanioIndiceCodigo;
+					superMensaje[10] = pcbAEnviar.peso;
+//					//free(l_new);
+//					//l_new = NULL;
+					status = send(i, superMensaje, 11*sizeof(int), 0);
+//					encolarExec(pcbAux);
 				}
 
 			}
@@ -807,30 +813,31 @@ void serializarPcb(t_pcb* pcb, void* package)
 	return;
 }
 
-t_pcb* recibirSuperMensaje ( int superMensaje[11] )
+t_pcb recibirSuperMensaje ( int superMensaje[11] )
 {
-	int i;
-	t_pcb* pcb = l_exec;
-	while(pcb->pid != superMensaje[0] && pcb != NULL)
-	{
-		pcb= pcb->siguiente;
-	}
-	if(pcb == NULL) printf("El PCB no existe\n");
-	pcb->pid = superMensaje[0];
-	pcb->segmentoCodigo = superMensaje[1];
-	pcb->segmentoStack=	superMensaje[2] ;
-	pcb->cursorStack=superMensaje[3]  ;
-	pcb->indiceCodigo=superMensaje[4] ;
-	pcb->indiceEtiquetas=superMensaje[5]  ;
-	pcb->programCounter=superMensaje[6] ;
-	pcb->tamanioContextoActual=superMensaje[7] ;
-	pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
-	pcb->tamanioIndiceCodigo=superMensaje[9] ;
-	pcb->peso=superMensaje[10] ;
+	t_pcb pcb;
+//	int i;
+//	t_pcb* pcb = l_exec;
+//	while(pcb->pid != superMensaje[0] && pcb != NULL)
+//	{
+//		pcb= pcb->siguiente;
+//	}
+//	if(pcb == NULL) printf("El PCB no existe\n");
+	pcb.pid = superMensaje[0];
+	pcb.segmentoCodigo = superMensaje[1];
+	pcb.segmentoStack=	superMensaje[2] ;
+	pcb.cursorStack=superMensaje[3]  ;
+	pcb.indiceCodigo=superMensaje[4] ;
+	pcb.indiceEtiquetas=superMensaje[5]  ;
+	pcb.programCounter=superMensaje[6] ;
+	pcb.tamanioContextoActual=superMensaje[7] ;
+	pcb.tamanioIndiceEtiquetas=superMensaje[8] ;
+	pcb.tamanioIndiceCodigo=superMensaje[9] ;
+	pcb.peso=superMensaje[10] ;
 
-	for(i=0; i<11; i++){
-		printf("pcb: %d\n", superMensaje[i]);
-	}
+//	for(i=0; i<11; i++){
+//		printf("pcb: %d\n", superMensaje[i]);
+//	}
 	return pcb;
 }
 
@@ -976,8 +983,8 @@ void encolarExec(t_pcb* pcb)
 	if(l_exec == NULL)
 	{
 		l_exec = pcb;
-		l_exec->siguiente = NULL;
-		return;
+		pcb->siguiente = NULL;
+		//return;
 	}
 	else
 	{
@@ -987,15 +994,22 @@ void encolarExec(t_pcb* pcb)
 		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
-		return;
+		//return;
 	}
+	aux = l_exec;
+	while(aux != NULL)
+	{
+		printf("PID en exec: %d", aux->pid);
+		aux = aux->siguiente;
+	}
+	return;
 }
 
 void desencolarExec(t_pcb* pcb)
 {
 	t_pcb* aux = l_exec;
 	t_pcb* auxAnt;
-	if(aux->siguiente == NULL)
+	if(aux->siguiente == NULL && aux->pid == pcb->pid)
 	{
 		l_exec = NULL;
 		//free(aux);
@@ -1038,6 +1052,181 @@ void encolarExit(t_pcb* pcb)
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
 		printf("Encolando ULTIMO en exit %d\n", pcb->pid);
+		sem_post(&s_ColaExit);
+		return;
+	}
+}
+
+t_pcb readyAExec(void)
+{
+	sem_wait(&s_ColaReady);
+	t_pcb* auxReady = l_ready;
+	l_ready = auxReady->siguiente;
+	sem_post(&s_ColaReady);
+
+	t_pcb* auxExec = l_exec;
+	if(l_exec == NULL)
+	{
+		l_exec = auxReady;
+		auxReady->siguiente = NULL;
+		//return;
+	}
+	else
+	{
+		while(auxExec->siguiente != NULL)
+		{
+			auxExec = auxExec->siguiente;
+		}
+		auxExec->siguiente = auxReady;
+		auxReady->siguiente = NULL;
+		//return;
+	}
+//	aux = l_exec;
+//	while(aux != NULL)
+//	{
+//		printf("PID en exec: %d", aux->pid);
+//		aux = aux->siguiente;
+//	}
+	return *auxReady;
+}
+
+void execAReady(t_pcb pcb)
+{
+	t_pcb* auxExec = l_exec;
+	t_pcb* auxAnt;
+	//t_pcb* pcbAMover;
+	while (auxExec != NULL)
+	{
+		printf("PID EN EXEC: %d\n", auxExec->pid);
+		auxExec = auxExec->siguiente;
+	}
+	auxExec = l_exec;
+	if(auxExec->siguiente == NULL && auxExec->pid == pcb.pid)
+	{
+		l_exec = NULL;
+		//free(aux);
+		//return;
+	}
+	else
+	{
+		auxAnt = auxExec;
+		auxExec = auxExec->siguiente;
+		while(auxExec != NULL)
+		{
+			if(auxExec->pid == pcb.pid)
+			{
+				auxAnt->siguiente = auxExec->siguiente;
+				//free(aux);
+			}
+			else
+			{
+				auxAnt = auxExec;
+				auxExec = auxExec->siguiente;
+			}
+		}
+	}
+
+	printf("Desencole\n");
+
+	//pcbAMover = auxExec;
+	auxExec->pid = pcb.pid;
+	auxExec->segmentoCodigo = pcb.segmentoCodigo;
+	auxExec->segmentoStack = pcb.segmentoStack;
+	auxExec->cursorStack = pcb.cursorStack;
+	auxExec->indiceCodigo = pcb.indiceCodigo;
+	auxExec->indiceEtiquetas = pcb.indiceEtiquetas;
+	auxExec->programCounter = pcb.programCounter;
+	auxExec->tamanioContextoActual = pcb.tamanioContextoActual;
+	auxExec->tamanioIndiceEtiquetas = pcb.tamanioIndiceEtiquetas;
+	auxExec->tamanioIndiceCodigo = pcb.tamanioIndiceCodigo;
+	auxExec->peso = pcb.peso;
+	//auxExec->siguiente = NULL;
+
+	printf("Asigne\n");
+
+	sem_wait(&s_ColaReady);
+	t_pcb* aux = l_ready;
+	if(l_ready == NULL)
+	{
+		l_ready = auxExec;
+		sem_post(&s_ColaReady);
+		return;
+	}
+	else
+	{
+		while(aux->siguiente != NULL)
+		{
+			aux = aux->siguiente;
+		}
+		aux->siguiente = auxExec;
+		auxExec->siguiente = NULL;
+		sem_post(&s_ColaReady);
+		return;
+	}
+}
+
+void execAExit(t_pcb pcb)
+{
+	t_pcb* auxExec = l_exec;
+	t_pcb* auxAnt;
+	//t_pcb* pcbAMover;
+	if(auxExec->siguiente == NULL && auxExec->pid == pcb.pid)
+	{
+		l_exec = NULL;
+		//free(aux);
+		//return;
+	}
+	else
+	{
+		auxAnt = auxExec;
+		auxExec = auxExec->siguiente;
+		while(auxExec != NULL)
+		{
+			if(auxExec->pid == pcb.pid)
+			{
+				auxAnt->siguiente = auxExec->siguiente;
+				//free(aux);
+				//return;
+			}
+			auxAnt = auxExec;
+			auxExec = auxExec->siguiente;
+		}
+	}
+
+	//pcbAMover = auxExec;
+	auxExec->pid = pcb.pid;
+	auxExec->segmentoCodigo = pcb.segmentoCodigo;
+	auxExec->segmentoStack = pcb.segmentoStack;
+	auxExec->cursorStack = pcb.cursorStack;
+	auxExec->indiceCodigo = pcb.indiceCodigo;
+	auxExec->indiceEtiquetas = pcb.indiceEtiquetas;
+	auxExec->programCounter = pcb.programCounter;
+	auxExec->tamanioContextoActual = pcb.tamanioContextoActual;
+	auxExec->tamanioIndiceEtiquetas = pcb.tamanioIndiceEtiquetas;
+	auxExec->tamanioIndiceCodigo = pcb.tamanioIndiceCodigo;
+	auxExec->peso = pcb.peso;
+	auxExec->siguiente = NULL;
+
+	sem_wait(&s_ColaExit);
+	t_pcb* aux = l_exit;
+
+	if(l_exit == NULL)
+	{
+		l_exit = auxExec;
+		auxExec->siguiente = NULL;
+		printf("Encolando PRIMERO en exit %d\n", auxExec->pid);
+		sem_post(&s_ColaExit);
+		return;
+	}
+	else
+	{
+		while(aux->siguiente != NULL)
+		{
+			aux = aux->siguiente;
+		}
+		aux->siguiente = auxExec;
+		auxExec->siguiente = NULL;
+		printf("Encolando ULTIMO en exit %d\n", auxExec->pid);
 		sem_post(&s_ColaExit);
 		return;
 	}
