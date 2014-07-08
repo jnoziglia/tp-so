@@ -53,7 +53,7 @@ enum{
 
 /* Funciones */
 void* solicitarBytes(int base, int offset, int tamanio);
-void enviarBytes(int base, int offset, int tamanio, void* buffer);
+int enviarBytes(int base, int offset, int tamanio, void* buffer);
 void* mainConsola();
 void destruirSegmentos(int id);
 void* mainEsperarConexiones();
@@ -502,7 +502,8 @@ void* f_hiloCpu(void* socketCliente)
 			buffer = malloc(tamanio);
 			status = recv(socketCPU, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
-			enviarBytes(base, offset, tamanio, buffer);
+			confirmacion = enviarBytes(base, offset, tamanio, buffer);
+			send(socketCPU, &confirmacion, sizeof(int), 0);
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
@@ -595,7 +596,7 @@ void* solicitarBytes(int base, int offset, int tamanio)
 	return buffer;
 }
 
-void enviarBytes(int base, int offset, int tamanio, void* buffer)
+int enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
@@ -606,12 +607,13 @@ void enviarBytes(int base, int offset, int tamanio, void* buffer)
 		sleep(10);
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
-		return;
+		return -1;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	memcpy(pComienzo,buffer,tamanio);
 	sem_post(&s_cambioProcesoActivo);
 	sem_post(&s_TablaSegmentos);
+	return 0;
 }
 
 int crearSegmento(int idProceso, int tamanio)
