@@ -66,7 +66,7 @@ enum
 /* Funciones */
 void* f_hiloPCP();
 void* f_hiloPLP();
-t_pcb* crearPcb(t_new programa);
+int crearPcb(t_new programa, t_pcb* pcbAux);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
@@ -152,15 +152,16 @@ int main(void) {
 void* f_hiloColaReady()
 {
 	t_new programa;
+	int conf;
 	while(1)
 	{
 		if(l_new != NULL)
 		{
 			sem_wait(&s_Multiprogramacion);
 			programa = desencolarNew();
-			t_pcb* nuevoPCB;
-			nuevoPCB = crearPcb(programa);
-			if(nuevoPCB != NULL)
+			t_pcb* nuevoPCB = malloc(sizeof(t_pcb));
+			conf = crearPcb(programa, nuevoPCB);
+			if(conf == 1)
 			{
 				printf("Nuevo PCB Creado\n");
 				encolarEnReady(nuevoPCB);
@@ -175,11 +176,13 @@ void* f_hiloPCP()
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int socketPCP, socketAux;
-	int i, maximo = 0;
+	int i, j, maximo = 0;
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
 	void* package = malloc(sizeof(t_pcb));
+	t_pcb* pcb;
+	t_pcb* puntero;
 	printf("Inicio del PCP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -203,6 +206,8 @@ void* f_hiloPCP()
 
 	while(1)
 	{
+		FD_ZERO(&readPCP);
+		FD_ZERO(&writePCP);
 		readPCP = fdRPCP;
 		writePCP = fdWPCP;
 		select(maximo + 1, &readPCP, &writePCP, NULL, NULL);
@@ -223,9 +228,20 @@ void* f_hiloPCP()
 					FD_SET(i, &fdWPCP);
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
+
+					puntero = l_exec;
+					printf("SOCKET CPU: %d\n", i);
+					printf("MENSAJE: %d\n", mensaje);
 					recv(i,&superMensaje,sizeof(superMensaje),0);
-					//t_pcb* pcb = malloc(sizeof(t_pcb));
-					t_pcb* pcb = recibirSuperMensaje(superMensaje);
+					for(j=0; j<11; j++) printf("%d\n", superMensaje[j]);
+					while(puntero != NULL)
+					{
+						printf("Lista ejecucion\n");
+						printf("%d\n", puntero->pid);
+						puntero = puntero->siguiente;
+					}
+
+					pcb = recibirSuperMensaje(superMensaje);
 					desencolarExec(pcb);
 					pcb->siguiente = NULL;
 					if(mensaje == 0) //todo:podria ser ENUM
@@ -241,14 +257,14 @@ void* f_hiloPCP()
 						//Se termina el quantum o va a block
 						printf("Llegó un programa para encolar en Ready\n");
 						encolarEnReady(pcb);
-						t_pcb* aux = l_ready;
-						while(aux != NULL)
-						{
-							printf("PID en Ready: %d\n",aux->pid);
-							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
-							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
-							aux = aux->siguiente;
-						}
+//						t_pcb* aux = l_ready;
+//						while(aux != NULL)
+//						{
+//							printf("PID en Ready: %d\n",aux->pid);
+//							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
+//							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
+//							aux = aux->siguiente;
+//						}
 					}
 				}
 			}
@@ -469,9 +485,9 @@ void* f_hiloPLP()
 
 
 
-t_pcb* crearPcb(t_new programa)
+int crearPcb(t_new programa, t_pcb* pcbAux)
 {
-	t_pcb* pcbAux = malloc (sizeof(t_pcb));
+	//t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(programa.codigo);
 	printf("%s\n", programa.codigo);
 	int mensaje[2];
@@ -496,7 +512,7 @@ t_pcb* crearPcb(t_new programa)
 		//UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
-		return NULL;
+		return -1;
 	}
 	pcbAux->segmentoStack = respuesta;
 	mensaje[1] = strlen(programa.codigo);
@@ -508,7 +524,7 @@ t_pcb* crearPcb(t_new programa)
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
-		return NULL;
+		return -1;
 	}
 	pcbAux->segmentoCodigo = respuesta;
 	mensaje[1] = (metadataAux->instrucciones_size*sizeof(t_intructions));
@@ -520,7 +536,7 @@ t_pcb* crearPcb(t_new programa)
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
-		return NULL;
+		return -1;
 	}
 	pcbAux->indiceCodigo = respuesta;
 	mensaje[1] = metadataAux->etiquetas_size;
@@ -534,7 +550,7 @@ t_pcb* crearPcb(t_new programa)
 			UMV_destruirSegmentos(pcbAux->pid);
 			printf("no se creo el pcb\n");
 			free (pcbAux);
-			return NULL;
+			return -1;
 		}
 		pcbAux->indiceEtiquetas = respuesta;
 	}
@@ -555,7 +571,7 @@ t_pcb* crearPcb(t_new programa)
 	}
 	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
-	return pcbAux;
+	return 1;
 }
 
 int UMV_crearSegmentos(int mensaje[2])
@@ -858,7 +874,7 @@ void destruirPCB(int pid)
 		printf("PID en Exit: %d\n",aux->pid);
 		aux = aux->siguiente;
 	}
-	if(listaExit->siguiente == NULL && listaExit->pid == pid)
+	if(listaExit->pid == pid)
 	{
 		listaAux = l_exit;
 		l_exit = l_exit->siguiente;
@@ -995,13 +1011,12 @@ void desencolarExec(t_pcb* pcb)
 {
 	t_pcb* aux = l_exec;
 	t_pcb* auxAnt;
-	if(aux->siguiente == NULL)
+
+	if (aux->pid == pcb->pid)
 	{
-		l_exec = NULL;
-		//free(aux);
-		return;
+		l_exec = l_exec->siguiente;
 	}
-	auxAnt = aux;
+	auxAnt = l_exec;
 	aux = aux->siguiente;
 	while(aux != NULL)
 	{
