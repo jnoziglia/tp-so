@@ -184,12 +184,27 @@ int main (void)
 /* Hilo consola */
 void* mainConsola()
 {
-	printf("Bienvenido a la consola\n");
+	printf("Bienvenido a la consola\n\n");
+
 	char* parametros = malloc(1000);
 	while(1)
 	{
 		gets(parametros);
 		//sleep(retardo);
+		if(string_equals_ignore_case(parametros,"man"))
+		{
+			printf("Operaciones:\n");
+			printf("\toperacion solicitar [pid] [base] [offset] [tamanio]\n");
+			printf("\toperacion solicitar [pid] [base] [offset] [tamanio]\n");
+			printf("\toperacion escribir [pid] [base] [offset] [tamanio]\n");
+			printf("\toperacion crear-segmento [pid] [tamanio]\n");
+			printf("\toperacion destruir-segmentos [pid]\n");
+			printf("\tretardo [tiempo]\n");
+			printf("\talgoritmo first-fit / worst-fit\n");
+			printf("\tcompactacion\n");
+			printf("\tdump\n");
+			continue;
+		}
 		if(string_starts_with(parametros,"operacion "))
 		{
 			char* resto = string_substring_from(parametros,10);
@@ -215,7 +230,7 @@ void* mainConsola()
 				}
 				else
 				{
-					printf("Argumentos incorrectos");
+					printf("Argumentos incorrectos\n");
 				}
 				continue;
 			}
@@ -235,7 +250,9 @@ void* mainConsola()
 				{
 					//TODO: tratar de cambiar el 128
 					void* buffer = malloc (128);
+					printf("Ingrese bytes a escribir: ");
 					gets(buffer);
+					printf("\n");
 					cambioProcesoActivo(atoi(pid));
 					enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
 					free(buffer);
@@ -243,7 +260,7 @@ void* mainConsola()
 				}
 				else
 				{
-					printf("Argumentos incorrectos");
+					printf("Argumentos incorrectos\n");
 				}
 				continue;
 			}
@@ -261,7 +278,7 @@ void* mainConsola()
 				}
 				else
 				{
-					printf("Argumentos incorrectos");
+					printf("Argumentos incorrectos\n");
 
 				}
 				continue;
@@ -273,15 +290,15 @@ void* mainConsola()
 				if(atoi(resto2) != 0)
 				{
 					destruirSegmentos(atoi(resto2));
-					printf("Segmentos destruidos");
+					printf("Segmentos destruidos\n");
 				}
 				else
 				{
-					printf("Argumentos incorrectos.");
+					printf("Argumentos incorrectos.\n");
 				}
 				continue;
 			}
-			printf("Argumento incorrecto");
+			printf("Argumento incorrecto\n");
 			continue;
 		}
 		if(string_starts_with(parametros,"retardo "))
