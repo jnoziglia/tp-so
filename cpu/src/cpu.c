@@ -319,6 +319,10 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 		send(socketUMV, mensaje, 4*sizeof(int), 0);
 		status = recv(socketUMV, buffer, tamanio, 0);
 		printf("recibo datos segmento\n");
+		if(buffer == NULL)
+		{
+			terminarPrograma = 1;
+		}
 	}
 	return buffer;
 }
@@ -328,6 +332,7 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	//int status = 1;
 	char operacion = 3;
 	char confirmacion;
+	int conf;
 	char* package;
 	send(socketUMV, &operacion, sizeof(char), 0);
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
@@ -335,6 +340,11 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	{
 		package = serializarEnvioBytes(pid, base, offset, tamanio, buffer);
 		send(socketUMV, package, 4*sizeof(int) + tamanio, 0);
+		recv(socketUMV, &conf, sizeof(int), 0);
+		if(conf == -1)
+		{
+			terminarPrograma = 1;
+		}
 	}
 }
 

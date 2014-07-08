@@ -1,4 +1,4 @@
 #!./Programa
 begin
-	variables a
+	 !a=2
 end

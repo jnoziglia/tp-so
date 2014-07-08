@@ -23,6 +23,7 @@
 #include <semaphore.h>
 #include <commons/log.h>
 
+
 #define PUERTO "6668"
 #define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 
@@ -52,7 +53,7 @@ enum{
 
 /* Funciones */
 void* solicitarBytes(int base, int offset, int tamanio);
-void enviarBytes(int base, int offset, int tamanio, void* buffer);
+int enviarBytes(int base, int offset, int tamanio, void* buffer);
 void* mainConsola();
 void destruirSegmentos(int id);
 void* mainEsperarConexiones();
@@ -186,12 +187,27 @@ int main (void)
 /* Hilo consola */
 void* mainConsola()
 {
-	printf("Bienvenido a la consola\n");
+	printf("Bienvenido a la consola\n\n");
+
 	char* parametros = malloc(1000);
 	while(1)
 	{
 		gets(parametros);
 		//sleep(retardo);
+		if(string_equals_ignore_case(parametros,"man"))
+		{
+			printf("Operaciones:\n");
+			printf("\toperacion solicitar [pid] [base] [offset] [tamanio]\n");
+			printf("\toperacion solicitar [pid] [base] [offset] [tamanio]\n");
+			printf("\toperacion escribir [pid] [base] [offset] [tamanio]\n");
+			printf("\toperacion crear-segmento [pid] [tamanio]\n");
+			printf("\toperacion destruir-segmentos [pid]\n");
+			printf("\tretardo [tiempo]\n");
+			printf("\talgoritmo first-fit / worst-fit\n");
+			printf("\tcompactacion\n");
+			printf("\tdump\n");
+			continue;
+		}
 		if(string_starts_with(parametros,"operacion "))
 		{
 			char* resto = string_substring_from(parametros,10);
@@ -217,7 +233,7 @@ void* mainConsola()
 				}
 				else
 				{
-					printf("Argumentos incorrectos");
+					printf("Argumentos incorrectos\n");
 				}
 				continue;
 			}
@@ -237,7 +253,9 @@ void* mainConsola()
 				{
 					//TODO: tratar de cambiar el 128
 					void* buffer = malloc (128);
+					printf("Ingrese bytes a escribir: ");
 					gets(buffer);
+					printf("\n");
 					cambioProcesoActivo(atoi(pid));
 					enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
 					free(buffer);
@@ -245,7 +263,7 @@ void* mainConsola()
 				}
 				else
 				{
-					printf("Argumentos incorrectos");
+					printf("Argumentos incorrectos\n");
 				}
 				continue;
 			}
@@ -263,7 +281,7 @@ void* mainConsola()
 				}
 				else
 				{
-					printf("Argumentos incorrectos");
+					printf("Argumentos incorrectos\n");
 
 				}
 				continue;
@@ -275,15 +293,15 @@ void* mainConsola()
 				if(atoi(resto2) != 0)
 				{
 					destruirSegmentos(atoi(resto2));
-					printf("Segmentos destruidos");
+					printf("Segmentos destruidos\n");
 				}
 				else
 				{
-					printf("Argumentos incorrectos.");
+					printf("Argumentos incorrectos.\n");
 				}
 				continue;
 			}
-			printf("Argumento incorrecto");
+			printf("Argumento incorrecto\n");
 			continue;
 		}
 		if(string_starts_with(parametros,"retardo "))
@@ -457,7 +475,7 @@ void* f_hiloCpu(void* socketCliente)
 	{
 		printf("Recibo operacion\n");
 		recv(socketCPU, &operacion, sizeof(char), 0);
-		sem_wait(&s_cpu);
+		mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 		printf("La operacion es: %d\n", operacion);
 		if (operacion == operSolicitarBytes)
 		{
@@ -488,7 +506,8 @@ void* f_hiloCpu(void* socketCliente)
 			buffer = malloc(tamanio);
 			status = recv(socketCPU, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
-			enviarBytes(base, offset, tamanio, buffer);
+			confirmacion = enviarBytes(base, offset, tamanio, buffer);
+			send(socketCPU, &confirmacion, sizeof(int), 0);
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
@@ -582,7 +601,7 @@ void* solicitarBytes(int base, int offset, int tamanio)
 	return buffer;
 }
 
-void enviarBytes(int base, int offset, int tamanio, void* buffer)
+int enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
@@ -593,12 +612,13 @@ void enviarBytes(int base, int offset, int tamanio, void* buffer)
 		sleep(10);
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
-		return;
+		return -1;
 	}
 	pComienzo = segmentoBuscado->dirInicio + offset;
 	memcpy(pComienzo,buffer,tamanio);
 	sem_post(&s_cambioProcesoActivo);
 	sem_post(&s_TablaSegmentos);
+	return 0;
 }
 
 int crearSegmento(int idProceso, int tamanio)

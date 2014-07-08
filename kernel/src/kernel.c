@@ -72,7 +72,7 @@ enum
 /* Funciones */
 void* f_hiloPCP();
 void* f_hiloPLP();
-t_pcb* crearPcb(t_new programa);
+int crearPcb(t_new programa, t_pcb* pcbAux);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(char* texto);
@@ -168,15 +168,16 @@ int main(void) {
 void* f_hiloColaReady()
 {
 	t_new programa;
+	int conf;
 	while(1)
 	{
 		if(l_new != NULL)
 		{
 			sem_wait(&s_Multiprogramacion);
 			programa = desencolarNew();
-			t_pcb* nuevoPCB;
-			nuevoPCB = crearPcb(programa);
-			if(nuevoPCB != NULL)
+			t_pcb* nuevoPCB = malloc(sizeof(t_pcb));
+			conf = crearPcb(programa, nuevoPCB);
+			if(conf == 1)
 			{
 				printf("Nuevo PCB Creado\n");
 				encolarEnReady(nuevoPCB);
@@ -191,12 +192,15 @@ void* f_hiloPCP()
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int socketPCP, socketAux;
-	int i, maximo = 0;
+	int i, j, maximo = 0;
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
 	t_pcb pcbAEnviar;
 	t_pcb pcbRecibido;
+	//void* package = malloc(sizeof(t_pcb));
+	//t_pcb* pcb;
+	//t_pcb* puntero;
 	printf("Inicio del PCP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -220,6 +224,8 @@ void* f_hiloPCP()
 
 	while(1)
 	{
+		FD_ZERO(&readPCP);
+		FD_ZERO(&writePCP);
 		readPCP = fdRPCP;
 		writePCP = fdWPCP;
 		select(maximo + 1, &readPCP, &writePCP, NULL, NULL);
@@ -262,14 +268,6 @@ void* f_hiloPCP()
 						pcbRecibido = recibirSuperMensaje(superMensaje);
 						printf("Llegó un programa para encolar en Ready\n");
 						execAReady(pcbRecibido);
-//						t_pcb* aux = l_ready;
-//						while(aux != NULL)
-//						{
-//							printf("PID en Ready: %d\n",aux->pid);
-//							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
-//							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
-//							aux = aux->siguiente;
-//						}
 					}
 					else if(mensaje == 2) //todo:podria ser ENUM
 					{
@@ -545,9 +543,9 @@ void* f_hiloPLP()
 
 
 
-t_pcb* crearPcb(t_new programa)
+int crearPcb(t_new programa, t_pcb* pcbAux)
 {
-	t_pcb* pcbAux = malloc (sizeof(t_pcb));
+	//t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(programa.codigo);
 	printf("%s\n", programa.codigo);
 	int mensaje[2];
@@ -572,7 +570,7 @@ t_pcb* crearPcb(t_new programa)
 		//UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
-		return NULL;
+		return -1;
 	}
 	pcbAux->segmentoStack = respuesta;
 	mensaje[1] = strlen(programa.codigo);
@@ -584,7 +582,7 @@ t_pcb* crearPcb(t_new programa)
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
-		return NULL;
+		return -1;
 	}
 	pcbAux->segmentoCodigo = respuesta;
 	mensaje[1] = (metadataAux->instrucciones_size*sizeof(t_intructions));
@@ -596,7 +594,7 @@ t_pcb* crearPcb(t_new programa)
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
-		return NULL;
+		return -1;
 	}
 	pcbAux->indiceCodigo = respuesta;
 	mensaje[1] = metadataAux->etiquetas_size;
@@ -610,7 +608,7 @@ t_pcb* crearPcb(t_new programa)
 			UMV_destruirSegmentos(pcbAux->pid);
 			printf("no se creo el pcb\n");
 			free (pcbAux);
-			return NULL;
+			return -1;
 		}
 		pcbAux->indiceEtiquetas = respuesta;
 	}
@@ -631,7 +629,7 @@ t_pcb* crearPcb(t_new programa)
 	}
 	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
 	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
-	return pcbAux;
+	return 1;
 }
 
 int UMV_crearSegmentos(int mensaje[2])
@@ -954,7 +952,7 @@ void destruirPCB(int pid)
 		printf("PID en Exit: %d\n",aux->pid);
 		aux = aux->siguiente;
 	}
-	if(listaExit->siguiente == NULL && listaExit->pid == pid)
+	if(listaExit->pid == pid)
 	{
 		listaAux = l_exit;
 		l_exit = l_exit->siguiente;
@@ -1098,13 +1096,11 @@ void desencolarExec(t_pcb* pcb)
 {
 	t_pcb* aux = l_exec;
 	t_pcb* auxAnt;
-	if(aux->siguiente == NULL && aux->pid == pcb->pid)
+	if (aux->pid == pcb->pid)
 	{
-		l_exec = NULL;
-		//free(aux);
-		return;
+		l_exec = l_exec->siguiente;
 	}
-	auxAnt = aux;
+	auxAnt = l_exec;
 	aux = aux->siguiente;
 	while(aux != NULL)
 	{
