@@ -232,39 +232,50 @@ void* f_hiloPCP()
 					puntero = l_exec;
 					printf("SOCKET CPU: %d\n", i);
 					printf("MENSAJE: %d\n", mensaje);
-					recv(i,&superMensaje,sizeof(superMensaje),0);
-					for(j=0; j<11; j++) printf("%d\n", superMensaje[j]);
-					while(puntero != NULL)
-					{
-						printf("Lista ejecucion\n");
-						printf("%d\n", puntero->pid);
-						puntero = puntero->siguiente;
-					}
+					if(mensaje==5){
+						printf("primitiva asignarValorCompartida\n");
+						//t_nombre_compartida variable;
+						//t_valor_variable valor;
 
-					pcb = recibirSuperMensaje(superMensaje);
-					desencolarExec(pcb);
-					pcb->siguiente = NULL;
-					if(mensaje == 0) //todo:podria ser ENUM
-					{
-						//Se muere el programa
-
-						printf("Llegó un programa para encolar en Exit\n");
-						//encolarEnExit
-						encolarExit(pcb);
+						//recv(i,&variable,sizeof(t_nombre_compartida),0);
+					//	recv(i,&valor,sizeof(t_valor_variable),0);
+					//	printf("variable=%s",variable);
+						//printf("valor=%d",valor);
 					}
 					else
 					{
-						//Se termina el quantum o va a block
-						printf("Llegó un programa para encolar en Ready\n");
-						encolarEnReady(pcb);
-//						t_pcb* aux = l_ready;
-//						while(aux != NULL)
-//						{
-//							printf("PID en Ready: %d\n",aux->pid);
-//							printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
-//							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
-//							aux = aux->siguiente;
-//						}
+						recv(i,&superMensaje,sizeof(superMensaje),0);
+						for(j=0; j<11; j++) printf("%d\n", superMensaje[j]);
+						while(puntero != NULL)
+						{
+							printf("Lista ejecucion\n");
+							printf("%d\n", puntero->pid);
+							puntero = puntero->siguiente;
+						}
+						pcb = recibirSuperMensaje(superMensaje);
+						desencolarExec(pcb);
+						pcb->siguiente = NULL;
+						if(mensaje == 0) //todo:podria ser ENUM
+						{
+							//Se muere el programa
+							printf("Llegó un programa para encolar en Exit\n");
+							//encolarEnExit
+							encolarExit(pcb);
+						}
+						else
+						{
+							//Se termina el quantum o va a block
+							printf("Llegó un programa para encolar en Ready\n");
+							encolarEnReady(pcb);
+//							t_pcb* aux = l_ready;
+//							while(aux != NULL)
+//							{
+//								printf("PID en Ready: %d\n",aux->pid);
+//								printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
+//								printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
+//								aux = aux->siguiente;
+//							}
+						}
 					}
 				}
 			}

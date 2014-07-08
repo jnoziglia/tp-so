@@ -455,12 +455,22 @@ void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor)
 //TODO:ObtenerValorCompartida, asignarVariableCompartida
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable)
 {
-	return 0;
+	printf("primitiva obtenerValorCompartida\n");
+	return variable;
+
 }
 
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor)
 {
-	return 0;
+	printf("primitiva asignarValorCompartida\n");
+			printf("variable=%s",variable);
+			printf("valor=%d",valor);
+			estadoCPU =5;                                                                //nuevo valor de estado,5 que indica sistemcallasignarValorCompartida
+
+			send(kernelSocket,&estadoCPU,sizeof(char),0);
+			//send(kernelSocket,&variable,sizeof(t_nombre_compartida),0);
+			//send(kernelSocket,&valor,sizeof(t_valor_variable),0);
+	return valor;
 }
 
 void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
