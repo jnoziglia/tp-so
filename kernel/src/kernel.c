@@ -54,6 +54,12 @@ typedef struct new
 	struct new *siguiente;
 }t_new;
 
+typedef struct  variableCompartida
+{
+	char* nombreVariable;
+	int valorVariable;
+}t_variableCompartida;
+
 enum
 {
 	new,
@@ -87,10 +93,10 @@ t_pcb* desencolarReady(void);
 void encolarExec(t_pcb* pcb);
 void desencolarExec(t_pcb* pcb);
 void encolarExit(t_pcb* pcb);
-
 t_pcb readyAExec(void);
 void execAReady(t_pcb pcb);
 void execAExit(t_pcb pcb);
+void cargarVariablesCompartidas(void);
 
 /* Variables Globales */
 t_new* l_new = NULL;
@@ -116,6 +122,8 @@ char* PUERTOUMV;
 char* IPUMV;
 char* PUERTOCPU;
 char* IPCPU;
+t_variableCompartida* arrayVariablesCompartidas;
+int cantidadVariableCompartidas = 0;
 
 
 /* Semáforos */
@@ -126,6 +134,9 @@ sem_t s_ColaNew;
 sem_t s_ComUmv;
 
 
+/*Archivo de Configuración*/
+t_config* configuracion;
+
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady;
@@ -134,7 +145,9 @@ int main(void) {
 	sem_init(&s_ColaExit,0,1);
 	sem_init(&s_ColaNew,0,1);
 	sem_init(&s_ComUmv,0,1);
+	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
+	cargarVariablesCompartidas();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
@@ -228,22 +241,25 @@ void* f_hiloPCP()
 //					FD_SET(i, &fdWPCP);
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
-					recv(i,&superMensaje,sizeof(superMensaje),0);
+					//recv(i,&superMensaje,sizeof(superMensaje),0);
 					//t_pcb* pcb = malloc(sizeof(t_pcb));
-					pcbRecibido = recibirSuperMensaje(superMensaje);
+					//pcbRecibido = recibirSuperMensaje(superMensaje);
 					//desencolarExec(pcb);
 					//pcb->siguiente = NULL;
 					if(mensaje == 0) //todo:podria ser ENUM
 					{
 						//Se muere el programa
-
+						recv(i,&superMensaje,sizeof(superMensaje),0);
+						pcbRecibido = recibirSuperMensaje(superMensaje);
 						printf("Llegó un programa para encolar en Exit\n");
 						//encolarEnExit
 						execAExit(pcbRecibido);
 					}
-					else
+					else if (mensaje == 1)
 					{
 						//Se termina el quantum o va a block
+						recv(i,&superMensaje,sizeof(superMensaje),0);
+						pcbRecibido = recibirSuperMensaje(superMensaje);
 						printf("Llegó un programa para encolar en Ready\n");
 						execAReady(pcbRecibido);
 //						t_pcb* aux = l_ready;
@@ -254,6 +270,60 @@ void* f_hiloPCP()
 //							printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
 //							aux = aux->siguiente;
 //						}
+					}
+					else if(mensaje == 2) //todo:podria ser ENUM
+					{
+						//Manejo de variables compartidas.
+						printf("Llegó un programa para manejar variables compartidas.\n");
+						char mensaje2;
+						recv(i,&mensaje2,sizeof(char),0);
+						printf("Operación: %c\n", mensaje2);
+						int tamanio = 0, valorVariable = -1;
+						recv(i,&tamanio,sizeof(int),0);
+						char* variable = malloc(tamanio);
+						printf("Tamanio del nombre de la variable: %d\n",tamanio);
+						recv(i,variable,tamanio,0);
+						printf("Nombre de la variable: %s\n",variable);
+						if(mensaje2 == 0)
+						{
+							//Obtener valor variable compartida.
+							printf("Obtener valor variable compartida %s\n", variable);
+							int j;
+							for(j = 0; j < cantidadVariableCompartidas; j++)
+							{
+								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+								if(string_equals_ignore_case(arrayVariablesCompartidas[j].nombreVariable, variable))
+								{
+									valorVariable = arrayVariablesCompartidas[j].valorVariable;
+									printf("Variable Global pedida: %s Valor %d\n",variable,valorVariable);
+								}
+							}
+							send(i,&valorVariable,sizeof(int),0);
+							free(variable);
+						}
+						else if (mensaje2 == 1)
+						{
+							//Asignar variable compartida.
+							recv(i,&valorVariable,sizeof(int),0);
+							printf("Asignar valor variable compartida: %s\n", variable);
+							int j;
+							for(j = 0; j < cantidadVariableCompartidas; j++)
+							{
+								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+								if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
+								{
+									 arrayVariablesCompartidas[j].valorVariable = valorVariable;
+									 printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
+								}
+							}
+							//send(i,&valorVariable,sizeof(int),0);
+							free(variable);
+						}
+						else
+						{
+							//Error.
+							printf("Error accediendo a variables compartidas.\n");
+						}
 					}
 				}
 			}
@@ -843,7 +913,7 @@ t_pcb recibirSuperMensaje ( int superMensaje[11] )
 
 void cargarConfig(void)
 {
-	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
+	//t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
@@ -852,6 +922,25 @@ void cargarConfig(void)
 	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
 	IPCPU = config_get_string_value(configuracion, "IPCPU");
 	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
+}
+
+void cargarVariablesCompartidas(void)
+{
+	char** vars = malloc(1000);
+	vars = config_get_array_value(configuracion, "VARIABLES_COMPARTIDAS");
+	int i;
+	while(vars[cantidadVariableCompartidas] != NULL)
+	{
+		//printf("Variable compartida %d: %s\n",(cantTot+1), vars[cantTot]);
+		cantidadVariableCompartidas++;
+	}
+	printf("Cantidad total de variables compartidas: %d\n",cantidadVariableCompartidas);
+	arrayVariablesCompartidas = malloc(cantidadVariableCompartidas*sizeof(t_variableCompartida));
+	for(i = 0; i < cantidadVariableCompartidas; i++)
+	{
+		arrayVariablesCompartidas[i].nombreVariable = vars[i];
+		printf("NombreVar: %s\n", arrayVariablesCompartidas[i].nombreVariable);
+	}
 }
 
 void destruirPCB(int pid)
@@ -1231,3 +1320,4 @@ void execAExit(t_pcb pcb)
 		return;
 	}
 }
+

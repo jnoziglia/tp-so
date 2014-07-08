@@ -1,0 +1,8 @@
+#!./Programa
+begin
+	variables a, b
+	a = 3
+	!comp = 1
+	b = !comp + 2
+	a = b + 12
+end
