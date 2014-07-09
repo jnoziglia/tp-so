@@ -181,7 +181,6 @@ int main(){
 			{
 				estadoCPU = 0;
 				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
-				//send(socketUMV,(int*)estadoCPU,sizeof(int),0); //avisar que se muere
 				close(kernelSocket);
 				close(socketUMV);
 				free(pcb);
@@ -189,8 +188,6 @@ int main(){
 			}
 			printf("Program counter: %d\n", pcb->programCounter);
 			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
-			//memcpy(&(instruccionABuscar.start), indiceCodigo, sizeof(int));
-			//memcpy(&(instruccionABuscar.offset), indiceCodigo+sizeof(int), sizeof(int));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
 			printf("offset: %d\n", instruccionABuscar->offset);
 			char* instruccionAEjecutar = malloc(instruccionABuscar->offset + 1);
@@ -198,19 +195,19 @@ int main(){
 			if(instruccionAEjecutar == NULL)
 			{
 				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
-//				estadoCPU = 0;
-//				send(kernelSocket,&estadoCPU,sizeof(char),0);
-//				generarSuperMensaje();
-//				send(kernelSocket,superMensaje, 11*sizeof(int),0);
-//				AnSISOP_finalizar(); // Es una primitiva.
-				instruccionAEjecutar = "end\0";
+				estadoCPU = 0;
+				send(kernelSocket,&estadoCPU,sizeof(char),0);
+				generarSuperMensaje();
+				send(kernelSocket,superMensaje, sizeof(int)*11,0);
 				break;
 			}
 			instruccionAEjecutar[instruccionABuscar->offset] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
 			sleep(2);
+
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
 			printf("Terminar programa: %d\n", terminarPrograma);
+
 			if(terminarPrograma)
 			{
 				printf("Se termina el programa \n");
@@ -544,33 +541,50 @@ t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable)
 	printf("Primitiva Dereferenciar Variable\n");
 	int* valor;
 	valor = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4);
+	printf("Dereferenciar puntero: %d, valor: %d\n", direccion_variable, *valor);
 	return *valor;
 }
 
 void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor)
 {
 	printf("Primitiva Asignar Variable\n");
+	printf("Valor: %d, Dirección: %d\n", valor, direccion_variable);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4,&valor);
 }
 
 //TODO:ObtenerValorCompartida, asignarVariableCompartida
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable)
 {
-	printf("primitiva obtenerValorCompartida\n");
-	return variable;
-
+	printf("Primitiva Obtener Valor de Variable Compartida: %s\n", variable);
+	char estadoCPU = 2; //Trabajar con variables compartidas
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	char mensaje2 = 0; //Pedir valor de variable
+	send(kernelSocket,&mensaje2,sizeof(char),0);
+	//todo: Chequear acá si hubo error recibiendo. Marcar terminarPrograma = 1.
+	int tamanio = strlen(variable);
+	printf("Tamanio: %d\n", tamanio);
+	send(kernelSocket,&tamanio,sizeof(int),0);
+	send(kernelSocket,variable,tamanio,0);
+	t_valor_variable valorVariable;
+	recv(kernelSocket,&valorVariable,sizeof(int),0);
+	if(valorVariable == -1) printf("Error recibiendo el valor de la variable");
+	printf("Valor de la variable: %d\n", valorVariable);
+	return valorVariable;
 }
 
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor)
 {
-	printf("primitiva asignarValorCompartida\n");
-			printf("variable=%s",variable);
-			printf("valor=%d",valor);
-			estadoCPU =5;                                                                //nuevo valor de estado,5 que indica sistemcallasignarValorCompartida
-
-			send(kernelSocket,&estadoCPU,sizeof(char),0);
-			//send(kernelSocket,&variable,sizeof(t_nombre_compartida),0);
-			//send(kernelSocket,&valor,sizeof(t_valor_variable),0);
+	printf("Primitiva Asignar Valor de Variable Compartida: %s\n", variable);
+	estadoCPU = 2;
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	char mensaje2 = 1; //Asignar valor de variable
+	send(kernelSocket,&mensaje2,sizeof(char),0);
+	//todo: Chequear acá si hubo error recibiendo. Marcar terminarPrograma = 1.
+	int tamanio = strlen(variable);
+	printf("Tamanio: %d\n", tamanio);
+	send(kernelSocket,&tamanio,sizeof(int),0);
+	send(kernelSocket,variable,tamanio,0);
+	send(kernelSocket,&valor,sizeof(int),0);
 	return valor;
 }
 

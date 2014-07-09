@@ -54,6 +54,12 @@ typedef struct new
 	struct new *siguiente;
 }t_new;
 
+typedef struct  variableCompartida
+{
+	char* nombreVariable;
+	int valorVariable;
+}t_variableCompartida;
+
 enum
 {
 	new,
@@ -77,7 +83,7 @@ int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
-t_pcb* recibirSuperMensaje ( int superMensaje[11] );
+t_pcb recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
@@ -87,7 +93,10 @@ t_pcb* desencolarReady(void);
 void encolarExec(t_pcb* pcb);
 void desencolarExec(t_pcb* pcb);
 void encolarExit(t_pcb* pcb);
-
+t_pcb readyAExec(void);
+void execAReady(t_pcb pcb);
+void execAExit(t_pcb pcb);
+void cargarVariablesCompartidas(void);
 
 /* Variables Globales */
 t_new* l_new = NULL;
@@ -113,6 +122,8 @@ char* PUERTOUMV;
 char* IPUMV;
 char* PUERTOCPU;
 char* IPCPU;
+t_variableCompartida* arrayVariablesCompartidas;
+int cantidadVariableCompartidas = 0;
 
 
 /* Semáforos */
@@ -123,6 +134,9 @@ sem_t s_ColaNew;
 sem_t s_ComUmv;
 
 
+/*Archivo de Configuración*/
+t_config* configuracion;
+
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady;
@@ -131,7 +145,9 @@ int main(void) {
 	sem_init(&s_ColaExit,0,1);
 	sem_init(&s_ColaNew,0,1);
 	sem_init(&s_ComUmv,0,1);
+	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
+	cargarVariablesCompartidas();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
@@ -180,9 +196,11 @@ void* f_hiloPCP()
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
-	void* package = malloc(sizeof(t_pcb));
-	t_pcb* pcb;
-	t_pcb* puntero;
+	t_pcb pcbAEnviar;
+	t_pcb pcbRecibido;
+	//void* package = malloc(sizeof(t_pcb));
+	//t_pcb* pcb;
+	//t_pcb* puntero;
 	printf("Inicio del PCP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -220,90 +238,119 @@ void* f_hiloPCP()
 					printf("Nueva CPU: %d\n", socketPCP);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 					FD_SET(socketAux, &fdWPCP);
+					FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximo) maximo = socketAux;
 				}
 				else
 				{
-					FD_CLR(i, &fdRPCP);
-					FD_SET(i, &fdWPCP);
+//					FD_CLR(i, &fdRPCP);
+//					FD_SET(i, &fdWPCP);
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
-
-					puntero = l_exec;
-					printf("SOCKET CPU: %d\n", i);
-					printf("MENSAJE: %d\n", mensaje);
-					if(mensaje==5){
-						printf("primitiva asignarValorCompartida\n");
-						//t_nombre_compartida variable;
-						//t_valor_variable valor;
-
-						//recv(i,&variable,sizeof(t_nombre_compartida),0);
-					//	recv(i,&valor,sizeof(t_valor_variable),0);
-					//	printf("variable=%s",variable);
-						//printf("valor=%d",valor);
-					}
-					else
+					//recv(i,&superMensaje,sizeof(superMensaje),0);
+					//t_pcb* pcb = malloc(sizeof(t_pcb));
+					//pcbRecibido = recibirSuperMensaje(superMensaje);
+					//desencolarExec(pcb);
+					//pcb->siguiente = NULL;
+					if(mensaje == 0) //todo:podria ser ENUM
 					{
+						//Se muere el programa
 						recv(i,&superMensaje,sizeof(superMensaje),0);
-						for(j=0; j<11; j++) printf("%d\n", superMensaje[j]);
-						while(puntero != NULL)
+						pcbRecibido = recibirSuperMensaje(superMensaje);
+						printf("Llegó un programa para encolar en Exit\n");
+						//encolarEnExit
+						execAExit(pcbRecibido);
+					}
+					else if (mensaje == 1)
+					{
+						//Se termina el quantum o va a block
+						recv(i,&superMensaje,sizeof(superMensaje),0);
+						pcbRecibido = recibirSuperMensaje(superMensaje);
+						printf("Llegó un programa para encolar en Ready\n");
+						execAReady(pcbRecibido);
+					}
+					else if(mensaje == 2) //todo:podria ser ENUM
+					{
+						//Manejo de variables compartidas.
+						printf("Llegó un programa para manejar variables compartidas.\n");
+						char mensaje2;
+						recv(i,&mensaje2,sizeof(char),0);
+						printf("Operación: %c\n", mensaje2);
+						int tamanio = 0, valorVariable = -1;
+						recv(i,&tamanio,sizeof(int),0);
+						char* variable = malloc(tamanio);
+						printf("Tamanio del nombre de la variable: %d\n",tamanio);
+						recv(i,variable,tamanio,0);
+						printf("Nombre de la variable: %s\n",variable);
+						if(mensaje2 == 0)
 						{
-							printf("Lista ejecucion\n");
-							printf("%d\n", puntero->pid);
-							puntero = puntero->siguiente;
+							//Obtener valor variable compartida.
+							printf("Obtener valor variable compartida %s\n", variable);
+							int j;
+							for(j = 0; j < cantidadVariableCompartidas; j++)
+							{
+								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+								if(string_equals_ignore_case(arrayVariablesCompartidas[j].nombreVariable, variable))
+								{
+									valorVariable = arrayVariablesCompartidas[j].valorVariable;
+									printf("Variable Global pedida: %s Valor %d\n",variable,valorVariable);
+								}
+							}
+							send(i,&valorVariable,sizeof(int),0);
+							free(variable);
 						}
-						pcb = recibirSuperMensaje(superMensaje);
-						desencolarExec(pcb);
-						pcb->siguiente = NULL;
-						if(mensaje == 0) //todo:podria ser ENUM
+						else if (mensaje2 == 1)
 						{
-							//Se muere el programa
-							printf("Llegó un programa para encolar en Exit\n");
-							//encolarEnExit
-							encolarExit(pcb);
+							//Asignar variable compartida.
+							recv(i,&valorVariable,sizeof(int),0);
+							printf("Asignar valor variable compartida: %s\n", variable);
+							int j;
+							for(j = 0; j < cantidadVariableCompartidas; j++)
+							{
+								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+								if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
+								{
+									 arrayVariablesCompartidas[j].valorVariable = valorVariable;
+									 printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
+								}
+							}
+							//send(i,&valorVariable,sizeof(int),0);
+							free(variable);
 						}
 						else
 						{
-							//Se termina el quantum o va a block
-							printf("Llegó un programa para encolar en Ready\n");
-							encolarEnReady(pcb);
-//							t_pcb* aux = l_ready;
-//							while(aux != NULL)
-//							{
-//								printf("PID en Ready: %d\n",aux->pid);
-//								printf("SegmentoCodigo en Ready: %d\n",aux->segmentoCodigo);
-//								printf("SegmentoStack en Ready: %d\n",aux->segmentoStack);
-//								aux = aux->siguiente;
-//							}
+							//Error.
+							printf("Error accediendo a variables compartidas.\n");
 						}
 					}
 				}
 			}
 			else if(FD_ISSET(i, &writePCP))
 			{
-				//FD_SET(i, &writePCP);
-				//Sacar de Ready
+//				//FD_SET(i, &writePCP);
+//				//Sacar de Ready
 				if(l_ready != NULL)	//TODO: PONER SEMAFORO!!!
 				{
-					FD_CLR(i, &fdWPCP);
-					FD_SET(i, &fdRPCP);
-					t_pcb* pcbAux;
-					pcbAux = desencolarReady();
-					superMensaje[0] = pcbAux->pid;
-					superMensaje[1] = pcbAux->segmentoCodigo;
-					superMensaje[2] = pcbAux->segmentoStack;
-					superMensaje[3] = pcbAux->cursorStack;
-					superMensaje[4] = pcbAux->indiceCodigo;
-					superMensaje[5] = pcbAux->indiceEtiquetas;
-					superMensaje[6] = pcbAux->programCounter;
-					superMensaje[7] = pcbAux->tamanioContextoActual;
-					superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
-					superMensaje[9] = pcbAux->tamanioIndiceCodigo;
-					superMensaje[10] = pcbAux->peso;
-					//free(l_new);
-					//l_new = NULL;
-					status = send(i, superMensaje, sizeof(t_pcb), 0);
-					encolarExec(pcbAux);
+////					FD_CLR(i, &fdWPCP);
+////					FD_SET(i, &fdRPCP);
+					pcbAEnviar = readyAExec();
+//					t_pcb* pcbAux;
+//					pcbAux = desencolarReady();
+					superMensaje[0] = pcbAEnviar.pid;
+					superMensaje[1] = pcbAEnviar.segmentoCodigo;
+					superMensaje[2] = pcbAEnviar.segmentoStack;
+					superMensaje[3] = pcbAEnviar.cursorStack;
+					superMensaje[4] = pcbAEnviar.indiceCodigo;
+					superMensaje[5] = pcbAEnviar.indiceEtiquetas;
+					superMensaje[6] = pcbAEnviar.programCounter;
+					superMensaje[7] = pcbAEnviar.tamanioContextoActual;
+					superMensaje[8] = pcbAEnviar.tamanioIndiceEtiquetas;
+					superMensaje[9] = pcbAEnviar.tamanioIndiceCodigo;
+					superMensaje[10] = pcbAEnviar.peso;
+//					//free(l_new);
+//					//l_new = NULL;
+					status = send(i, superMensaje, 11*sizeof(int), 0);
+//					encolarExec(pcbAux);
 				}
 
 			}
@@ -834,36 +881,37 @@ void serializarPcb(t_pcb* pcb, void* package)
 	return;
 }
 
-t_pcb* recibirSuperMensaje ( int superMensaje[11] )
+t_pcb recibirSuperMensaje ( int superMensaje[11] )
 {
-	int i;
-	t_pcb* pcb = l_exec;
-	while(pcb->pid != superMensaje[0] && pcb != NULL)
-	{
-		pcb= pcb->siguiente;
-	}
-	if(pcb == NULL) printf("El PCB no existe\n");
-	pcb->pid = superMensaje[0];
-	pcb->segmentoCodigo = superMensaje[1];
-	pcb->segmentoStack=	superMensaje[2] ;
-	pcb->cursorStack=superMensaje[3]  ;
-	pcb->indiceCodigo=superMensaje[4] ;
-	pcb->indiceEtiquetas=superMensaje[5]  ;
-	pcb->programCounter=superMensaje[6] ;
-	pcb->tamanioContextoActual=superMensaje[7] ;
-	pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
-	pcb->tamanioIndiceCodigo=superMensaje[9] ;
-	pcb->peso=superMensaje[10] ;
+	t_pcb pcb;
+//	int i;
+//	t_pcb* pcb = l_exec;
+//	while(pcb->pid != superMensaje[0] && pcb != NULL)
+//	{
+//		pcb= pcb->siguiente;
+//	}
+//	if(pcb == NULL) printf("El PCB no existe\n");
+	pcb.pid = superMensaje[0];
+	pcb.segmentoCodigo = superMensaje[1];
+	pcb.segmentoStack=	superMensaje[2] ;
+	pcb.cursorStack=superMensaje[3]  ;
+	pcb.indiceCodigo=superMensaje[4] ;
+	pcb.indiceEtiquetas=superMensaje[5]  ;
+	pcb.programCounter=superMensaje[6] ;
+	pcb.tamanioContextoActual=superMensaje[7] ;
+	pcb.tamanioIndiceEtiquetas=superMensaje[8] ;
+	pcb.tamanioIndiceCodigo=superMensaje[9] ;
+	pcb.peso=superMensaje[10] ;
 
-	for(i=0; i<11; i++){
-		printf("pcb: %d\n", superMensaje[i]);
-	}
+//	for(i=0; i<11; i++){
+//		printf("pcb: %d\n", superMensaje[i]);
+//	}
 	return pcb;
 }
 
 void cargarConfig(void)
 {
-	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
+	//t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
@@ -872,6 +920,25 @@ void cargarConfig(void)
 	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
 	IPCPU = config_get_string_value(configuracion, "IPCPU");
 	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
+}
+
+void cargarVariablesCompartidas(void)
+{
+	char** vars = malloc(1000);
+	vars = config_get_array_value(configuracion, "VARIABLES_COMPARTIDAS");
+	int i;
+	while(vars[cantidadVariableCompartidas] != NULL)
+	{
+		//printf("Variable compartida %d: %s\n",(cantTot+1), vars[cantTot]);
+		cantidadVariableCompartidas++;
+	}
+	printf("Cantidad total de variables compartidas: %d\n",cantidadVariableCompartidas);
+	arrayVariablesCompartidas = malloc(cantidadVariableCompartidas*sizeof(t_variableCompartida));
+	for(i = 0; i < cantidadVariableCompartidas; i++)
+	{
+		arrayVariablesCompartidas[i].nombreVariable = vars[i];
+		printf("NombreVar: %s\n", arrayVariablesCompartidas[i].nombreVariable);
+	}
 }
 
 void destruirPCB(int pid)
@@ -1003,8 +1070,8 @@ void encolarExec(t_pcb* pcb)
 	if(l_exec == NULL)
 	{
 		l_exec = pcb;
-		l_exec->siguiente = NULL;
-		return;
+		pcb->siguiente = NULL;
+		//return;
 	}
 	else
 	{
@@ -1014,15 +1081,21 @@ void encolarExec(t_pcb* pcb)
 		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
-		return;
+		//return;
 	}
+	aux = l_exec;
+	while(aux != NULL)
+	{
+		printf("PID en exec: %d", aux->pid);
+		aux = aux->siguiente;
+	}
+	return;
 }
 
 void desencolarExec(t_pcb* pcb)
 {
 	t_pcb* aux = l_exec;
 	t_pcb* auxAnt;
-
 	if (aux->pid == pcb->pid)
 	{
 		l_exec = l_exec->siguiente;
@@ -1068,3 +1141,179 @@ void encolarExit(t_pcb* pcb)
 		return;
 	}
 }
+
+t_pcb readyAExec(void)
+{
+	sem_wait(&s_ColaReady);
+	t_pcb* auxReady = l_ready;
+	l_ready = auxReady->siguiente;
+	sem_post(&s_ColaReady);
+
+	t_pcb* auxExec = l_exec;
+	if(l_exec == NULL)
+	{
+		l_exec = auxReady;
+		auxReady->siguiente = NULL;
+		//return;
+	}
+	else
+	{
+		while(auxExec->siguiente != NULL)
+		{
+			auxExec = auxExec->siguiente;
+		}
+		auxExec->siguiente = auxReady;
+		auxReady->siguiente = NULL;
+		//return;
+	}
+//	aux = l_exec;
+//	while(aux != NULL)
+//	{
+//		printf("PID en exec: %d", aux->pid);
+//		aux = aux->siguiente;
+//	}
+	return *auxReady;
+}
+
+void execAReady(t_pcb pcb)
+{
+	t_pcb* auxExec = l_exec;
+	t_pcb* auxAnt;
+	//t_pcb* pcbAMover;
+	while (auxExec != NULL)
+	{
+		printf("PID EN EXEC: %d\n", auxExec->pid);
+		auxExec = auxExec->siguiente;
+	}
+	auxExec = l_exec;
+	if(auxExec->siguiente == NULL && auxExec->pid == pcb.pid)
+	{
+		l_exec = NULL;
+		//free(aux);
+		//return;
+	}
+	else
+	{
+		auxAnt = auxExec;
+		auxExec = auxExec->siguiente;
+		while(auxExec != NULL)
+		{
+			if(auxExec->pid == pcb.pid)
+			{
+				auxAnt->siguiente = auxExec->siguiente;
+				//free(aux);
+			}
+			else
+			{
+				auxAnt = auxExec;
+				auxExec = auxExec->siguiente;
+			}
+		}
+	}
+
+	printf("Desencole\n");
+
+	//pcbAMover = auxExec;
+	auxExec->pid = pcb.pid;
+	auxExec->segmentoCodigo = pcb.segmentoCodigo;
+	auxExec->segmentoStack = pcb.segmentoStack;
+	auxExec->cursorStack = pcb.cursorStack;
+	auxExec->indiceCodigo = pcb.indiceCodigo;
+	auxExec->indiceEtiquetas = pcb.indiceEtiquetas;
+	auxExec->programCounter = pcb.programCounter;
+	auxExec->tamanioContextoActual = pcb.tamanioContextoActual;
+	auxExec->tamanioIndiceEtiquetas = pcb.tamanioIndiceEtiquetas;
+	auxExec->tamanioIndiceCodigo = pcb.tamanioIndiceCodigo;
+	auxExec->peso = pcb.peso;
+	//auxExec->siguiente = NULL;
+
+	printf("Asigne\n");
+
+	sem_wait(&s_ColaReady);
+	t_pcb* aux = l_ready;
+	if(l_ready == NULL)
+	{
+		l_ready = auxExec;
+		sem_post(&s_ColaReady);
+		return;
+	}
+	else
+	{
+		while(aux->siguiente != NULL)
+		{
+			aux = aux->siguiente;
+		}
+		aux->siguiente = auxExec;
+		auxExec->siguiente = NULL;
+		sem_post(&s_ColaReady);
+		return;
+	}
+}
+
+void execAExit(t_pcb pcb)
+{
+	t_pcb* auxExec = l_exec;
+	t_pcb* auxAnt;
+	//t_pcb* pcbAMover;
+	if(auxExec->siguiente == NULL && auxExec->pid == pcb.pid)
+	{
+		l_exec = NULL;
+		//free(aux);
+		//return;
+	}
+	else
+	{
+		auxAnt = auxExec;
+		auxExec = auxExec->siguiente;
+		while(auxExec != NULL)
+		{
+			if(auxExec->pid == pcb.pid)
+			{
+				auxAnt->siguiente = auxExec->siguiente;
+				//free(aux);
+				//return;
+			}
+			auxAnt = auxExec;
+			auxExec = auxExec->siguiente;
+		}
+	}
+
+	//pcbAMover = auxExec;
+	auxExec->pid = pcb.pid;
+	auxExec->segmentoCodigo = pcb.segmentoCodigo;
+	auxExec->segmentoStack = pcb.segmentoStack;
+	auxExec->cursorStack = pcb.cursorStack;
+	auxExec->indiceCodigo = pcb.indiceCodigo;
+	auxExec->indiceEtiquetas = pcb.indiceEtiquetas;
+	auxExec->programCounter = pcb.programCounter;
+	auxExec->tamanioContextoActual = pcb.tamanioContextoActual;
+	auxExec->tamanioIndiceEtiquetas = pcb.tamanioIndiceEtiquetas;
+	auxExec->tamanioIndiceCodigo = pcb.tamanioIndiceCodigo;
+	auxExec->peso = pcb.peso;
+	auxExec->siguiente = NULL;
+
+	sem_wait(&s_ColaExit);
+	t_pcb* aux = l_exit;
+
+	if(l_exit == NULL)
+	{
+		l_exit = auxExec;
+		auxExec->siguiente = NULL;
+		printf("Encolando PRIMERO en exit %d\n", auxExec->pid);
+		sem_post(&s_ColaExit);
+		return;
+	}
+	else
+	{
+		while(aux->siguiente != NULL)
+		{
+			aux = aux->siguiente;
+		}
+		aux->siguiente = auxExec;
+		auxExec->siguiente = NULL;
+		printf("Encolando ULTIMO en exit %d\n", auxExec->pid);
+		sem_post(&s_ColaExit);
+		return;
+	}
+}
+

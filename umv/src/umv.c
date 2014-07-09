@@ -90,6 +90,7 @@ t_log* logi;
 /* Semaforos */
 sem_t s_cambioProcesoActivo;
 sem_t s_TablaSegmentos;
+sem_t s_cpu;
 
 
 int main (void)
@@ -99,6 +100,7 @@ int main (void)
 	int i;
 	sem_init(&s_cambioProcesoActivo,0,1);
 	sem_init(&s_TablaSegmentos,0,1);
+	sem_init(&s_cpu,0,1);
 
 	logi = log_create("/home/utnso/tp-2014-1c-unnamed/umv/src/log", "UMV", 0, LOG_LEVEL_INFO);
 
@@ -413,6 +415,7 @@ void* f_hiloKernel(void* socketCliente)
 	while(status != 0)
 	{
 		recv(socketKernel, &operacion, sizeof(char), 0);
+		sem_wait(&s_cpu);
 		printf("OPERACION: %d\n", operacion);
 		if (operacion == operCrearSegmento)
 		{
@@ -452,6 +455,7 @@ void* f_hiloKernel(void* socketCliente)
 				destruirSegmentos(pid);
 			}
 		}
+		sem_post(&s_cpu);
 	}
 	//exit(0);
 	return 0;
@@ -523,6 +527,7 @@ void* f_hiloCpu(void* socketCliente)
 		{
 			printf("ERROR");
 		}
+		sem_post(&s_cpu);
 	}
 	//exit(0);
 	return 0;
