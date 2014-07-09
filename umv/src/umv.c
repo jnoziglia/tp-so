@@ -464,6 +464,7 @@ void* f_hiloCpu(void* socketCliente)
 	int mensaje[4];
 	char operacion;
 	char confirmacion;
+	char error;
 	int pid, base, offset, tamanio;
 	void* buffer;
 	int i;
@@ -485,9 +486,10 @@ void* f_hiloCpu(void* socketCliente)
 				printf("MEnsaje %d: %d\n", i, mensaje[i]);
 			}
 			buffer = solicitarBytes(mensaje[1], mensaje[2], mensaje[3]);
-			int aux;
-			memcpy(&aux, buffer, sizeof(int));
-			printf("AUX: %d\n", aux);
+//			int aux;
+//			memcpy(&aux, buffer, sizeof(int));
+//			printf("AUX: %d\n", aux);
+			if (buffer == NULL) printf("buffer nulo\n");
 			send(socketCPU, buffer, mensaje[3], 0);
 			free(buffer);
 		}
@@ -502,8 +504,9 @@ void* f_hiloCpu(void* socketCliente)
 			buffer = malloc(tamanio);
 			status = recv(socketCPU, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
-			confirmacion = enviarBytes(base, offset, tamanio, buffer);
-			send(socketCPU, &confirmacion, sizeof(int), 0);
+			error = enviarBytes(base, offset, tamanio, buffer);
+			printf("CONFIRMACION: %d\n", error);
+			send(socketCPU, &error, sizeof(char), 0);
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
@@ -601,6 +604,7 @@ int enviarBytes(int base, int offset, int tamanio, void* buffer)
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
+	printf("CHEQUEO SI HAY SEG FAULT\n");
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
 		printf("Segmentation Fault");

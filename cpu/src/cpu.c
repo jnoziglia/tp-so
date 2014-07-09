@@ -49,6 +49,13 @@ typedef struct pcb
 	struct pcb *siguiente;
 }t_pcb;
 
+typedef struct diccionario
+{
+	char variable;
+	int offset;
+	struct diccionario *siguiente;
+} t_diccionario;
+
 
 /* Funciones */
 void conectarConKernel();
@@ -59,6 +66,9 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 void dejarDeDarServicio();
 void recibirSuperMensaje ( int* superMensaje );
 void generarSuperMensaje(void);
+void generarDiccionarioVariables(void);
+void agregarAlDiccionario(char variable, int offset);
+void liberarDiccionario(void);
 
 /* Primitivas*/
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable);
@@ -104,7 +114,7 @@ AnSISOP_kernel kernel_functions = {
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 1; //todo:quantum que lee de archivo de configuración
+int quantum = 10; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -116,6 +126,8 @@ char* PUERTOKERNEL;
 char* IPKERNEL;
 int BACKLOG;	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 int PACKAGESIZE;
+t_diccionario* diccionarioVariables;
+
 
 //todo:Primitivas, Hot Plug.
 
@@ -157,6 +169,12 @@ int main(){
 		printf("pid: %d\n", pcb->pid);
 		printf("peso: %d\n", pcb->peso);
 
+		if(pcb->tamanioContextoActual != 0)
+		{
+			generarDiccionarioVariables();
+			printf("Sali de la funcion\n");
+		}
+
 		while(quantumUtilizado<=quantum)
 		{
 			if(matarCPU == 1)
@@ -175,7 +193,7 @@ int main(){
 			//memcpy(&(instruccionABuscar.offset), indiceCodigo+sizeof(int), sizeof(int));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
 			printf("offset: %d\n", instruccionABuscar->offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
+			char* instruccionAEjecutar = malloc(instruccionABuscar->offset + 1);
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -192,6 +210,7 @@ int main(){
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
 			sleep(2);
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
+			printf("Terminar programa: %d\n", terminarPrograma);
 			if(terminarPrograma)
 			{
 				printf("Se termina el programa \n");
@@ -199,6 +218,7 @@ int main(){
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
 				send(kernelSocket,superMensaje, sizeof(int)*11,0);
+				liberarDiccionario();
 				break;
 			}
 			pcb->programCounter += 8;
@@ -210,6 +230,7 @@ int main(){
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
 		send(kernelSocket,superMensaje, sizeof(int)*11,0);
+		liberarDiccionario();
 	}
 
 	return 0;
@@ -326,6 +347,7 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 		printf("recibo datos segmento\n");
 		if(buffer == NULL)
 		{
+			printf("Termino programa\n");
 			terminarPrograma = 1;
 		}
 	}
@@ -337,7 +359,7 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	//int status = 1;
 	char operacion = 3;
 	char confirmacion;
-	int conf;
+	char conf;
 	char* package;
 	send(socketUMV, &operacion, sizeof(char), 0);
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
@@ -345,7 +367,8 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	{
 		package = serializarEnvioBytes(pid, base, offset, tamanio, buffer);
 		send(socketUMV, package, 4*sizeof(int) + tamanio, 0);
-		recv(socketUMV, &conf, sizeof(int), 0);
+		recv(socketUMV, &conf, sizeof(char), 0);
+		printf("CONF: %d\n", conf);
 		if(conf == -1)
 		{
 			terminarPrograma = 1;
@@ -412,6 +435,71 @@ void generarSuperMensaje(void)
 	return;
 }
 
+void generarDiccionarioVariables(void)
+{
+	int aux = 0;
+	char* buffer = malloc(pcb->tamanioContextoActual * 5);
+	t_diccionario* diccionarioAux = diccionarioVariables;
+	t_diccionario* nodo;
+	buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
+	while(aux < (pcb->tamanioContextoActual * 5))
+	{
+		printf("Entre a definir variables\n");
+		nodo = malloc(sizeof(t_diccionario));
+		nodo->variable = buffer[aux];
+		nodo->offset = pcb->cursorStack + aux + 1;
+		nodo->siguiente = NULL;
+		//return (offset);
+		aux = aux + 5;
+		if(diccionarioVariables == NULL)
+		{
+			diccionarioVariables = nodo;
+		}
+		else
+		{
+			diccionarioAux->siguiente = nodo;
+			diccionarioAux = diccionarioVariables->siguiente;
+		}
+	}
+	free(buffer);
+	printf("Arme diccionario\n");
+	return;
+}
+
+void agregarAlDiccionario(char variable, int offset)
+{
+	t_diccionario* diccionarioAux = diccionarioVariables;
+	t_diccionario* nodo = malloc(sizeof(t_diccionario));
+	nodo->variable = variable;
+	nodo->offset = offset;
+	nodo->siguiente = NULL;
+	if(diccionarioVariables == NULL)
+	{
+		diccionarioVariables = nodo;
+	}
+	else
+	{
+		while(diccionarioAux->siguiente != NULL)
+		{
+			diccionarioAux = diccionarioAux->siguiente;
+		}
+		diccionarioAux->siguiente = nodo;
+	}
+	return;
+}
+
+void liberarDiccionario(void)
+{
+	t_diccionario* diccionarioAux = diccionarioVariables;
+	t_diccionario* siguienteNodo;
+	while(diccionarioVariables != NULL)
+	{
+		diccionarioVariables = diccionarioVariables->siguiente;
+		free(diccionarioAux);
+		diccionarioAux = diccionarioVariables;
+	}
+}
+
 /*
  * PRIMITVAS
  */
@@ -419,12 +507,14 @@ void generarSuperMensaje(void)
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
 	printf("Primitiva Definir Variable\n");
-	int a;
+	int offset;
 	char variable = (char) identificador_variable;
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),1,&variable);
+	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),5,&variable);
+	offset = pcb->cursorStack + pcb->tamanioContextoActual * 5 + 1;
+	agregarAlDiccionario(variable, offset);
 	pcb->tamanioContextoActual++;
 	//todo:Diccionario de variables. ??? ???
-	return (pcb->cursorStack + pcb->tamanioContextoActual * 5)+1;
+	return offset;
 }
 
 t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable)
@@ -432,19 +522,20 @@ t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variab
 	printf("Primitiva Obtener Posicion Variable\n");
 	int offset = -1;
 	int aux = 0;
-	char* buffer = malloc(pcb->tamanioContextoActual * 5);
-	buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
-	while(aux <= (pcb->tamanioContextoActual * 5))
+	t_diccionario* diccionarioAux = diccionarioVariables;
+	//char* buffer = malloc(pcb->tamanioContextoActual * 5);
+	//buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
+	while(diccionarioAux != NULL)
 	{
-		if(*(buffer + aux) == identificador_variable)
+		if(diccionarioAux->variable == identificador_variable)
 		{
-			free(buffer);
-			offset = pcb->cursorStack + aux + 1;
+			//free(buffer);
+			offset = diccionarioAux->offset;
 			return (offset);
 		}
-		aux = aux + 5;
+		diccionarioAux = diccionarioAux->siguiente;
 	}
-	free(buffer);
+	//free(buffer);
 	return offset;
 }
 
@@ -518,6 +609,8 @@ void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta)
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),8,buffer);
 	pcb->cursorStack = pcb->cursorStack + 8 + (pcb->tamanioContextoActual*5);
 	AnSISOP_irAlLabel(etiqueta);
+	pcb->tamanioContextoActual = 0;
+	liberarDiccionario();
 	free(buffer);
 	return;
 }
@@ -533,6 +626,8 @@ void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retorn
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),12,buffer);
 	pcb->cursorStack = pcb->cursorStack + 12 + (pcb->tamanioContextoActual*5);
 	AnSISOP_irAlLabel(etiqueta);
+	pcb->tamanioContextoActual = 0;
+	liberarDiccionario();
 	free(buffer);
 	return;
 }
@@ -554,8 +649,10 @@ void AnSISOP_finalizar(void)
 		buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 8),8);
 		memcpy(&instruccion_a_ejecutar,(buffer+4),4);
 		memcpy(&contexto_anterior,buffer,4);
+		pcb->tamanioContextoActual = (pcb->cursorStack - 8 - contexto_anterior) / 5;
 		pcb->programCounter = instruccion_a_ejecutar;
 		pcb->cursorStack = contexto_anterior;
+		generarDiccionarioVariables();
 		free(buffer);
 		return;
 	}
@@ -570,7 +667,9 @@ void AnSISOP_retornar(t_valor_variable retorno)
 	memcpy(&direccion_a_retornar,(buffer+4),4);
 	memcpy(&contexto_anterior,buffer,4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_a_retornar,4,&retorno);
+	pcb->tamanioContextoActual = (pcb->cursorStack - 12 - contexto_anterior) / 5;
 	pcb->cursorStack = contexto_anterior;
+	generarDiccionarioVariables();
 	free(buffer);
 	return;
 }
