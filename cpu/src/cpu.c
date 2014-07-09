@@ -190,7 +190,7 @@ int main(){
 			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
 			printf("offset: %d\n", instruccionABuscar->offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar->offset + 1);
+			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -329,7 +329,7 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 {
 	char operacion = 0;
 	char confirmacion;
-	void* buffer = malloc(tamanio);
+	void* buffer = malloc(tamanio+1);
 	int mensaje[4], status;
 	mensaje[0] = pid;
 	mensaje[1] = base;
