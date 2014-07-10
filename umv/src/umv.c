@@ -476,7 +476,7 @@ void* f_hiloCpu(void* socketCliente)
 	{
 		printf("Recibo operacion\n");
 		recv(socketCPU, &operacion, sizeof(char), 0);
-		mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
+		//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 		printf("La operacion es: %d\n", operacion);
 		if (operacion == operSolicitarBytes)
 		{

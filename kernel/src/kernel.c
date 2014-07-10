@@ -243,8 +243,7 @@ void* f_hiloPCP()
 				}
 				else
 				{
-					FD_CLR(i, &fdRPCP);
-					FD_SET(i, &fdWPCP);
+
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
 					puntero = l_exec;
@@ -264,6 +263,8 @@ void* f_hiloPCP()
 					//pcb->siguiente = NULL;
 					if(mensaje == 0) //todo:podria ser ENUM
 					{
+						FD_CLR(i, &fdRPCP);
+						FD_SET(i, &fdWPCP);
 						//Se muere el programa
 						recv(i,&superMensaje,sizeof(superMensaje),0);
 						pcb = recibirSuperMensaje(superMensaje);
@@ -276,6 +277,8 @@ void* f_hiloPCP()
 					}
 					else if (mensaje == 1)
 					{
+						FD_CLR(i, &fdRPCP);
+						FD_SET(i, &fdWPCP);
 						//Se termina el quantum o va a block
 						recv(i,&superMensaje,sizeof(superMensaje),0);
 						for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
