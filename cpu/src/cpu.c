@@ -329,7 +329,7 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 {
 	char operacion = 0;
 	char confirmacion;
-	void* buffer = malloc(tamanio+1);
+	void* buffer = malloc(tamanio);
 	int mensaje[4], status;
 	mensaje[0] = pid;
 	mensaje[1] = base;
