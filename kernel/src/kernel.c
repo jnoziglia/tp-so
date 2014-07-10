@@ -83,7 +83,7 @@ int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
-t_pcb recibirSuperMensaje ( int superMensaje[11] );
+t_pcb* recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
@@ -196,8 +196,8 @@ void* f_hiloPCP()
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
-	t_pcb pcbAEnviar;
-	t_pcb pcbRecibido;
+	t_pcb* pcb;
+	t_pcb* puntero;
 	//void* package = malloc(sizeof(t_pcb));
 	//t_pcb* pcb;
 	//t_pcb* puntero;
@@ -238,15 +238,25 @@ void* f_hiloPCP()
 					printf("Nueva CPU: %d\n", socketPCP);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 					FD_SET(socketAux, &fdWPCP);
-					FD_SET(socketAux, &fdRPCP);
+					//FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximo) maximo = socketAux;
 				}
 				else
 				{
-//					FD_CLR(i, &fdRPCP);
-//					FD_SET(i, &fdWPCP);
+					FD_CLR(i, &fdRPCP);
+					FD_SET(i, &fdWPCP);
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
+					puntero = l_exec;
+					printf("SOCKET CPU: %d\n", i);
+					printf("MENSAJE: %d\n", mensaje);
+					while(puntero != NULL)
+					{
+						printf("Lista ejecucion\n");
+						printf("%d\n", puntero->pid);
+						puntero = puntero->siguiente;
+					}
+
 					//recv(i,&superMensaje,sizeof(superMensaje),0);
 					//t_pcb* pcb = malloc(sizeof(t_pcb));
 					//pcbRecibido = recibirSuperMensaje(superMensaje);
@@ -256,18 +266,25 @@ void* f_hiloPCP()
 					{
 						//Se muere el programa
 						recv(i,&superMensaje,sizeof(superMensaje),0);
-						pcbRecibido = recibirSuperMensaje(superMensaje);
+						pcb = recibirSuperMensaje(superMensaje);
 						printf("Llegó un programa para encolar en Exit\n");
 						//encolarEnExit
-						execAExit(pcbRecibido);
+						//execAExit(pcbRecibido);
+						desencolarExec(pcb);
+						pcb->siguiente = NULL;
+						encolarExit(pcb);
 					}
 					else if (mensaje == 1)
 					{
 						//Se termina el quantum o va a block
 						recv(i,&superMensaje,sizeof(superMensaje),0);
-						pcbRecibido = recibirSuperMensaje(superMensaje);
+						for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
+						printf("RECIBO SUPERMENSAJE\n");
+						pcb = recibirSuperMensaje(superMensaje);
 						printf("Llegó un programa para encolar en Ready\n");
-						execAReady(pcbRecibido);
+						desencolarExec(pcb);
+						pcb->siguiente = NULL;
+						encolarEnReady(pcb);
 					}
 					else if(mensaje == 2) //todo:podria ser ENUM
 					{
@@ -275,7 +292,7 @@ void* f_hiloPCP()
 						printf("Llegó un programa para manejar variables compartidas.\n");
 						char mensaje2;
 						recv(i,&mensaje2,sizeof(char),0);
-						printf("Operación: %c\n", mensaje2);
+						printf("Operación: %d\n", mensaje2);
 						int tamanio = 0, valorVariable = -1;
 						recv(i,&tamanio,sizeof(int),0);
 						char* variable = malloc(tamanio);
@@ -331,26 +348,27 @@ void* f_hiloPCP()
 //				//Sacar de Ready
 				if(l_ready != NULL)	//TODO: PONER SEMAFORO!!!
 				{
-////					FD_CLR(i, &fdWPCP);
-////					FD_SET(i, &fdRPCP);
-					pcbAEnviar = readyAExec();
+					FD_CLR(i, &fdWPCP);
+					FD_SET(i, &fdRPCP);
+					t_pcb* pcbAux;
+					pcbAux = desencolarReady();
 //					t_pcb* pcbAux;
 //					pcbAux = desencolarReady();
-					superMensaje[0] = pcbAEnviar.pid;
-					superMensaje[1] = pcbAEnviar.segmentoCodigo;
-					superMensaje[2] = pcbAEnviar.segmentoStack;
-					superMensaje[3] = pcbAEnviar.cursorStack;
-					superMensaje[4] = pcbAEnviar.indiceCodigo;
-					superMensaje[5] = pcbAEnviar.indiceEtiquetas;
-					superMensaje[6] = pcbAEnviar.programCounter;
-					superMensaje[7] = pcbAEnviar.tamanioContextoActual;
-					superMensaje[8] = pcbAEnviar.tamanioIndiceEtiquetas;
-					superMensaje[9] = pcbAEnviar.tamanioIndiceCodigo;
-					superMensaje[10] = pcbAEnviar.peso;
+					superMensaje[0] = pcbAux->pid;
+					superMensaje[1] = pcbAux->segmentoCodigo;
+					superMensaje[2] = pcbAux->segmentoStack;
+					superMensaje[3] = pcbAux->cursorStack;
+					superMensaje[4] = pcbAux->indiceCodigo;
+					superMensaje[5] = pcbAux->indiceEtiquetas;
+					superMensaje[6] = pcbAux->programCounter;
+					superMensaje[7] = pcbAux->tamanioContextoActual;
+					superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
+					superMensaje[9] = pcbAux->tamanioIndiceCodigo;
+					superMensaje[10] = pcbAux->peso;
 //					//free(l_new);
 //					//l_new = NULL;
 					status = send(i, superMensaje, 11*sizeof(int), 0);
-//					encolarExec(pcbAux);
+					encolarExec(pcbAux);
 				}
 
 			}
@@ -881,31 +899,30 @@ void serializarPcb(t_pcb* pcb, void* package)
 	return;
 }
 
-t_pcb recibirSuperMensaje ( int superMensaje[11] )
+t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 {
-	t_pcb pcb;
-//	int i;
-//	t_pcb* pcb = l_exec;
-//	while(pcb->pid != superMensaje[0] && pcb != NULL)
-//	{
-//		pcb= pcb->siguiente;
-//	}
-//	if(pcb == NULL) printf("El PCB no existe\n");
-	pcb.pid = superMensaje[0];
-	pcb.segmentoCodigo = superMensaje[1];
-	pcb.segmentoStack=	superMensaje[2] ;
-	pcb.cursorStack=superMensaje[3]  ;
-	pcb.indiceCodigo=superMensaje[4] ;
-	pcb.indiceEtiquetas=superMensaje[5]  ;
-	pcb.programCounter=superMensaje[6] ;
-	pcb.tamanioContextoActual=superMensaje[7] ;
-	pcb.tamanioIndiceEtiquetas=superMensaje[8] ;
-	pcb.tamanioIndiceCodigo=superMensaje[9] ;
-	pcb.peso=superMensaje[10] ;
+	int i;
+	t_pcb* pcb = l_exec;
+	while(pcb->pid != superMensaje[0] && pcb != NULL)
+	{
+		pcb= pcb->siguiente;
+	}
+	if(pcb == NULL) printf("El PCB no existe\n");
+	pcb->pid = superMensaje[0];
+	pcb->segmentoCodigo = superMensaje[1];
+	pcb->segmentoStack=	superMensaje[2] ;
+	pcb->cursorStack=superMensaje[3]  ;
+	pcb->indiceCodigo=superMensaje[4] ;
+	pcb->indiceEtiquetas=superMensaje[5]  ;
+	pcb->programCounter=superMensaje[6] ;
+	pcb->tamanioContextoActual=superMensaje[7] ;
+	pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
+	pcb->tamanioIndiceCodigo=superMensaje[9] ;
+	pcb->peso=superMensaje[10] ;
 
-//	for(i=0; i<11; i++){
-//		printf("pcb: %d\n", superMensaje[i]);
-//	}
+	for(i=0; i<11; i++){
+		printf("pcb: %d\n", superMensaje[i]);
+	}
 	return pcb;
 }
 

@@ -114,7 +114,7 @@ AnSISOP_kernel kernel_functions = {
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 10; //todo:quantum que lee de archivo de configuración
+int quantum = 1; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -190,7 +190,7 @@ int main(){
 			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
 			printf("offset: %d\n", instruccionABuscar->offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
+			char* instruccionAEjecutar = malloc(instruccionABuscar->offset+1);
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -434,31 +434,53 @@ void generarSuperMensaje(void)
 
 void generarDiccionarioVariables(void)
 {
+	printf("Genero diccionario de variables\n");
 	int aux = 0;
 	char* buffer = malloc(pcb->tamanioContextoActual * 5);
-	t_diccionario* diccionarioAux = diccionarioVariables;
+	t_diccionario* diccionarioAux;
 	t_diccionario* nodo;
+	t_diccionario* puntero;
 	buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
 	while(aux < (pcb->tamanioContextoActual * 5))
 	{
+		puntero = diccionarioVariables;
+		while(puntero!= NULL)
+		{
+			printf("%c   %d   %p",puntero->variable, puntero->offset, puntero->siguiente);
+			puntero = puntero->siguiente;
+		}
 		printf("Entre a definir variables\n");
-		nodo = malloc(sizeof(t_diccionario));
-		nodo->variable = buffer[aux];
-		nodo->offset = pcb->cursorStack + aux + 1;
-		nodo->siguiente = NULL;
-		//return (offset);
-		aux = aux + 5;
+
 		if(diccionarioVariables == NULL)
 		{
-			diccionarioVariables = nodo;
+			printf("El diccionario de variables esta vacio\n");
+			diccionarioVariables = malloc(sizeof(t_diccionario));
+			diccionarioVariables->variable = buffer[aux];
+			printf("La variable es: %c\n", diccionarioVariables->variable);
+			diccionarioVariables->offset = pcb->cursorStack + aux + 1;
+			diccionarioVariables->siguiente = NULL;
+			//return (offset);
+			aux = aux + 5;
+			diccionarioAux = diccionarioVariables;
 		}
 		else
 		{
+			printf("El diccionario de variables NO esta vacio\n");
+			nodo = malloc(sizeof(t_diccionario));
+			nodo->variable = buffer[aux];
+			printf("La variable es: %c\n", nodo->variable);
+			nodo->offset = pcb->cursorStack + aux + 1;
+			nodo->siguiente = NULL;
+			//return (offset);
+			aux = aux + 5;
+			printf("AUX: %d\n", aux);
 			diccionarioAux->siguiente = nodo;
-			diccionarioAux = diccionarioVariables->siguiente;
+			printf("Paso al siguiente nodo\n");
+			//diccionarioAux = diccionarioAux->siguiente;
+			diccionarioAux = diccionarioAux->siguiente;
 		}
 	}
-	free(buffer);
+	//free(buffer);
 	printf("Arme diccionario\n");
 	return;
 }
