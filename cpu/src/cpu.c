@@ -689,6 +689,7 @@ void AnSISOP_finalizar(void)
 	}
 	else
 	{
+		liberarDiccionario();
 		printf("Termina la funcion\n");
 		int contexto_anterior, instruccion_a_ejecutar;
 		void* buffer = malloc(8);
@@ -696,6 +697,7 @@ void AnSISOP_finalizar(void)
 		memcpy(&instruccion_a_ejecutar,(buffer+4),4);
 		memcpy(&contexto_anterior,buffer,4);
 		pcb->tamanioContextoActual = (pcb->cursorStack - 8 - contexto_anterior) / 5;
+		printf("Contexto Actual: %d\n", pcb->tamanioContextoActual);
 		pcb->programCounter = instruccion_a_ejecutar;
 		pcb->cursorStack = contexto_anterior;
 		generarDiccionarioVariables();
@@ -722,11 +724,17 @@ void AnSISOP_retornar(t_valor_variable retorno)
 
 void AnSISOP_imprimir(t_valor_variable valor_mostrar)
 {
+	printf("********\n");
+	printf("%d\n", valor_mostrar);
+	printf("********\n");
 	return;
 }
 
 void AnSISOP_imprimirTexto(char* texto)
 {
+	printf("********\n");
+	printf("%s\n", texto);
+	printf("********\n");
 	return;
 }
 
