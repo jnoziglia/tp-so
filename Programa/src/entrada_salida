@@ -1,0 +1,4 @@
+#!./Programa
+begin
+	io LPT1 200
+end

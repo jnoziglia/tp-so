@@ -54,11 +54,26 @@ typedef struct new
 	struct new *siguiente;
 }t_new;
 
+/*Estructura de variables compartidas. Array con Nombre y valor*/
 typedef struct  variableCompartida
 {
 	char* nombreVariable;
 	int valorVariable;
 }t_variableCompartida;
+
+/*Estructuras IO. Un listado con PCB/Tiempo y un array con cada dispositivo y su lista*/
+typedef struct listaIO
+{
+	t_pcb* pcb;
+	int tiempo;
+	struct listaIO *siguiente;
+}t_listaIO;
+
+typedef struct  IO
+{
+	char* nombreIO;
+	t_listaIO* pcbEnLista;
+}t_IO;
 
 enum
 {
@@ -87,6 +102,7 @@ t_pcb* recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
+void* f_hiloIO();
 t_new desencolarNew(void);
 void encolarEnReady(t_pcb* pcb);
 t_pcb* desencolarReady(void);
@@ -97,6 +113,7 @@ t_pcb readyAExec(void);
 void execAReady(t_pcb pcb);
 void execAExit(t_pcb pcb);
 void cargarVariablesCompartidas(void);
+void cargarDispositivosIO(void);
 
 /* Variables Globales */
 t_new* l_new = NULL;
@@ -123,7 +140,9 @@ char* IPUMV;
 char* PUERTOCPU;
 char* IPCPU;
 t_variableCompartida* arrayVariablesCompartidas;
-int cantidadVariableCompartidas = 0;
+int cantidadVariablesCompartidas = 0;
+t_IO* arrayDispositivosIO;
+int cantidadDispositivosIO = 0;
 
 
 /* Semáforos */
@@ -132,22 +151,25 @@ sem_t s_ColaReady;
 sem_t s_ColaExit;
 sem_t s_ColaNew;
 sem_t s_ComUmv;
+sem_t s_IO; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
 
 
 /*Archivo de Configuración*/
 t_config* configuracion;
 
 int main(void) {
-	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
-	int rhPCP, rhPLP, rhMostrarNew, rhColaReady;
+	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady, hiloIO;
+	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
 	sem_init(&s_Multiprogramacion,0,4);
 	sem_init(&s_ColaReady,0,1);
 	sem_init(&s_ColaExit,0,1);
 	sem_init(&s_ColaNew,0,1);
 	sem_init(&s_ComUmv,0,1);
+	sem_init(&s_IO,0,0);
 	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
 	cargarVariablesCompartidas();
+	cargarDispositivosIO();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
@@ -155,9 +177,11 @@ int main(void) {
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
 	rhMostrarNew = pthread_create(&hiloMostrarNew, NULL, f_hiloMostrarNew, NULL);
 	rhColaReady = pthread_create(&hiloColaReady, NULL, f_hiloColaReady, NULL);
+	rhColaIO = pthread_create(&hiloIO, NULL, f_hiloIO, NULL);
 	pthread_join(hiloPCP, NULL);
 	pthread_join(hiloPLP, NULL);
 	pthread_join(hiloMostrarNew, NULL);
+	pthread_join(hiloIO, NULL);
 	//printf("%d",rhPCP);
 	//printf("%d",rhPLP);
 
@@ -279,7 +303,7 @@ void* f_hiloPCP()
 					{
 						FD_CLR(i, &fdRPCP);
 						FD_SET(i, &fdWPCP);
-						//Se termina el quantum o va a block
+						//Se termina el quantum
 						recv(i,&superMensaje,sizeof(superMensaje),0);
 						for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
 						printf("RECIBO SUPERMENSAJE\n");
@@ -307,13 +331,14 @@ void* f_hiloPCP()
 							//Obtener valor variable compartida.
 							printf("Obtener valor variable compartida %s\n", variable);
 							int j;
-							for(j = 0; j < cantidadVariableCompartidas; j++)
+							for(j = 0; j < cantidadVariablesCompartidas; j++)
 							{
 								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
 								if(string_equals_ignore_case(arrayVariablesCompartidas[j].nombreVariable, variable))
 								{
 									valorVariable = arrayVariablesCompartidas[j].valorVariable;
 									printf("Variable Global pedida: %s Valor %d\n",variable,valorVariable);
+									break;
 								}
 							}
 							send(i,&valorVariable,sizeof(int),0);
@@ -321,17 +346,20 @@ void* f_hiloPCP()
 						}
 						else if (mensaje2 == 1)
 						{
+							FD_CLR(i, &fdRPCP);
+							FD_SET(i, &fdWPCP);
 							//Asignar variable compartida.
 							recv(i,&valorVariable,sizeof(int),0);
 							printf("Asignar valor variable compartida: %s\n", variable);
 							int j;
-							for(j = 0; j < cantidadVariableCompartidas; j++)
+							for(j = 0; j < cantidadVariablesCompartidas; j++)
 							{
 								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
 								if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
 								{
 									 arrayVariablesCompartidas[j].valorVariable = valorVariable;
 									 printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
+									 break;
 								}
 							}
 							//send(i,&valorVariable,sizeof(int),0);
@@ -341,6 +369,55 @@ void* f_hiloPCP()
 						{
 							//Error.
 							printf("Error accediendo a variables compartidas.\n");
+						}
+					}
+					else if (mensaje == 3)
+					{
+						FD_CLR(i, &fdRPCP);
+						FD_SET(i, &fdWPCP);
+						printf("Llegó un programa para encolar en dispositivo\n");
+						//Se bloquea el PCB
+						int tamanio = 0, tiempo = -1;
+						recv(i,&tamanio,sizeof(int),0);
+						char* dispositivo = malloc(tamanio);
+						printf("Tamanio del nombre del dispositivo: %d\n",tamanio);
+						recv(i,dispositivo,tamanio,0);
+						dispositivo[tamanio] = '\0';
+						recv(i,&tiempo,sizeof(int),0);
+						printf("Nombre del dispositivo: %s\n",dispositivo);
+						//Recepción del PCB
+						recv(i,&superMensaje,sizeof(superMensaje),0);
+						printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
+						pcb = recibirSuperMensaje(superMensaje);
+						desencolarExec(pcb);
+						pcb->siguiente = NULL;
+						//Buscar el dispositivo donde encolar
+						int j;
+						for(j = 0; j < cantidadDispositivosIO; j++)
+						{
+							printf("Busco el dispositivo. Buscado: %s, actual: %s\n", dispositivo, arrayDispositivosIO[j].nombreIO);
+							if(string_equals_ignore_case(dispositivo, arrayDispositivosIO[j].nombreIO))
+							{
+								//Generar el elemento de la lista para encolar
+								t_listaIO* aux = malloc(sizeof(t_listaIO));
+								aux->pcb = pcb;
+								aux->tiempo = tiempo;
+								aux->siguiente = NULL;
+								//Encolarlo último
+								if(arrayDispositivosIO[j].pcbEnLista == NULL)
+								{
+									arrayDispositivosIO[j].pcbEnLista = aux;
+								}
+								else
+								{
+									t_listaIO* listaAux = arrayDispositivosIO[j].pcbEnLista;
+									while(listaAux->siguiente != NULL) listaAux = arrayDispositivosIO[j].pcbEnLista->siguiente;
+									listaAux->siguiente = aux;
+								}
+								printf("PCB Encolado en el dispositivo %s\n",arrayDispositivosIO[j].nombreIO);
+								sem_post(&s_IO);
+								break;
+							}
 						}
 					}
 				}
@@ -561,6 +638,46 @@ void* f_hiloPLP()
 	select(escucharConexiones+1, &readfds, NULL, NULL, NULL);
 	return 0;
 }*/
+
+void* f_hiloIO()
+{
+	int i;
+	sem_wait(&s_IO);
+	while(1)
+	{
+		printf("Entro a buscar IO\n");
+		for(i=0; i < cantidadDispositivosIO; i++)
+		{
+			if(arrayDispositivosIO[i].pcbEnLista != NULL)
+			{
+				printf("El dispositivo: %s tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
+				t_listaIO* aux = arrayDispositivosIO[i].pcbEnLista;
+				while(aux != NULL)
+				{
+					printf("Dispositivo IO: %s, PID: %d, Espera de: %d ms\n", arrayDispositivosIO[i].nombreIO, aux->pcb->pid, aux->tiempo);
+					//Esperar las unidades de tiempo antes de seguir
+					usleep(aux->tiempo);
+					printf("Espera terminada\n");
+					sleep(4);
+					//Desencolar
+					encolarEnReady(aux->pcb);
+					arrayDispositivosIO[i].pcbEnLista = aux->siguiente;
+					free(aux);
+					aux = arrayDispositivosIO[i].pcbEnLista;
+				}
+				arrayDispositivosIO[i].pcbEnLista = NULL;
+				printf("El dispositivo: %s ya no tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
+			}
+			else
+			{
+				printf("El dispositivo: %s NO tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
+			}
+		}
+		sem_wait(&s_IO);
+
+	}
+	return 0;
+}
 
 
 
@@ -946,20 +1063,46 @@ void cargarVariablesCompartidas(void)
 {
 	char** vars = malloc(1000);
 	vars = config_get_array_value(configuracion, "VARIABLES_COMPARTIDAS");
-	int i;
-	while(vars[cantidadVariableCompartidas] != NULL)
+	while(vars[cantidadVariablesCompartidas] != NULL)
 	{
 		//printf("Variable compartida %d: %s\n",(cantTot+1), vars[cantTot]);
-		cantidadVariableCompartidas++;
+		cantidadVariablesCompartidas++;
 	}
-	printf("Cantidad total de variables compartidas: %d\n",cantidadVariableCompartidas);
-	arrayVariablesCompartidas = malloc(cantidadVariableCompartidas*sizeof(t_variableCompartida));
-	for(i = 0; i < cantidadVariableCompartidas; i++)
+	printf("Cantidad total de variables compartidas: %d\n",cantidadVariablesCompartidas);
+	arrayVariablesCompartidas = malloc(cantidadVariablesCompartidas*sizeof(t_variableCompartida));
+	printf("Variables Compartidas: \t");
+	int i;
+	for(i = 0; i < cantidadVariablesCompartidas; i++)
 	{
 		arrayVariablesCompartidas[i].nombreVariable = vars[i];
-		printf("NombreVar: %s\n", arrayVariablesCompartidas[i].nombreVariable);
+		printf("%s,\t", arrayVariablesCompartidas[i].nombreVariable);
 	}
+	printf("\n");
+	free(vars);
 }
+
+void cargarDispositivosIO(void)
+{
+	char** disp = malloc(1000);
+	disp = config_get_array_value(configuracion, "IO");
+	while(disp[cantidadDispositivosIO] != NULL)
+	{
+		cantidadDispositivosIO++;
+	}
+	printf("Cantidad total de dispositivos IO: %d\n",cantidadDispositivosIO);
+	arrayDispositivosIO = malloc(cantidadDispositivosIO*sizeof(t_IO));
+	printf("Dispositivos IO: \t");
+	int i;
+	for(i = 0; i < cantidadDispositivosIO; i++)
+	{
+		arrayDispositivosIO[i].nombreIO = disp[i];
+		arrayDispositivosIO[i].pcbEnLista = NULL;
+		printf("%s,\t", arrayDispositivosIO[i].nombreIO);
+	}
+	printf("\n");
+	free(disp);
+}
+
 
 void destruirPCB(int pid)
 {

@@ -118,6 +118,7 @@ int quantum = 1; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
+bool bloquearPrograma = 0;
 t_pcb* pcb;
 int superMensaje[11];
 char* PUERTOUMV;
@@ -157,6 +158,7 @@ int main(){
 	{
 		printf("Espero pcb\n");
 		terminarPrograma = 0;
+		bloquearPrograma = 0;
 
 		int recibido = recv(kernelSocket,superMensaje,sizeof(t_pcb),0);
 		recibirSuperMensaje(superMensaje);
@@ -205,9 +207,10 @@ int main(){
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
 			sleep(2);
 
-			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions); //Todo: fijarse el \0 al final del STRING. Faltan 2 argumentos
+			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
+			pcb->programCounter += 8;
+			quantumUtilizado++;
 			printf("Terminar programa: %d\n", terminarPrograma);
-
 			if(terminarPrograma)
 			{
 				printf("Se termina el programa \n");
@@ -218,11 +221,17 @@ int main(){
 				liberarDiccionario();
 				break;
 			}
-			pcb->programCounter += 8;
-			quantumUtilizado++;
+			printf("Bloquear programa: %d\n", bloquearPrograma);
+			if(bloquearPrograma)
+			{
+				generarSuperMensaje();
+				send(kernelSocket,superMensaje, sizeof(int)*11,0);
+				liberarDiccionario();
+				break;
+			}
 		}
 		quantumUtilizado = 1;
-		if(terminarPrograma) continue;
+		if(terminarPrograma || bloquearPrograma) continue; //Si el programa ya salió por algo, no mandarlo de vuelta.
 		estadoCPU = 1;
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
@@ -597,7 +606,7 @@ t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable)
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor)
 {
 	printf("Primitiva Asignar Valor de Variable Compartida: %s\n", variable);
-	estadoCPU = 2;
+	estadoCPU = 2; //Trabajar con variables compartidas
 	send(kernelSocket,&estadoCPU,sizeof(char),0);
 	char mensaje2 = 1; //Asignar valor de variable
 	send(kernelSocket,&mensaje2,sizeof(char),0);
@@ -722,6 +731,15 @@ void AnSISOP_imprimirTexto(char* texto)
 
 void AnSISOP_entradaSalida(t_nombre_dispositivo dispositivo, int tiempo)
 {
+	printf("Primitiva Entrada Salida: %s\n", dispositivo);
+	estadoCPU = 3; //Trabajar con entrada/Salida
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	int tamanio = strlen(dispositivo);
+	printf("Tamanio del nombre del dispositivo: %d\n", tamanio);
+	send(kernelSocket,&tamanio,sizeof(int),0);
+	send(kernelSocket,dispositivo,tamanio,0);
+	send(kernelSocket,&tiempo,sizeof(int),0);
+	bloquearPrograma = 1;
 	return;
 }
 
