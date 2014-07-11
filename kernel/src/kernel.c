@@ -75,6 +75,14 @@ typedef struct  IO
 	t_listaIO* pcbEnLista;
 }t_IO;
 
+/*Estructura Semáforos. Un array con cada Semáforo, su cantidad de recursos disponibles (valor) y listado de PCB*/
+typedef struct semaforo
+{
+	char* nombreSemaforo;
+	int valor;
+	t_pcb* pcb;
+}t_semaforo;
+
 enum
 {
 	new,
@@ -100,6 +108,9 @@ void* f_hiloMostrarNew();
 void serializarPcb(t_pcb* pcb, void* package);
 t_pcb* recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
+void cargarVariablesCompartidas(void);
+void cargarDispositivosIO(void);
+void cargarSemaforos(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
 void* f_hiloIO();
@@ -112,8 +123,7 @@ void encolarExit(t_pcb* pcb);
 t_pcb readyAExec(void);
 void execAReady(t_pcb pcb);
 void execAExit(t_pcb pcb);
-void cargarVariablesCompartidas(void);
-void cargarDispositivosIO(void);
+
 
 /* Variables Globales */
 t_new* l_new = NULL;
@@ -143,6 +153,8 @@ t_variableCompartida* arrayVariablesCompartidas;
 int cantidadVariablesCompartidas = 0;
 t_IO* arrayDispositivosIO;
 int cantidadDispositivosIO = 0;
+t_semaforo* arraySemaforos;
+int cantidadSemaforos = 0;
 
 
 /* Semáforos */
@@ -152,6 +164,7 @@ sem_t s_ColaExit;
 sem_t s_ColaNew;
 sem_t s_ComUmv;
 sem_t s_IO; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
+sem_t s_Semaforos; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
 
 
 /*Archivo de Configuración*/
@@ -166,10 +179,12 @@ int main(void) {
 	sem_init(&s_ColaNew,0,1);
 	sem_init(&s_ComUmv,0,1);
 	sem_init(&s_IO,0,0);
+	sem_init(&s_Semaforos,0,0);
 	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
 	cargarVariablesCompartidas();
 	cargarDispositivosIO();
+	cargarSemaforos();
 
 	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
@@ -357,9 +372,9 @@ void* f_hiloPCP()
 								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
 								if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
 								{
-									 arrayVariablesCompartidas[j].valorVariable = valorVariable;
-									 printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
-									 break;
+									arrayVariablesCompartidas[j].valorVariable = valorVariable;
+									printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
+									break;
 								}
 							}
 							//send(i,&valorVariable,sizeof(int),0);
@@ -420,20 +435,119 @@ void* f_hiloPCP()
 							}
 						}
 					}
+					else if (mensaje == 4)
+					{
+						FD_CLR(i, &fdRPCP);
+						FD_SET(i, &fdWPCP);
+						printf("Llegó un pedido de semáforo.\n");
+						int tamanio = 0;
+						recv(i,&tamanio,sizeof(int),0);
+						char* semaforo = malloc(tamanio);
+						printf("Tamanio del nombre del semaforo: %d\n",tamanio);
+						recv(i,semaforo,tamanio,0);
+						semaforo[tamanio] = '\0';
+						printf("Nombre del semaforo: %s\n",semaforo);
+						char mensaje2;
+						recv(i,&mensaje2,sizeof(char),0);
+						printf("Operación: %d\n",mensaje2);
+						//Busco afuera cuál es el semaforo,
+						int j, semaforoEncontrado = -1;
+						for(j = 0; j < cantidadDispositivosIO; j++)
+						{
+							printf("Busco el semáforo. Buscado: %s, actual: %s\n", semaforo, arraySemaforos[j].nombreSemaforo);
+							if(string_equals_ignore_case(semaforo, arraySemaforos[j].nombreSemaforo))
+							{
+								semaforoEncontrado = j;
+							}
+						}
+						if(semaforoEncontrado == -1)
+						{
+							mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
+							send(i,&mensaje2,sizeof(char),0);
+							printf("No se encontró el semáforo solicitado. Se destruye el PCB");
+							recv(i,&superMensaje,sizeof(superMensaje),0);
+							printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
+							pcb = recibirSuperMensaje(superMensaje);
+							desencolarExec(pcb);
+							pcb->siguiente = NULL;
+							encolarExit(pcb);
+							break;
+						}
+						if(mensaje2 == 0)
+						{
+							//WAIT
+							printf("Wait\n");
+							arraySemaforos[semaforoEncontrado].valor--;
+							if(arraySemaforos[semaforoEncontrado].valor < 0)
+							{
+								//Se bloquea el programa.
+								printf("Se bloquea el PCB.\n");
+								mensaje2 = 0; //Se bloquea el programa. Hay que pedir PCB.
+								send(i,&mensaje2,sizeof(char),0);
+								//Recepción del PCB
+								recv(i,&superMensaje,sizeof(superMensaje),0);
+								printf("PCB a bloquear: %d\n", superMensaje[0]);
+								pcb = recibirSuperMensaje(superMensaje);
+								desencolarExec(pcb);
+								pcb->siguiente = NULL;
+								//Encolar en la cola del semáforo.
+								if(arraySemaforos[semaforoEncontrado].pcb == NULL)
+								{
+									arraySemaforos[semaforoEncontrado].pcb = pcb;
+									break;
+								}
+								else
+								{
+									t_pcb* listaAux = arraySemaforos[semaforoEncontrado].pcb;
+									while(listaAux->siguiente != NULL) listaAux = arraySemaforos[semaforoEncontrado].pcb->siguiente;
+									listaAux->siguiente = pcb;
+									break;
+								}
+							}
+							else
+							{
+								//Puede seguir ejecutando
+								printf("Puede seguir ejecutando\n");
+								char mensaje3 = 1; //Enviar confirmación: Puede seguir ejecutando.
+								send(i,&mensaje3,sizeof(char),0);
+								break;
+							}
+						}
+						else if (mensaje2 == 1)
+						{
+							//SIGNAL
+							printf("Signal\n");
+							arraySemaforos[semaforoEncontrado].valor++;
+							if(arraySemaforos[semaforoEncontrado].pcb != NULL)
+							{
+								t_pcb* aux = arraySemaforos[semaforoEncontrado].pcb;
+								printf("Se pasa a ready un PCB: %d\n", aux->pid);
+								arraySemaforos[semaforoEncontrado].pcb = arraySemaforos[semaforoEncontrado].pcb->siguiente;
+								encolarEnReady(aux);
+								break;
+							}
+						}
+						else
+						{
+							//Error.
+							printf("Error en la recepción de la operación.\n");
+							break;
+						}
+					}
 				}
 			}
 			else if(FD_ISSET(i, &writePCP))
 			{
-//				//FD_SET(i, &writePCP);
-//				//Sacar de Ready
+				//				//FD_SET(i, &writePCP);
+				//				//Sacar de Ready
 				if(l_ready != NULL)	//TODO: PONER SEMAFORO!!!
 				{
 					FD_CLR(i, &fdWPCP);
 					FD_SET(i, &fdRPCP);
 					t_pcb* pcbAux;
 					pcbAux = desencolarReady();
-//					t_pcb* pcbAux;
-//					pcbAux = desencolarReady();
+					//					t_pcb* pcbAux;
+					//					pcbAux = desencolarReady();
 					superMensaje[0] = pcbAux->pid;
 					superMensaje[1] = pcbAux->segmentoCodigo;
 					superMensaje[2] = pcbAux->segmentoStack;
@@ -445,8 +559,8 @@ void* f_hiloPCP()
 					superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
 					superMensaje[9] = pcbAux->tamanioIndiceCodigo;
 					superMensaje[10] = pcbAux->peso;
-//					//free(l_new);
-//					//l_new = NULL;
+					//					//free(l_new);
+					//					//l_new = NULL;
 					status = send(i, superMensaje, 11*sizeof(int), 0);
 					encolarExec(pcbAux);
 				}
@@ -480,20 +594,20 @@ void* f_hiloPLP()
 	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketServidor, BACKLOG);
 	printf("SocketServidor: %d\n",socketServidor);
-//
-//	int socketllegado = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
-//	printf("SocketLlegado: %d\n",socketllegado);
-//
-//	status = recv(socketllegado,(void*)package, PACKAGESIZE, 0);
-//	printf("status: %d\n",status);
-//
-//	t_pcb* nuevoPCB;
-//	nuevoPCB = crearPcb(package);
-//	if(nuevoPCB != NULL)
-//	{
-//		printf("Nuevo PCB Creado\n");
-//		encolarEnNew(nuevoPCB);
-//	}
+	//
+	//	int socketllegado = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
+	//	printf("SocketLlegado: %d\n",socketllegado);
+	//
+	//	status = recv(socketllegado,(void*)package, PACKAGESIZE, 0);
+	//	printf("status: %d\n",status);
+	//
+	//	t_pcb* nuevoPCB;
+	//	nuevoPCB = crearPcb(package);
+	//	if(nuevoPCB != NULL)
+	//	{
+	//		printf("Nuevo PCB Creado\n");
+	//		encolarEnNew(nuevoPCB);
+	//	}
 
 
 	FD_ZERO(&readPLP);
@@ -533,11 +647,11 @@ void* f_hiloPLP()
 						//t_pcb* nuevoPCB;
 						//printf("%s", package);
 						//nuevoPCB = crearPcb(package, i);
-//						if(nuevoPCB != NULL)
-//						{
-//							printf("Nuevo PCB Creado\n");
-//							encolarEnNew(nuevoPCB, new);
-//						}
+						//						if(nuevoPCB != NULL)
+						//						{
+						//							printf("Nuevo PCB Creado\n");
+						//							encolarEnNew(nuevoPCB, new);
+						//						}
 						package[status+1] = '\0';
 						t_new* nodoNew = malloc(sizeof(t_new));
 						nodoNew->pid = i;
@@ -606,7 +720,7 @@ void* f_hiloPLP()
 	return NULL;
 }
 
-	/*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+/*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
 
@@ -658,7 +772,7 @@ void* f_hiloIO()
 					//Esperar las unidades de tiempo antes de seguir
 					usleep(aux->tiempo);
 					printf("Espera terminada\n");
-					sleep(4);
+					sleep(4); //todo:Hay sleep de 4 segundos para test.
 					//Desencolar
 					encolarEnReady(aux->pcb);
 					arrayDispositivosIO[i].pcbEnLista = aux->siguiente;
@@ -885,64 +999,64 @@ void encolarEnNew(t_new* programa)
 		return;
 	}
 
-//		if (l_new->peso > pcb->peso)
-//		{
-//			pcb->siguiente = l_new;
-//			l_new = pcb;
-//			return;
-//		}
-//		else
-//		{
-//			auxAnterior = l_new;
-//			aux = auxAnterior->siguiente;
-//			while (aux != NULL)
-//			{
-//				if (aux->peso > pcb->peso)
-//				{
-//					pcb->siguiente = aux;
-//					auxAnterior->siguiente = pcb;
-//					return;
-//				}
-//				else
-//				{
-//					auxAnterior = aux;
-//					aux = aux->siguiente;
-//				}
-//			}
-//			auxAnterior->siguiente = pcb;
-//			pcb->siguiente = NULL;
-//			return;
-//		}
+	//		if (l_new->peso > pcb->peso)
+	//		{
+	//			pcb->siguiente = l_new;
+	//			l_new = pcb;
+	//			return;
+	//		}
+	//		else
+	//		{
+	//			auxAnterior = l_new;
+	//			aux = auxAnterior->siguiente;
+	//			while (aux != NULL)
+	//			{
+	//				if (aux->peso > pcb->peso)
+	//				{
+	//					pcb->siguiente = aux;
+	//					auxAnterior->siguiente = pcb;
+	//					return;
+	//				}
+	//				else
+	//				{
+	//					auxAnterior = aux;
+	//					aux = aux->siguiente;
+	//				}
+	//			}
+	//			auxAnterior->siguiente = pcb;
+	//			pcb->siguiente = NULL;
+	//			return;
+	//		}
 }
 
 
 void conexionUMV(void)
 {
-		struct addrinfo hintsumv;
-		struct addrinfo *umvInfo;
-		char id = 0;
-		char conf = 0;
+	struct addrinfo hintsumv;
+	struct addrinfo *umvInfo;
+	char id = 0;
+	char conf = 0;
 
-		memset(&hintsumv, 0, sizeof(hintsumv));
-		hintsumv.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
-		hintsumv.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+	memset(&hintsumv, 0, sizeof(hintsumv));
+	hintsumv.ai_family = AF_UNSPEC;		// Permite que la maquina se encargue de verificar si usamos IPv4 o IPv6
+	hintsumv.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
 
-		getaddrinfo(IPUMV, PUERTOUMV, &hintsumv, &umvInfo);	// Carga en umvInfo los datos de la conexion
+	getaddrinfo(IPUMV, PUERTOUMV, &hintsumv, &umvInfo);	// Carga en umvInfo los datos de la conexion
 
-		socketUMV = socket(umvInfo->ai_family, umvInfo->ai_socktype, umvInfo->ai_protocol);
+	socketUMV = socket(umvInfo->ai_family, umvInfo->ai_socktype, umvInfo->ai_protocol);
 
-		int a = connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
-		printf("Conexión con la UMV: %d", a);
-		freeaddrinfo(umvInfo);	// No lo necesitamos mas
-		send(socketUMV, &id, sizeof(char), 0);
-		recv(socketUMV, &conf, sizeof(char), 0);
-//		int idKernel = 0;
-//		int confirmacion;
-//		send(socketUMV, (void*)idKernel, sizeof(int), 0);
-//		printf("Enviado Tipo:Kernel\n");
-//		recv(socketUMV, (void*)confirmacion, sizeof(int),0);
-//		printf("Confirmación: %d \n",confirmacion);
-		return;
+	int a = connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
+	printf("Conexión con la UMV: %d", a);
+	freeaddrinfo(umvInfo);	// No lo necesitamos mas
+	send(socketUMV, &id, sizeof(char), 0);
+	recv(socketUMV, &conf, sizeof(char), 0);
+	//		int idKernel = 0;
+	//		int confirmacion;
+	//		send(socketUMV, (void*)idKernel, sizeof(int), 0);
+	//		printf("Enviado Tipo:Kernel\n");
+	//		recv(socketUMV, (void*)confirmacion, sizeof(int),0);
+	//		printf("Confirmación: %d \n",confirmacion);
+	return;
 }
 
 void* f_hiloMostrarNew()
@@ -954,13 +1068,26 @@ void* f_hiloMostrarNew()
 		if(string_equals_ignore_case(ingreso,"mostrar-new"))
 		{
 			printf("Procesos encolados en New\n");
-			printf("PID: \t\tPeso:\n");
+			printf("PID:\n");
 			printf("-----------------------\n");
 			t_new* aux = l_new;
 			while(aux != NULL)
 			{
 				printf("%d\t\t",aux->pid);
 				//printf("%d\n",aux->peso);
+				aux = aux->siguiente;
+			}
+			continue;
+		}
+		else if(string_equals_ignore_case(ingreso,"mostrar-ready"))
+		{
+			printf("Procesos encolados en Ready\n");
+			printf("PID:\n");
+			printf("-----------------------\n");
+			t_pcb* aux = l_ready;
+			while(aux != NULL)
+			{
+				printf("%d\t\t",aux->pid);
 				aux = aux->siguiente;
 			}
 			continue;
@@ -1065,7 +1192,6 @@ void cargarVariablesCompartidas(void)
 	vars = config_get_array_value(configuracion, "VARIABLES_COMPARTIDAS");
 	while(vars[cantidadVariablesCompartidas] != NULL)
 	{
-		//printf("Variable compartida %d: %s\n",(cantTot+1), vars[cantTot]);
 		cantidadVariablesCompartidas++;
 	}
 	printf("Cantidad total de variables compartidas: %d\n",cantidadVariablesCompartidas);
@@ -1075,13 +1201,13 @@ void cargarVariablesCompartidas(void)
 	for(i = 0; i < cantidadVariablesCompartidas; i++)
 	{
 		arrayVariablesCompartidas[i].nombreVariable = vars[i];
-		printf("%s,\t", arrayVariablesCompartidas[i].nombreVariable);
+		printf("%s, ", arrayVariablesCompartidas[i].nombreVariable);
 	}
 	printf("\n");
 	free(vars);
 }
 
-void cargarDispositivosIO(void)
+void cargarDispositivosIO(void) //Todo: Falta agregar Retardo para cada Dispositivo. (Un hilo por cada semáforo?)
 {
 	char** disp = malloc(1000);
 	disp = config_get_array_value(configuracion, "IO");
@@ -1097,10 +1223,36 @@ void cargarDispositivosIO(void)
 	{
 		arrayDispositivosIO[i].nombreIO = disp[i];
 		arrayDispositivosIO[i].pcbEnLista = NULL;
-		printf("%s,\t", arrayDispositivosIO[i].nombreIO);
+		printf("%s, ", arrayDispositivosIO[i].nombreIO);
 	}
 	printf("\n");
 	free(disp);
+}
+
+void cargarSemaforos(void)
+{
+	char** sem = malloc(1000);
+	char** val = malloc(1000);
+	sem = config_get_array_value(configuracion, "SEMAFOROS");
+	val = config_get_array_value(configuracion, "VALOR_SEMAFOROS");
+	while(sem[cantidadSemaforos] != NULL)
+	{
+		cantidadSemaforos++;
+	}
+	printf("Cantidad total de Semáforos: %d\n",cantidadSemaforos);
+	arraySemaforos = malloc(cantidadSemaforos*sizeof(t_semaforo));
+	printf("Semáforos: \t");
+	int i;
+	for(i = 0; i < cantidadSemaforos; i++)
+	{
+		arraySemaforos[i].nombreSemaforo = sem[i];
+		arraySemaforos[i].valor = atoi(val[i]);
+		arraySemaforos[i].pcb = NULL;
+		printf("%s (%d), ", arraySemaforos[i].nombreSemaforo, arraySemaforos[i].valor);
+	}
+	printf("\n");
+	free(sem);
+	free(val);
 }
 
 
@@ -1249,7 +1401,7 @@ void encolarExec(t_pcb* pcb)
 	aux = l_exec;
 	while(aux != NULL)
 	{
-		printf("PID en exec: %d", aux->pid);
+		printf("PID en exec: %d\t", aux->pid);
 		aux = aux->siguiente;
 	}
 	return;
@@ -1329,12 +1481,12 @@ t_pcb readyAExec(void)
 		auxReady->siguiente = NULL;
 		//return;
 	}
-//	aux = l_exec;
-//	while(aux != NULL)
-//	{
-//		printf("PID en exec: %d", aux->pid);
-//		aux = aux->siguiente;
-//	}
+	//	aux = l_exec;
+	//	while(aux != NULL)
+	//	{
+	//		printf("PID en exec: %d", aux->pid);
+	//		aux = aux->siguiente;
+	//	}
 	return *auxReady;
 }
 

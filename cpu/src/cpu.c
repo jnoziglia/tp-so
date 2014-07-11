@@ -114,7 +114,7 @@ AnSISOP_kernel kernel_functions = {
 /* Variables Globales */
 int kernelSocket;
 int socketUMV;
-int quantum = 1; //todo:quantum que lee de archivo de configuración
+int quantum = 3; //todo:quantum que lee de archivo de configuración
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -236,6 +236,7 @@ int main(){
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
 		send(kernelSocket,superMensaje, sizeof(int)*11,0);
+		printf("Retorno PCB al Kernel\n");
 		liberarDiccionario();
 	}
 
@@ -745,10 +746,51 @@ void AnSISOP_entradaSalida(t_nombre_dispositivo dispositivo, int tiempo)
 
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo)
 {
-	return;
+	printf("Primitiva Wait Semaforo: %s\n", identificador_semaforo);
+	estadoCPU = 4; //Trabajar con entrada/Salida
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	int tamanio = strlen(identificador_semaforo);
+	tamanio--;
+	printf("Tamanio del nombre del semaforo: %d\n", tamanio);
+	send(kernelSocket,&tamanio,sizeof(int),0);
+	send(kernelSocket,identificador_semaforo,tamanio,0);
+	char operacion = 0, confirmacion = -1; //Wait
+	send(kernelSocket,&operacion,sizeof(char),0);
+	recv(kernelSocket,&confirmacion,sizeof(char),0);
+	if(confirmacion == 0)
+	{
+		//Se bloquea el programa. Hay que enviar PCB
+		printf("Se bloquea el programa\n");
+		bloquearPrograma = 1;
+		return;
+	}
+	else if (confirmacion == 1)
+	{
+		//Se puede seguir ejecutando.
+		printf("Puedo seguir ejecutando\n");
+		return;
+	}
+	else
+	{
+		//Error de comunicación. No llegó la confirmación.
+		printf("No se pudo recibir la confirmación\n");
+		terminarPrograma = 1;
+		return;
+	}
 }
+
 void AnSISOP_signal(t_nombre_semaforo identificador_semaforo)
 {
+	printf("Primitiva Signal Semaforo: %s\n", identificador_semaforo);
+	estadoCPU = 4; //Trabajar con entrada/Salida
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	int tamanio = strlen(identificador_semaforo);
+	tamanio--;
+	printf("Tamanio del nombre del semaforo: %d\n", tamanio);
+	send(kernelSocket,&tamanio,sizeof(int),0);
+	send(kernelSocket,identificador_semaforo,tamanio,0);
+	char operacion = 1; //Signal
+	send(kernelSocket,&operacion,sizeof(char),0);
 	return;
 }
 
