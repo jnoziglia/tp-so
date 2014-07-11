@@ -1,39 +1,19 @@
 #!./Programa
 begin
-<<<<<<< HEAD
 	f 0
 end
 
 function f
 	variables a
-	#io HDD1 5
+	io LPT1 5
 	a=$0+1
 	print a
 	g a
-=======
-	f
-end
-
-function f
-	variables a
-	#io HDD1 5
-	a=1
-	print a
-	g
 end
 
 function g
 	variables a
-	#io HDD1 1
-	a=0
-	print a
-	f
->>>>>>> 57bd96f33f63e64c4e54bf53e0ddfbec0f45b3cf
-end
-
-function g
-	variables a
-	#io HDD1 1
+	io HDD1 30
 	a=$0+1
 	print a
 	f a

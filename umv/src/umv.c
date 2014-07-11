@@ -341,6 +341,28 @@ void* mainConsola()
 			printf("Fin de dump\n");
 			continue;
 		}
+//		if(string_starts_with(parametros,"dump "))
+//		{
+//			char* resto = string_substring_from(parametros,5);
+//			if(string_equals_ignore_case(resto,"tabla-segmentos"))
+//			{
+//				mostrarEstructuras();
+//				printf("Fin de dump\n");
+//				continue;
+//			}
+//			if(string_equals_ignore_case(resto,"mostrar-memoria"))
+//			{
+//				mostrarMemoria();
+//				printf("Fin de dump\n");
+//				continue;
+//			}
+//			if(string_equals_ignore_case(resto,"mostrar-estructura"))
+//			{
+//				mostrarContenidoDeMemoria(0, memPpal-finMemPpal);
+//				printf("Fin de dump\n");
+//				continue;
+//			}
+//		}
 		printf("Argumentos incorrectos.");
 		continue;
 	}

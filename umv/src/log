@@ -1,110 +1,44 @@
-[INFO] 23:36:39:571 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:36:39:571 UMV/(5448:5452): Proceso: 7 	 Segmento: 0 
+[INFO] 10:49:39:587 UMV/(4261:4267): Tabla de Segmentos:
+[INFO] 10:49:39:588 UMV/(4261:4267): Proceso: 7 	 Segmento: 0 
  Base: 8973
-[INFO] 23:36:39:571 UMV/(5448:5452): Proceso: 7 	 Segmento: 1 
+[INFO] 10:49:39:588 UMV/(4261:4267): Proceso: 7 	 Segmento: 1 
  Base: 6202
-[INFO] 23:36:39:571 UMV/(5448:5452): Proceso: 7 	 Segmento: 2 
+[INFO] 10:49:39:588 UMV/(4261:4267): Proceso: 7 	 Segmento: 2 
  Base: 4625
-[INFO] 23:36:39:571 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:36:39:571 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:36:39:571 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:37:07:306 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 7 	 Segmento: 0 
- Base: 5469
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 7 	 Segmento: 1 
- Base: 2038
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 7 	 Segmento: 2 
- Base: 5916
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 8 	 Segmento: 0 
- Base: 3405
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 8 	 Segmento: 1 
- Base: 5533
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 8 	 Segmento: 2 
- Base: 7004
-[INFO] 23:37:07:306 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:37:07:306 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 8 	 Segmento: 0 
- Base: 3405
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 8 	 Segmento: 1 
- Base: 5533
-[INFO] 23:37:07:306 UMV/(5448:5452): Proceso: 8 	 Segmento: 2 
- Base: 7004
-[INFO] 23:37:07:306 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:37:11:298 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:37:11:298 UMV/(5448:5452): Proceso: 8 	 Segmento: 0 
- Base: 3405
-[INFO] 23:37:11:298 UMV/(5448:5452): Proceso: 8 	 Segmento: 1 
- Base: 5533
-[INFO] 23:37:11:298 UMV/(5448:5452): Proceso: 8 	 Segmento: 2 
- Base: 7004
-[INFO] 23:37:11:298 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:37:11:298 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:37:11:298 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:39:19:486 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 7 	 Segmento: 0 
- Base: 2469
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 7 	 Segmento: 1 
- Base: 9853
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 7 	 Segmento: 2 
- Base: 4992
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 8 	 Segmento: 0 
- Base: 361
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 8 	 Segmento: 1 
- Base: 9819
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 8 	 Segmento: 2 
- Base: 3294
-[INFO] 23:39:19:486 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:39:19:486 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 8 	 Segmento: 0 
- Base: 361
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 8 	 Segmento: 1 
- Base: 9819
-[INFO] 23:39:19:486 UMV/(5448:5452): Proceso: 8 	 Segmento: 2 
- Base: 3294
-[INFO] 23:39:19:486 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:39:25:610 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:39:25:610 UMV/(5448:5452): Proceso: 8 	 Segmento: 0 
- Base: 361
-[INFO] 23:39:25:610 UMV/(5448:5452): Proceso: 8 	 Segmento: 1 
- Base: 9819
-[INFO] 23:39:25:610 UMV/(5448:5452): Proceso: 8 	 Segmento: 2 
- Base: 3294
-[INFO] 23:39:25:610 UMV/(5448:5452): ----------------------------------------------
-[INFO] 23:39:25:610 UMV/(5448:5452): Tabla de Segmentos:
-[INFO] 23:39:25:610 UMV/(5448:5452): ----------------------------------------------
-[INFO] 08:25:52:343 UMV/(2416:2420): Tabla de Segmentos:
-[INFO] 08:25:52:343 UMV/(2416:2420): Proceso: 7 	 Segmento: 0 
+[INFO] 10:49:39:588 UMV/(4261:4267): ----------------------------------------------
+[INFO] 10:49:39:588 UMV/(4261:4267): Tabla de Segmentos:
+[INFO] 10:49:39:588 UMV/(4261:4267): ----------------------------------------------
+[INFO] 11:22:21:592 UMV/(4672:4678): Tabla de Segmentos:
+[INFO] 11:22:21:592 UMV/(4672:4678): Proceso: 7 	 Segmento: 0 
  Base: 8973
-[INFO] 08:25:52:343 UMV/(2416:2420): Proceso: 7 	 Segmento: 1 
+[INFO] 11:22:21:592 UMV/(4672:4678): Proceso: 7 	 Segmento: 1 
  Base: 6202
-[INFO] 08:25:52:343 UMV/(2416:2420): Proceso: 7 	 Segmento: 2 
+[INFO] 11:22:21:592 UMV/(4672:4678): Proceso: 7 	 Segmento: 2 
  Base: 4625
-[INFO] 08:25:52:343 UMV/(2416:2420): Proceso: 7 	 Segmento: 3 
+[INFO] 11:22:21:592 UMV/(4672:4678): Proceso: 7 	 Segmento: 3 
  Base: 5469
-[INFO] 08:25:52:343 UMV/(2416:2420): ----------------------------------------------
-[INFO] 08:25:52:343 UMV/(2416:2420): Tabla de Segmentos:
-[INFO] 08:25:52:343 UMV/(2416:2420): ----------------------------------------------
-[INFO] 08:30:39:300 UMV/(2468:2472): Tabla de Segmentos:
-[INFO] 08:30:39:300 UMV/(2468:2472): Proceso: 7 	 Segmento: 0 
+[INFO] 11:22:21:592 UMV/(4672:4678): ----------------------------------------------
+[INFO] 11:22:21:592 UMV/(4672:4678): Tabla de Segmentos:
+[INFO] 11:22:21:592 UMV/(4672:4678): ----------------------------------------------
+[INFO] 11:34:03:929 UMV/(4940:4946): Tabla de Segmentos:
+[INFO] 11:34:03:929 UMV/(4940:4946): Proceso: 7 	 Segmento: 0 
  Base: 8973
-[INFO] 08:30:39:300 UMV/(2468:2472): Proceso: 7 	 Segmento: 1 
+[INFO] 11:34:03:929 UMV/(4940:4946): Proceso: 7 	 Segmento: 1 
  Base: 6202
-[INFO] 08:30:39:300 UMV/(2468:2472): Proceso: 7 	 Segmento: 2 
+[INFO] 11:34:03:929 UMV/(4940:4946): Proceso: 7 	 Segmento: 2 
  Base: 4625
-[INFO] 08:30:39:300 UMV/(2468:2472): Proceso: 7 	 Segmento: 3 
+[INFO] 11:34:03:929 UMV/(4940:4946): Proceso: 7 	 Segmento: 3 
  Base: 5469
-[INFO] 08:30:39:300 UMV/(2468:2472): ----------------------------------------------
-[INFO] 08:30:39:300 UMV/(2468:2472): Tabla de Segmentos:
-[INFO] 08:30:39:300 UMV/(2468:2472): ----------------------------------------------
-[INFO] 08:32:16:260 UMV/(2537:2541): Tabla de Segmentos:
-[INFO] 08:32:16:260 UMV/(2537:2541): Proceso: 7 	 Segmento: 0 
+[INFO] 11:34:03:929 UMV/(4940:4946): ----------------------------------------------
+[INFO] 11:34:03:929 UMV/(4940:4946): Tabla de Segmentos:
+[INFO] 11:34:03:929 UMV/(4940:4946): ----------------------------------------------
+[INFO] 11:50:32:986 UMV/(5186:5192): Tabla de Segmentos:
+[INFO] 11:50:32:986 UMV/(5186:5192): Proceso: 7 	 Segmento: 0 
  Base: 8973
-[INFO] 08:32:16:263 UMV/(2537:2541): Proceso: 7 	 Segmento: 1 
+[INFO] 11:50:32:986 UMV/(5186:5192): Proceso: 7 	 Segmento: 1 
  Base: 6202
-[INFO] 08:32:16:263 UMV/(2537:2541): Proceso: 7 	 Segmento: 2 
+[INFO] 11:50:32:986 UMV/(5186:5192): Proceso: 7 	 Segmento: 2 
  Base: 4625
-[INFO] 08:32:16:263 UMV/(2537:2541): Proceso: 7 	 Segmento: 3 
- Base: 5469
-[INFO] 08:32:16:263 UMV/(2537:2541): ----------------------------------------------
-[INFO] 08:32:16:263 UMV/(2537:2541): Tabla de Segmentos:
-[INFO] 08:32:16:263 UMV/(2537:2541): ----------------------------------------------
+[INFO] 11:50:32:986 UMV/(5186:5192): ----------------------------------------------
+[INFO] 11:50:32:986 UMV/(5186:5192): Tabla de Segmentos:
+[INFO] 11:50:32:986 UMV/(5186:5192): ----------------------------------------------

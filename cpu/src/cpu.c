@@ -189,10 +189,10 @@ int main(){
 				return 0;
 			}
 			printf("Program counter: %d\n", pcb->programCounter);
-			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter,sizeof(t_intructions));
+			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter*8,sizeof(t_intructions));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
 			printf("offset: %d\n", instruccionABuscar->offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar->offset+1);
+			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -203,12 +203,12 @@ int main(){
 				send(kernelSocket,superMensaje, sizeof(int)*11,0);
 				break;
 			}
-			instruccionAEjecutar[instruccionABuscar->offset] = '\0';
+			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
-			sleep(2);
+			//sleep(2);
 
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
-			pcb->programCounter += 8;
+			pcb->programCounter++;
 			quantumUtilizado++;
 			printf("Terminar programa: %d\n", terminarPrograma);
 			if(terminarPrograma)
@@ -256,10 +256,11 @@ void conectarConKernel()
 
 	getaddrinfo(IPKERNEL, PUERTOKERNEL, &hintsKernel, &kernelInfo);	// Carga en serverInfo los datos de la conexion
 	kernelSocket = socket(kernelInfo->ai_family, kernelInfo->ai_socktype, kernelInfo->ai_protocol);
-while (a == -1){
-	a = connect(kernelSocket, kernelInfo->ai_addr, kernelInfo->ai_addrlen);
-}
-	printf("A: %d\n", a);
+	while (a == -1){
+		a = connect(kernelSocket, kernelInfo->ai_addr, kernelInfo->ai_addrlen);
+	}
+	recv(kernelSocket, &quantum, sizeof(int), 0);
+	printf("quantun: %d\n", quantum);
 	freeaddrinfo(kernelInfo);	// No lo necesitamos mas
 
 }
@@ -624,7 +625,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
 {
 	printf("Primitiva Ir al Label\n");
 	void* buffer = malloc(pcb->tamanioIndiceEtiquetas);
-	string_trim(&nombre_etiqueta);
+	if(string_ends_with(nombre_etiqueta, "\n")) string_trim(&nombre_etiqueta);
 //	char* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
 	printf("tamanio indice etiquetas: %d\n", pcb->tamanioIndiceEtiquetas);
 	t_puntero_instruccion instruccion;
@@ -639,7 +640,7 @@ void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
 	printf("instruccion: %d\n", instruccion);
 	//scanf("%d", &instruccion);
 
-	pcb->programCounter = instruccion*8 - 8;
+	pcb->programCounter = instruccion - 1;
 
 //	free(etiquetas);
 	return;
@@ -710,6 +711,7 @@ void AnSISOP_retornar(t_valor_variable retorno)
 {
 	int contexto_anterior, instruccion_a_ejecutar, direccion_a_retornar;
 	void* buffer = malloc(12);
+	liberarDiccionario();
 	buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 12),12);
 	memcpy(&instruccion_a_ejecutar,(buffer+8),4);
 	memcpy(&direccion_a_retornar,(buffer+4),4);
@@ -758,7 +760,7 @@ void AnSISOP_wait(t_nombre_semaforo identificador_semaforo)
 	estadoCPU = 4; //Trabajar con entrada/Salida
 	send(kernelSocket,&estadoCPU,sizeof(char),0);
 	int tamanio = strlen(identificador_semaforo);
-	tamanio--;
+	//tamanio--;
 	printf("Tamanio del nombre del semaforo: %d\n", tamanio);
 	send(kernelSocket,&tamanio,sizeof(int),0);
 	send(kernelSocket,identificador_semaforo,tamanio,0);
@@ -793,7 +795,7 @@ void AnSISOP_signal(t_nombre_semaforo identificador_semaforo)
 	estadoCPU = 4; //Trabajar con entrada/Salida
 	send(kernelSocket,&estadoCPU,sizeof(char),0);
 	int tamanio = strlen(identificador_semaforo);
-	tamanio--;
+	//tamanio--;
 	printf("Tamanio del nombre del semaforo: %d\n", tamanio);
 	send(kernelSocket,&tamanio,sizeof(int),0);
 	send(kernelSocket,identificador_semaforo,tamanio,0);

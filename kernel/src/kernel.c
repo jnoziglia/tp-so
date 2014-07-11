@@ -72,6 +72,7 @@ typedef struct listaIO
 typedef struct  IO
 {
 	char* nombreIO;
+	int retardo;
 	t_listaIO* pcbEnLista;
 }t_IO;
 
@@ -113,7 +114,7 @@ void cargarDispositivosIO(void);
 void cargarSemaforos(void);
 void destruirPCB(int pid);
 void* f_hiloColaReady();
-void* f_hiloIO();
+void* f_hiloIO(void* pos);
 t_new desencolarNew(void);
 void encolarEnReady(t_pcb* pcb);
 t_pcb* desencolarReady(void);
@@ -155,6 +156,7 @@ t_IO* arrayDispositivosIO;
 int cantidadDispositivosIO = 0;
 t_semaforo* arraySemaforos;
 int cantidadSemaforos = 0;
+int quantum = 1;
 
 
 /* Semáforos */
@@ -171,7 +173,7 @@ sem_t s_Semaforos; //Semáforo para habilitar revisar la lista de IO y atender p
 t_config* configuracion;
 
 int main(void) {
-	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady, hiloIO;
+	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
 	sem_init(&s_Multiprogramacion,0,4);
 	sem_init(&s_ColaReady,0,1);
@@ -192,11 +194,12 @@ int main(void) {
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
 	rhMostrarNew = pthread_create(&hiloMostrarNew, NULL, f_hiloMostrarNew, NULL);
 	rhColaReady = pthread_create(&hiloColaReady, NULL, f_hiloColaReady, NULL);
-	rhColaIO = pthread_create(&hiloIO, NULL, f_hiloIO, NULL);
+	//rhColaIO = pthread_create(&hiloIO, NULL, f_hiloIO, NULL);
 	pthread_join(hiloPCP, NULL);
 	pthread_join(hiloPLP, NULL);
 	pthread_join(hiloMostrarNew, NULL);
-	pthread_join(hiloIO, NULL);
+	pthread_join(hiloColaReady, NULL);
+	//pthread_join(hiloIO, NULL);
 	//printf("%d",rhPCP);
 	//printf("%d",rhPLP);
 
@@ -279,6 +282,7 @@ void* f_hiloPCP()
 					FD_SET(socketAux, &fdWPCP);
 					//FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximo) maximo = socketAux;
+					send(socketAux, &quantum, sizeof(int), 0);
 				}
 				else
 				{
@@ -288,12 +292,6 @@ void* f_hiloPCP()
 					puntero = l_exec;
 					printf("SOCKET CPU: %d\n", i);
 					printf("MENSAJE: %d\n", mensaje);
-					while(puntero != NULL)
-					{
-						printf("Lista ejecucion\n");
-						printf("%d\n", puntero->pid);
-						puntero = puntero->siguiente;
-					}
 
 					//recv(i,&superMensaje,sizeof(superMensaje),0);
 					//t_pcb* pcb = malloc(sizeof(t_pcb));
@@ -361,8 +359,8 @@ void* f_hiloPCP()
 						}
 						else if (mensaje2 == 1)
 						{
-							FD_CLR(i, &fdRPCP);
-							FD_SET(i, &fdWPCP);
+//							FD_CLR(i, &fdRPCP);
+//							FD_SET(i, &fdWPCP);
 							//Asignar variable compartida.
 							recv(i,&valorVariable,sizeof(int),0);
 							printf("Asignar valor variable compartida: %s\n", variable);
@@ -437,8 +435,8 @@ void* f_hiloPCP()
 					}
 					else if (mensaje == 4)
 					{
-						FD_CLR(i, &fdRPCP);
-						FD_SET(i, &fdWPCP);
+//						FD_CLR(i, &fdRPCP);
+//						FD_SET(i, &fdWPCP);
 						printf("Llegó un pedido de semáforo.\n");
 						int tamanio = 0;
 						recv(i,&tamanio,sizeof(int),0);
@@ -462,6 +460,8 @@ void* f_hiloPCP()
 						}
 						if(semaforoEncontrado == -1)
 						{
+							FD_CLR(i, &fdRPCP);
+							FD_SET(i, &fdWPCP);
 							mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
 							send(i,&mensaje2,sizeof(char),0);
 							printf("No se encontró el semáforo solicitado. Se destruye el PCB");
@@ -480,6 +480,8 @@ void* f_hiloPCP()
 							arraySemaforos[semaforoEncontrado].valor--;
 							if(arraySemaforos[semaforoEncontrado].valor < 0)
 							{
+								FD_CLR(i, &fdRPCP);
+								FD_SET(i, &fdWPCP);
 								//Se bloquea el programa.
 								printf("Se bloquea el PCB.\n");
 								mensaje2 = 0; //Se bloquea el programa. Hay que pedir PCB.
@@ -753,15 +755,16 @@ void* f_hiloPLP()
 	return 0;
 }*/
 
-void* f_hiloIO()
+void* f_hiloIO(void* pos)
 {
-	int i;
+	int i = (int)pos;
+	printf("Numero de entrada salida: %d\n", i);
 	sem_wait(&s_IO);
 	while(1)
 	{
 		printf("Entro a buscar IO\n");
-		for(i=0; i < cantidadDispositivosIO; i++)
-		{
+		//for(i=0; i < cantidadDispositivosIO; i++)
+		//{
 			if(arrayDispositivosIO[i].pcbEnLista != NULL)
 			{
 				printf("El dispositivo: %s tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
@@ -770,9 +773,9 @@ void* f_hiloIO()
 				{
 					printf("Dispositivo IO: %s, PID: %d, Espera de: %d ms\n", arrayDispositivosIO[i].nombreIO, aux->pcb->pid, aux->tiempo);
 					//Esperar las unidades de tiempo antes de seguir
-					usleep(aux->tiempo);
+					//usleep(aux->tiempo);
 					printf("Espera terminada\n");
-					sleep(4); //todo:Hay sleep de 4 segundos para test.
+					usleep(aux->tiempo*arrayDispositivosIO[i].retardo*1000);
 					//Desencolar
 					encolarEnReady(aux->pcb);
 					arrayDispositivosIO[i].pcbEnLista = aux->siguiente;
@@ -786,9 +789,8 @@ void* f_hiloIO()
 			{
 				printf("El dispositivo: %s NO tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
 			}
-		}
+		//}
 		sem_wait(&s_IO);
-
 	}
 	return 0;
 }
@@ -1184,6 +1186,7 @@ void cargarConfig(void)
 	PUERTOCPU = config_get_string_value(configuracion, "PUERTOCPU");
 	IPCPU = config_get_string_value(configuracion, "IPCPU");
 	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
+	quantum = config_get_int_value(configuracion, "QUANTUM");
 }
 
 void cargarVariablesCompartidas(void)
@@ -1209,8 +1212,12 @@ void cargarVariablesCompartidas(void)
 
 void cargarDispositivosIO(void) //Todo: Falta agregar Retardo para cada Dispositivo. (Un hilo por cada semáforo?)
 {
+
+	pthread_t hiloIO;
 	char** disp = malloc(1000);
+	char** retardo = malloc(1000);
 	disp = config_get_array_value(configuracion, "IO");
+	retardo = config_get_array_value(configuracion, "RETARDO_IO");
 	while(disp[cantidadDispositivosIO] != NULL)
 	{
 		cantidadDispositivosIO++;
@@ -1222,11 +1229,14 @@ void cargarDispositivosIO(void) //Todo: Falta agregar Retardo para cada Disposit
 	for(i = 0; i < cantidadDispositivosIO; i++)
 	{
 		arrayDispositivosIO[i].nombreIO = disp[i];
+		arrayDispositivosIO[i].retardo = atoi(retardo[i]);
 		arrayDispositivosIO[i].pcbEnLista = NULL;
 		printf("%s, ", arrayDispositivosIO[i].nombreIO);
+		pthread_create(&hiloIO, NULL, f_hiloIO, (void*)i);
 	}
 	printf("\n");
 	free(disp);
+	free(retardo);
 }
 
 void cargarSemaforos(void)
