@@ -43,6 +43,9 @@ int main(int cantArgs, char **args) {
 	int num=0, status = 1;
 	char* buffer = malloc(1000);
 
+	int valor, tamanioTexto;
+	char* texto;
+
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/Programa/src/config.txt");
 	IP = config_get_string_value(configuracion, "IP");
 	PUERTO = config_get_string_value(configuracion, "PUERTO");
@@ -108,10 +111,28 @@ int main(int cantArgs, char **args) {
 	    //printf("socket %d\n",serverSocket);
 	    send(serverSocket, mensaje,tamanio, 0);
 	    printf("Código enviado\n");
-	    while (operacion != 2 || status != 0)
+	    while (1)
 	    {
 	    	status = recv(serverSocket, &operacion, sizeof(char), 0);
+	    	if(operacion == 0)	//Imprimir valor
+	    	{
+	    		recv(serverSocket, &valor, sizeof(int), 0);
+	    		printf("%d\n", valor);
+	    	}
+	    	else if(operacion == 1)	//Imprimir texto
+	    	{
+	    		recv(serverSocket, &tamanioTexto, sizeof(int), 0);
+	    		texto = malloc(tamanioTexto);
+	    		recv(serverSocket, texto, tamanioTexto, 0);
+	    		texto[tamanioTexto] = '\0';
+	    		printf("%s\n", texto);
+	    	}
+	    	else
+	    	{
+	    		break;
+	    	}
 	    }
+	    printf("Operacion: %d\n",operacion);
     }
 	free(buffer);
 	fclose(script);

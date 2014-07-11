@@ -84,6 +84,15 @@ typedef struct semaforo
 	t_pcb* pcb;
 }t_semaforo;
 
+typedef struct imprimir
+{
+	int pid;
+	char mensaje;
+	int valor;
+	char* texto;
+	struct imprimir *siguiente;
+}t_imprimir;
+
 enum
 {
 	new,
@@ -99,7 +108,7 @@ void* f_hiloPLP();
 int crearPcb(t_new programa, t_pcb* pcbAux);
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
-void Programa_imprimirTexto(char* texto);
+void Programa_imprimirTexto(int pid, char* texto);
 void encolarEnNew(t_new* programa);
 void conexionCPU(void);
 void conexionUMV(void);
@@ -124,6 +133,7 @@ void encolarExit(t_pcb* pcb);
 t_pcb readyAExec(void);
 void execAReady(t_pcb pcb);
 void execAExit(t_pcb pcb);
+void* f_hiloRespuestaPrograma(void);
 
 
 /* Variables Globales */
@@ -157,6 +167,7 @@ int cantidadDispositivosIO = 0;
 t_semaforo* arraySemaforos;
 int cantidadSemaforos = 0;
 int quantum = 1;
+t_imprimir* l_imprimir;
 
 
 /* Semáforos */
@@ -167,7 +178,7 @@ sem_t s_ColaNew;
 sem_t s_ComUmv;
 sem_t s_IO; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
 sem_t s_Semaforos; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
-
+sem_t s_ProgramaImprimir;
 
 /*Archivo de Configuración*/
 t_config* configuracion;
@@ -182,6 +193,7 @@ int main(void) {
 	sem_init(&s_ComUmv,0,1);
 	sem_init(&s_IO,0,0);
 	sem_init(&s_Semaforos,0,0);
+	sem_init(&s_ProgramaImprimir,0,1);
 	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
 	cargarVariablesCompartidas();
@@ -238,6 +250,9 @@ void* f_hiloPCP()
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
+	int pid, valorAImprimir, tamanioTexto;
+	char* texto;
+	char operacion;
 	t_pcb* pcb;
 	t_pcb* puntero;
 	//void* package = malloc(sizeof(t_pcb));
@@ -286,7 +301,6 @@ void* f_hiloPCP()
 				}
 				else
 				{
-
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					recv(i,&mensaje,sizeof(char),0);
 					puntero = l_exec;
@@ -536,6 +550,30 @@ void* f_hiloPCP()
 							break;
 						}
 					}
+					else if(mensaje == 5)	//Imprimir
+					{
+						operacion = 0;
+						recv(i, &pid, sizeof(int), 0);
+						recv(i, &valorAImprimir, sizeof(int), 0);
+						send(pid, &operacion, sizeof(char), 0);
+						send(pid, &valorAImprimir, sizeof(int), 0);
+						operacion = 1;
+						send(i, &operacion, sizeof(char), 0);
+					}
+					else if (mensaje == 6)
+					{
+						recv(i, &pid, sizeof(int), 0);
+						recv(i, &tamanioTexto, sizeof(int), 0);
+						texto = malloc(tamanioTexto);	//TODO: Revisar malloc
+						recv(i, texto, tamanioTexto, 0);
+						printf("%d\n", tamanioTexto);
+						//sleep(5);
+						//texto[tamanioTexto]='\0';
+						Programa_imprimirTexto(pid, texto);
+						operacion = 1;
+						send(i, &operacion, sizeof(char), 0);
+						free(texto);
+					}
 				}
 			}
 			else if(FD_ISSET(i, &writePCP))
@@ -574,6 +612,7 @@ void* f_hiloPCP()
 
 void* f_hiloPLP()
 {
+	pthread_t hiloRespuestaPrograma;
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int socketServidor;
@@ -582,6 +621,7 @@ void* f_hiloPLP()
 	int maximoAnterior;
 	char package[PACKAGESIZE], mensajePrograma;
 	t_pcb* listaExit;
+	t_imprimir* listaImprimir;
 	printf("Inicio del PLP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
@@ -596,20 +636,8 @@ void* f_hiloPLP()
 	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketServidor, BACKLOG);
 	printf("SocketServidor: %d\n",socketServidor);
-	//
-	//	int socketllegado = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
-	//	printf("SocketLlegado: %d\n",socketllegado);
-	//
-	//	status = recv(socketllegado,(void*)package, PACKAGESIZE, 0);
-	//	printf("status: %d\n",status);
-	//
-	//	t_pcb* nuevoPCB;
-	//	nuevoPCB = crearPcb(package);
-	//	if(nuevoPCB != NULL)
-	//	{
-	//		printf("Nuevo PCB Creado\n");
-	//		encolarEnNew(nuevoPCB);
-	//	}
+
+	//pthread_create(&hiloRespuestaPrograma, NULL, f_hiloRespuestaPrograma, NULL);
 
 
 	FD_ZERO(&readPLP);
@@ -637,6 +665,7 @@ void* f_hiloPLP()
 					socketAux = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
 					FD_SET(socketAux, &fdRPLP);
 					if (socketAux > maximo) maximo = socketAux;
+					printf("PROGRAMA: %d\n",socketAux);
 				}
 				else
 				{
@@ -683,6 +712,26 @@ void* f_hiloPLP()
 			}
 			else if (FD_ISSET(i, &writePLP))
 			{
+//				listaImprimir = l_imprimir;
+//				while(listaImprimir != NULL)
+//				{
+//					if(i == listaImprimir->pid)
+//					{
+//						send(listaImprimir->pid, &(listaImprimir->mensaje), sizeof(char), 0);
+//						if(listaImprimir->mensaje == 0)
+//						{
+//							send(listaImprimir->pid, &(listaImprimir->valor), sizeof(int), 0);
+//						}
+//						else
+//						{
+//							tamanioTexto = strlen(listaImprimir->texto);
+//							send(listaImprimir->pid, &tamanioTexto, sizeof(int), 0);
+//							send(listaImprimir->pid, listaImprimir->texto, tamanioTexto, 0);
+//						}
+//						l_imprimir = listaImprimir->siguiente;
+//						free(listaImprimir);
+//					}
+//				}
 				//printf("entro al isset %d\n", i);
 				listaExit = l_exit;
 				while(listaExit != NULL)
@@ -716,11 +765,51 @@ void* f_hiloPLP()
 						listaExit = listaExit->siguiente;
 					}
 				}
+				if(listaExit == NULL)
+				{
+					//El programa esta para imprimir
+
+				}
 			}
 		}
 	}
 	return NULL;
 }
+
+//void* f_hiloRespuestaPrograma(void)
+//{
+//	t_imprimir* listaImprimir = l_imprimir;
+//	t_pcb* listaExit = l_exit;
+//	int tamanioTexto;
+//	while(1)
+//	{
+//		sem_wait(&s_ColaExit);	//MUTEX
+//		while(l_imprimir != NULL)
+//		{
+//			send(listaImprimir->pid, &(listaImprimir->mensaje), sizeof(char), 0);
+//			if(listaImprimir->mensaje == 0)
+//			{
+//				sem_wait(&s_hayProgramas);
+//				send(listaImprimir->pid, &(listaImprimir->valor), sizeof(int), 0);
+//			}
+//			else
+//			{
+//				sem_wait(&s_hayProgramas);
+//				tamanioTexto = strlen(listaImprimir->texto);
+//				send(listaImprimir->pid, &tamanioTexto, sizeof(int), 0);
+//				send(listaImprimir->pid, listaImprimir->texto, tamanioTexto, 0);
+//			}
+//			l_imprimir = listaImprimir->siguiente;
+//			free(listaImprimir);
+//		}
+//		while(l_exit != NULL)
+//		{
+//
+//		}
+//
+//	}
+//	return NULL;
+//}
 
 /*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
@@ -820,7 +909,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	{
 		printf("NO SE CREO EL SEGMENTO\n");
 		//avisar al programa :D
-		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
 		//UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
@@ -832,7 +921,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	if(respuesta == -1)
 	{
 		//avisar al programa :D
-		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
@@ -844,7 +933,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	if(respuesta == -1)
 	{
 		//avisar al programa :D
-		Programa_imprimirTexto("Holis, No se pudo crear el programa");
+		Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
@@ -858,7 +947,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 		if(respuesta == -1)
 		{
 			//avisar al programa :D
-			Programa_imprimirTexto("Holis, No se pudo crear el programa");
+			Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
 			UMV_destruirSegmentos(pcbAux->pid);
 			printf("no se creo el pcb\n");
 			free (pcbAux);
@@ -973,9 +1062,14 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 	return package;
 }
 
-void Programa_imprimirTexto(char* texto)
+void Programa_imprimirTexto(int pid, char* texto)
 {
-
+	int tamanio = strlen(texto);
+	char operacion = 1;
+	send(pid, &operacion, sizeof(char), 0);
+	send(pid, &tamanio, sizeof(int), 0);
+	send(pid, texto, tamanio, 0);
+	printf("TEXTO: %s\n", texto);
 }
 
 void encolarEnNew(t_new* programa)

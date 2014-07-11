@@ -136,6 +136,7 @@ int main(){
 
 	void* package = malloc(sizeof(t_pcb));
 	void* indiceCodigo;
+	char* instruccionAEjecutar = malloc(1);
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/cpu/src/config.txt");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
@@ -192,7 +193,7 @@ int main(){
 			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter*8,sizeof(t_intructions));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
 			printf("offset: %d\n", instruccionABuscar->offset);
-			char* instruccionAEjecutar = malloc(instruccionABuscar->offset);
+			instruccionAEjecutar = realloc(instruccionAEjecutar, instruccionABuscar->offset);
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
@@ -726,17 +727,27 @@ void AnSISOP_retornar(t_valor_variable retorno)
 
 void AnSISOP_imprimir(t_valor_variable valor_mostrar)
 {
-	printf("********\n");
-	printf("%d\n", valor_mostrar);
-	printf("********\n");
+	char confirmacion;
+	printf("Primitiva imprimir: %d\n", valor_mostrar);
+	estadoCPU = 5; //Imprimir
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	send(kernelSocket,&pcb->pid,sizeof(int),0);
+	send(kernelSocket,&valor_mostrar,sizeof(int),0);
+	recv(kernelSocket,&confirmacion,sizeof(char),0);
 	return;
 }
 
 void AnSISOP_imprimirTexto(char* texto)
 {
-	printf("********\n");
-	printf("%s\n", texto);
-	printf("********\n");
+	char confirmacion;
+	int tamanio = strlen(texto);
+	printf("Primitiva imprimir texto: %s\n", texto);
+	estadoCPU = 6; //Imprimir
+	send(kernelSocket,&estadoCPU,sizeof(char),0);
+	send(kernelSocket,&pcb->pid,sizeof(int),0);
+	send(kernelSocket,&tamanio,sizeof(int),0);
+	send(kernelSocket,texto,tamanio,0);
+	recv(kernelSocket,&confirmacion,sizeof(char),0);
 	return;
 }
 

@@ -74,8 +74,8 @@ end
 
 begin
 variables x,y,A
-	y=325
-	x=26
+	y=2
+	x=3
 	textPrint MCD entre
 	print x
 	print y
