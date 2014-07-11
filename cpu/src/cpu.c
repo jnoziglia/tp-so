@@ -206,7 +206,7 @@ int main(){
 			}
 			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
-			//sleep(2);
+			sleep(2);
 
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
 			pcb->programCounter++;
@@ -718,6 +718,7 @@ void AnSISOP_retornar(t_valor_variable retorno)
 	memcpy(&direccion_a_retornar,(buffer+4),4);
 	memcpy(&contexto_anterior,buffer,4);
 	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_a_retornar,4,&retorno);
+	pcb->programCounter = instruccion_a_ejecutar;
 	pcb->tamanioContextoActual = (pcb->cursorStack - 12 - contexto_anterior) / 5;
 	pcb->cursorStack = contexto_anterior;
 	generarDiccionarioVariables();

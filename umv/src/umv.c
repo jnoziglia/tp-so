@@ -82,7 +82,7 @@ void* f_hiloCpu(void* socketCliente);
 void* memPpal;
 void* finMemPpal;
 t_segmento* tablaSegmentos = NULL;
-int algoritmo = 1;	// 0 = FirstFit
+int algoritmo = 0;	// 0 = FirstFit
 int procesoActivo = 2;
 int retardo = 0;
 t_log* logi;

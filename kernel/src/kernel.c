@@ -350,6 +350,7 @@ void* f_hiloPCP()
 						int tamanio = 0, valorVariable = -1;
 						recv(i,&tamanio,sizeof(int),0);
 						char* variable = malloc(tamanio);
+						variable[tamanio] = '\0';
 						printf("Tamanio del nombre de la variable: %d\n",tamanio);
 						recv(i,variable,tamanio,0);
 						printf("Nombre de la variable: %s\n",variable);
@@ -446,6 +447,7 @@ void* f_hiloPCP()
 								break;
 							}
 						}
+						free(dispositivo);
 					}
 					else if (mensaje == 4)
 					{
@@ -464,7 +466,7 @@ void* f_hiloPCP()
 						printf("Operación: %d\n",mensaje2);
 						//Busco afuera cuál es el semaforo,
 						int j, semaforoEncontrado = -1;
-						for(j = 0; j < cantidadDispositivosIO; j++)
+						for(j = 0; j < cantidadSemaforos; j++)
 						{
 							printf("Busco el semáforo. Buscado: %s, actual: %s\n", semaforo, arraySemaforos[j].nombreSemaforo);
 							if(string_equals_ignore_case(semaforo, arraySemaforos[j].nombreSemaforo))
@@ -549,6 +551,7 @@ void* f_hiloPCP()
 							printf("Error en la recepción de la operación.\n");
 							break;
 						}
+						free(semaforo);
 					}
 					else if(mensaje == 5)	//Imprimir
 					{
