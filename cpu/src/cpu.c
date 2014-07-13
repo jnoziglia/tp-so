@@ -23,6 +23,7 @@
 #include <parser/metadata_program.h>
 #include <parser/parser.h>
 #include <signal.h>
+#include <semaphore.h>
 
 /* Definiciones y variables para la conexión por Sockets */
 //#define PUERTOUMV "6668"
@@ -129,6 +130,7 @@ int BACKLOG;	// Define cuantas conexiones vamos a mantener pendientes al mismo t
 int PACKAGESIZE;
 t_diccionario* diccionarioVariables;
 
+sem_t s_terminarCPU;
 
 //todo:Primitivas, Hot Plug.
 
@@ -136,6 +138,8 @@ int main(){
 
 	void* package = malloc(sizeof(t_pcb));
 	void* indiceCodigo;
+	char ping;
+	char puedeRecibir = 10;
 	char* instruccionAEjecutar = malloc(1);
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/cpu/src/config.txt");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
@@ -147,6 +151,7 @@ int main(){
 	t_intructions* instruccionABuscar;
 	int quantumUtilizado = 1;
 	signal(SIGUSR1,dejarDeDarServicio);
+	sem_init(&s_terminarCPU,0,1);
 	conectarConUMV();
 	conectarConKernel();
 	printf("socketK: %d\n", kernelSocket);
@@ -161,7 +166,10 @@ int main(){
 		terminarPrograma = 0;
 		bloquearPrograma = 0;
 
+		send(kernelSocket, &puedeRecibir, sizeof(char), 0);
+		//recv(kernelSocket, &ping, sizeof(char), 0);
 		int recibido = recv(kernelSocket,superMensaje,sizeof(t_pcb),0);
+		sem_wait(&s_terminarCPU);
 		recibirSuperMensaje(superMensaje);
 
 		printf("%d",recibido);
@@ -182,11 +190,12 @@ int main(){
 		{
 			if(matarCPU == 1)
 			{
-				estadoCPU = 0;
+				estadoCPU = -1;
 				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
 				close(kernelSocket);
 				close(socketUMV);
 				free(pcb);
+				printf("Se envio señal\n");
 				return 0;
 			}
 			printf("Program counter: %d\n", pcb->programCounter);
@@ -206,7 +215,7 @@ int main(){
 			}
 			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
-			sleep(2);
+			//sleep(2);
 
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
 			pcb->programCounter++;
@@ -232,15 +241,19 @@ int main(){
 			}
 		}
 		quantumUtilizado = 1;
-		if(terminarPrograma || bloquearPrograma) continue; //Si el programa ya salió por algo, no mandarlo de vuelta.
+		if(terminarPrograma || bloquearPrograma)
+		{
+			sem_post(&s_terminarCPU);
+			continue; //Si el programa ya salió por algo, no mandarlo de vuelta.
+		}
 		estadoCPU = 1;
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
 		send(kernelSocket,superMensaje, sizeof(int)*11,0);
 		printf("Retorno PCB al Kernel\n");
 		liberarDiccionario();
+		sem_post(&s_terminarCPU);
 	}
-
 	return 0;
 }
 
@@ -289,7 +302,10 @@ void conectarConUMV()
 
 void dejarDeDarServicio()
 {
+	printf("LLEGO LA SEÑAL\n");
 	matarCPU = 1;
+	sem_wait(&s_terminarCPU);
+	kill(getpid(), SIGKILL);
 }
 
 t_pcb* deserializarPcb(void* package)

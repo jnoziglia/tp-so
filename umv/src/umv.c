@@ -490,14 +490,15 @@ void* f_hiloCpu(void* socketCliente)
 	int mensaje[4];
 	char operacion;
 	char confirmacion;
-	char error;
+	char enviarError;
 	int pid, base, offset, tamanio;
 	void* buffer;
 	int i;
 	while(status != 0)
 	{
 		printf("Recibo operacion\n");
-		recv(socketCPU, &operacion, sizeof(char), 0);
+		if(recv(socketCPU, &operacion, sizeof(char), 0) == 0) break;
+		sem_wait(&s_cpu);
 		//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 		printf("La operacion es: %d\n", operacion);
 		if (operacion == operSolicitarBytes)
@@ -530,9 +531,9 @@ void* f_hiloCpu(void* socketCliente)
 			buffer = malloc(tamanio);
 			status = recv(socketCPU, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
-			error = enviarBytes(base, offset, tamanio, buffer);
-			printf("CONFIRMACION: %d\n", error);
-			send(socketCPU, &error, sizeof(char), 0);
+			enviarError = enviarBytes(base, offset, tamanio, buffer);
+			printf("CONFIRMACION: %d\n", enviarError);
+			send(socketCPU, &enviarError, sizeof(char), 0);
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
