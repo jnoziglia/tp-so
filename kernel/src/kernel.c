@@ -134,6 +134,7 @@ t_pcb readyAExec(void);
 void execAReady(t_pcb pcb);
 void execAExit(t_pcb pcb);
 void* f_hiloRespuestaPrograma(void);
+void* f_hiloAceptarConexiones(void);
 
 
 /* Variables Globales */
@@ -145,6 +146,7 @@ t_medatada_program* metadata;
 int tamanioStack;
 int socketUMV;
 //int socketCPU; //VER
+int maximoSocketPCP = 0;
 fd_set fdWPCP;
 fd_set fdRPCP;
 fd_set readPCP;
@@ -179,6 +181,7 @@ sem_t s_ComUmv;
 sem_t s_IO; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
 sem_t s_Semaforos; //Semáforo para habilitar revisar la lista de IO y atender pedidos. Inicializada en 0.
 sem_t s_ProgramaImprimir;
+sem_t s_hayCPU;
 
 /*Archivo de Configuración*/
 t_config* configuracion;
@@ -194,6 +197,7 @@ int main(void) {
 	sem_init(&s_IO,0,0);
 	sem_init(&s_Semaforos,0,0);
 	sem_init(&s_ProgramaImprimir,0,1);
+	sem_init(&s_hayCPU,0,0);
 	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
 	cargarVariablesCompartidas();
@@ -240,13 +244,53 @@ void* f_hiloColaReady()
 	}
 }
 
+void* f_hiloAceptarConexiones()
+{
+	int socketPCP;
+	int socketAux;
+	struct addrinfo hints;
+	struct addrinfo *serverInfo;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
+	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
+	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
+	getaddrinfo(NULL, PUERTOCPU, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
+	struct sockaddr_in conexioncpu;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
+	socklen_t addrlen = sizeof(conexioncpu);
+	socketPCP = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+	maximoSocketPCP = socketPCP;
+	bind(socketPCP,serverInfo->ai_addr, serverInfo->ai_addrlen);
+	while(1)
+	{
+		printf("Espero nueva CPU\n");
+		listen(socketPCP, BACKLOG);
+		socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
+		printf("Nueva CPU: %d\n", socketAux);
+		FD_SET(socketAux, &fdWPCP);
+		//FD_SET(socketAux, &fdRPCP);
+		if (socketAux > maximoSocketPCP) maximoSocketPCP = socketAux;
+		send(socketAux, &quantum, sizeof(int), 0);
+		printf("Maximo socketPCP: %d\n",maximoSocketPCP);
+		//FD_SET(socketAux, &fdWPCP);
+		FD_SET(socketAux, &fdWPCP);
+		sem_post(&s_hayCPU);
+	}
+}
+
 
 void* f_hiloPCP()
 {
-	struct addrinfo hints;
-	struct addrinfo *serverInfo;
-	int socketPCP, socketAux;
-	int i, j, maximo = 0;
+	//void* package = malloc(sizeof(t_pcb));
+	//t_pcb* pcb;
+	//t_pcb* puntero;
+	printf("Inicio del PCP.\n");
+	pthread_t hiloAceptarConexiones;
+	FD_ZERO(&fdRPCP);
+	FD_ZERO(&fdWPCP);
+	FD_ZERO(&readPCP);
+	FD_ZERO(&writePCP);
+
+	int i, j;
 	int superMensaje[11];
 	int status = 1;
 	char mensaje;
@@ -255,329 +299,301 @@ void* f_hiloPCP()
 	char operacion;
 	t_pcb* pcb;
 	t_pcb* puntero;
-	//void* package = malloc(sizeof(t_pcb));
-	//t_pcb* pcb;
-	//t_pcb* puntero;
-	printf("Inicio del PCP.\n");
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
-	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
-	hints.ai_socktype = SOCK_STREAM;	// Indica que usaremos el protocolo TCP
-	getaddrinfo(NULL, PUERTOCPU, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
-	struct sockaddr_in conexioncpu;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
-	socklen_t addrlen = sizeof(conexioncpu);
 
-	socketPCP = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
-	maximo = socketPCP;
-	bind(socketPCP,serverInfo->ai_addr, serverInfo->ai_addrlen);
-	listen(socketPCP, BACKLOG);
+	pthread_create(&hiloAceptarConexiones, NULL, f_hiloAceptarConexiones, NULL);
 
-	FD_ZERO(&fdRPCP);
-	FD_ZERO(&fdWPCP);
-	FD_ZERO(&readPCP);
-	FD_ZERO(&writePCP);
-
-	FD_SET (socketPCP, &fdRPCP);
 
 	while(1)
 	{
-		FD_ZERO(&readPCP);
-		FD_ZERO(&writePCP);
+//		FD_ZERO(&readPCP);
+//		FD_ZERO(&writePCP);
+		sem_wait(&s_hayCPU);
 		readPCP = fdRPCP;
 		writePCP = fdWPCP;
-		select(maximo + 1, &readPCP, &writePCP, NULL, NULL);
-		for(i=3; i<=maximo; i++)
+		//printf("antes del select\n");
+		select(maximoSocketPCP + 1, &readPCP, &writePCP, NULL, NULL);
+		//printf("salio del select\n");
+		for(i=0; i<=maximoSocketPCP; i++)
 		{
 			if(FD_ISSET(i, &readPCP))
 			{
-				if(i == socketPCP)
-				{
-					printf("Nueva CPU: %d\n", socketPCP);
-					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
-					FD_SET(socketAux, &fdWPCP);
-					//FD_SET(socketAux, &fdRPCP);
-					if (socketAux > maximo) maximo = socketAux;
-					send(socketAux, &quantum, sizeof(int), 0);
-				}
-				else
-				{
-					//Cuando no es un CPU, recibe el PCB o se muere el programa;
-					recv(i,&mensaje,sizeof(char),0);
-					puntero = l_exec;
-					printf("SOCKET CPU: %d\n", i);
-					printf("MENSAJE: %d\n", mensaje);
+				//Cuando no es un CPU, recibe el PCB o se muere el programa;
+				recv(i,&mensaje,sizeof(char),0);
+				puntero = l_exec;
+				printf("SOCKET CPU: %d\n", i);
+				printf("MENSAJE: %d\n", mensaje);
 
-					//recv(i,&superMensaje,sizeof(superMensaje),0);
-					//t_pcb* pcb = malloc(sizeof(t_pcb));
-					//pcbRecibido = recibirSuperMensaje(superMensaje);
-					//desencolarExec(pcb);
-					//pcb->siguiente = NULL;
-					if(mensaje == 0) //todo:podria ser ENUM
+				//recv(i,&superMensaje,sizeof(superMensaje),0);
+				//t_pcb* pcb = malloc(sizeof(t_pcb));
+				//pcbRecibido = recibirSuperMensaje(superMensaje);
+				//desencolarExec(pcb);
+				//pcb->siguiente = NULL;
+				if(mensaje == 0) //todo:podria ser ENUM
+				{
+					FD_CLR(i, &fdRPCP);
+					FD_SET(i, &fdWPCP);
+					//Se muere el programa
+					recv(i,&superMensaje,sizeof(superMensaje),0);
+					pcb = recibirSuperMensaje(superMensaje);
+					printf("Llegó un programa para encolar en Exit\n");
+					//encolarEnExit
+					//execAExit(pcbRecibido);
+					desencolarExec(pcb);
+					pcb->siguiente = NULL;
+					encolarExit(pcb);
+				}
+				else if (mensaje == 1)
+				{
+					FD_CLR(i, &fdRPCP);
+					FD_SET(i, &fdWPCP);
+					//Se termina el quantum
+					recv(i,&superMensaje,sizeof(superMensaje),0);
+					for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
+					printf("RECIBO SUPERMENSAJE\n");
+					pcb = recibirSuperMensaje(superMensaje);
+					printf("Llegó un programa para encolar en Ready\n");
+					desencolarExec(pcb);
+					pcb->siguiente = NULL;
+					encolarEnReady(pcb);
+				}
+				else if(mensaje == 2) //todo:podria ser ENUM
+				{
+					//Manejo de variables compartidas.
+					printf("Llegó un programa para manejar variables compartidas.\n");
+					char mensaje2;
+					recv(i,&mensaje2,sizeof(char),0);
+					printf("Operación: %d\n", mensaje2);
+					int tamanio = 0, valorVariable = -1;
+					recv(i,&tamanio,sizeof(int),0);
+					char* variable = malloc(tamanio);
+					variable[tamanio] = '\0';
+					printf("Tamanio del nombre de la variable: %d\n",tamanio);
+					recv(i,variable,tamanio,0);
+					printf("Nombre de la variable: %s\n",variable);
+					if(mensaje2 == 0)
 					{
-						FD_CLR(i, &fdRPCP);
-						FD_SET(i, &fdWPCP);
-						//Se muere el programa
-						recv(i,&superMensaje,sizeof(superMensaje),0);
-						pcb = recibirSuperMensaje(superMensaje);
-						printf("Llegó un programa para encolar en Exit\n");
-						//encolarEnExit
-						//execAExit(pcbRecibido);
-						desencolarExec(pcb);
-						pcb->siguiente = NULL;
-						encolarExit(pcb);
-					}
-					else if (mensaje == 1)
-					{
-						FD_CLR(i, &fdRPCP);
-						FD_SET(i, &fdWPCP);
-						//Se termina el quantum
-						recv(i,&superMensaje,sizeof(superMensaje),0);
-						for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
-						printf("RECIBO SUPERMENSAJE\n");
-						pcb = recibirSuperMensaje(superMensaje);
-						printf("Llegó un programa para encolar en Ready\n");
-						desencolarExec(pcb);
-						pcb->siguiente = NULL;
-						encolarEnReady(pcb);
-					}
-					else if(mensaje == 2) //todo:podria ser ENUM
-					{
-						//Manejo de variables compartidas.
-						printf("Llegó un programa para manejar variables compartidas.\n");
-						char mensaje2;
-						recv(i,&mensaje2,sizeof(char),0);
-						printf("Operación: %d\n", mensaje2);
-						int tamanio = 0, valorVariable = -1;
-						recv(i,&tamanio,sizeof(int),0);
-						char* variable = malloc(tamanio);
-						variable[tamanio] = '\0';
-						printf("Tamanio del nombre de la variable: %d\n",tamanio);
-						recv(i,variable,tamanio,0);
-						printf("Nombre de la variable: %s\n",variable);
-						if(mensaje2 == 0)
+						//Obtener valor variable compartida.
+						printf("Obtener valor variable compartida %s\n", variable);
+						int j;
+						for(j = 0; j < cantidadVariablesCompartidas; j++)
 						{
-							//Obtener valor variable compartida.
-							printf("Obtener valor variable compartida %s\n", variable);
-							int j;
-							for(j = 0; j < cantidadVariablesCompartidas; j++)
+							printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+							if(string_equals_ignore_case(arrayVariablesCompartidas[j].nombreVariable, variable))
 							{
-								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
-								if(string_equals_ignore_case(arrayVariablesCompartidas[j].nombreVariable, variable))
-								{
-									valorVariable = arrayVariablesCompartidas[j].valorVariable;
-									printf("Variable Global pedida: %s Valor %d\n",variable,valorVariable);
-									break;
-								}
+								valorVariable = arrayVariablesCompartidas[j].valorVariable;
+								printf("Variable Global pedida: %s Valor %d\n",variable,valorVariable);
+								break;
 							}
-							send(i,&valorVariable,sizeof(int),0);
-							free(variable);
 						}
-						else if (mensaje2 == 1)
+						send(i,&valorVariable,sizeof(int),0);
+						free(variable);
+					}
+					else if (mensaje2 == 1)
+					{
+						//							FD_CLR(i, &fdRPCP);
+						//							FD_SET(i, &fdWPCP);
+						//Asignar variable compartida.
+						recv(i,&valorVariable,sizeof(int),0);
+						printf("Asignar valor variable compartida: %s\n", variable);
+						int j;
+						for(j = 0; j < cantidadVariablesCompartidas; j++)
 						{
-//							FD_CLR(i, &fdRPCP);
-//							FD_SET(i, &fdWPCP);
-							//Asignar variable compartida.
-							recv(i,&valorVariable,sizeof(int),0);
-							printf("Asignar valor variable compartida: %s\n", variable);
-							int j;
-							for(j = 0; j < cantidadVariablesCompartidas; j++)
+							printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+							if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
 							{
-								printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
-								if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
-								{
-									arrayVariablesCompartidas[j].valorVariable = valorVariable;
-									printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
-									break;
-								}
+								arrayVariablesCompartidas[j].valorVariable = valorVariable;
+								printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
+								break;
 							}
-							//send(i,&valorVariable,sizeof(int),0);
-							free(variable);
 						}
-						else
+						//send(i,&valorVariable,sizeof(int),0);
+						free(variable);
+					}
+					else
+					{
+						//Error.
+						printf("Error accediendo a variables compartidas.\n");
+					}
+				}
+				else if (mensaje == 3)
+				{
+					FD_CLR(i, &fdRPCP);
+					FD_SET(i, &fdWPCP);
+					printf("Llegó un programa para encolar en dispositivo\n");
+					//Se bloquea el PCB
+					int tamanio = 0, tiempo = -1;
+					recv(i,&tamanio,sizeof(int),0);
+					char* dispositivo = malloc(tamanio);
+					printf("Tamanio del nombre del dispositivo: %d\n",tamanio);
+					recv(i,dispositivo,tamanio,0);
+					dispositivo[tamanio] = '\0';
+					recv(i,&tiempo,sizeof(int),0);
+					printf("Nombre del dispositivo: %s\n",dispositivo);
+					//Recepción del PCB
+					recv(i,&superMensaje,sizeof(superMensaje),0);
+					printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
+					pcb = recibirSuperMensaje(superMensaje);
+					desencolarExec(pcb);
+					pcb->siguiente = NULL;
+					//Buscar el dispositivo donde encolar
+					int j;
+					for(j = 0; j < cantidadDispositivosIO; j++)
+					{
+						printf("Busco el dispositivo. Buscado: %s, actual: %s\n", dispositivo, arrayDispositivosIO[j].nombreIO);
+						if(string_equals_ignore_case(dispositivo, arrayDispositivosIO[j].nombreIO))
 						{
-							//Error.
-							printf("Error accediendo a variables compartidas.\n");
+							//Generar el elemento de la lista para encolar
+							t_listaIO* aux = malloc(sizeof(t_listaIO));
+							aux->pcb = pcb;
+							aux->tiempo = tiempo;
+							aux->siguiente = NULL;
+							//Encolarlo último
+							if(arrayDispositivosIO[j].pcbEnLista == NULL)
+							{
+								arrayDispositivosIO[j].pcbEnLista = aux;
+							}
+							else
+							{
+								t_listaIO* listaAux = arrayDispositivosIO[j].pcbEnLista;
+								while(listaAux->siguiente != NULL) listaAux = arrayDispositivosIO[j].pcbEnLista->siguiente;
+								listaAux->siguiente = aux;
+							}
+							printf("PCB Encolado en el dispositivo %s\n",arrayDispositivosIO[j].nombreIO);
+							sem_post(&s_IO);
+							break;
 						}
 					}
-					else if (mensaje == 3)
+					free(dispositivo);
+				}
+				else if (mensaje == 4)
+				{
+					//						FD_CLR(i, &fdRPCP);
+					//						FD_SET(i, &fdWPCP);
+					printf("Llegó un pedido de semáforo.\n");
+					int tamanio = 0;
+					recv(i,&tamanio,sizeof(int),0);
+					char* semaforo = malloc(tamanio);
+					printf("Tamanio del nombre del semaforo: %d\n",tamanio);
+					recv(i,semaforo,tamanio,0);
+					semaforo[tamanio] = '\0';
+					printf("Nombre del semaforo: %s\n",semaforo);
+					char mensaje2;
+					recv(i,&mensaje2,sizeof(char),0);
+					printf("Operación: %d\n",mensaje2);
+					//Busco afuera cuál es el semaforo,
+					int j, semaforoEncontrado = -1;
+					for(j = 0; j < cantidadSemaforos; j++)
+					{
+						printf("Busco el semáforo. Buscado: %s, actual: %s\n", semaforo, arraySemaforos[j].nombreSemaforo);
+						if(string_equals_ignore_case(semaforo, arraySemaforos[j].nombreSemaforo))
+						{
+							semaforoEncontrado = j;
+						}
+					}
+					if(semaforoEncontrado == -1)
 					{
 						FD_CLR(i, &fdRPCP);
 						FD_SET(i, &fdWPCP);
-						printf("Llegó un programa para encolar en dispositivo\n");
-						//Se bloquea el PCB
-						int tamanio = 0, tiempo = -1;
-						recv(i,&tamanio,sizeof(int),0);
-						char* dispositivo = malloc(tamanio);
-						printf("Tamanio del nombre del dispositivo: %d\n",tamanio);
-						recv(i,dispositivo,tamanio,0);
-						dispositivo[tamanio] = '\0';
-						recv(i,&tiempo,sizeof(int),0);
-						printf("Nombre del dispositivo: %s\n",dispositivo);
-						//Recepción del PCB
+						mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
+						send(i,&mensaje2,sizeof(char),0);
+						printf("No se encontró el semáforo solicitado. Se destruye el PCB");
 						recv(i,&superMensaje,sizeof(superMensaje),0);
 						printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
 						pcb = recibirSuperMensaje(superMensaje);
 						desencolarExec(pcb);
 						pcb->siguiente = NULL;
-						//Buscar el dispositivo donde encolar
-						int j;
-						for(j = 0; j < cantidadDispositivosIO; j++)
-						{
-							printf("Busco el dispositivo. Buscado: %s, actual: %s\n", dispositivo, arrayDispositivosIO[j].nombreIO);
-							if(string_equals_ignore_case(dispositivo, arrayDispositivosIO[j].nombreIO))
-							{
-								//Generar el elemento de la lista para encolar
-								t_listaIO* aux = malloc(sizeof(t_listaIO));
-								aux->pcb = pcb;
-								aux->tiempo = tiempo;
-								aux->siguiente = NULL;
-								//Encolarlo último
-								if(arrayDispositivosIO[j].pcbEnLista == NULL)
-								{
-									arrayDispositivosIO[j].pcbEnLista = aux;
-								}
-								else
-								{
-									t_listaIO* listaAux = arrayDispositivosIO[j].pcbEnLista;
-									while(listaAux->siguiente != NULL) listaAux = arrayDispositivosIO[j].pcbEnLista->siguiente;
-									listaAux->siguiente = aux;
-								}
-								printf("PCB Encolado en el dispositivo %s\n",arrayDispositivosIO[j].nombreIO);
-								sem_post(&s_IO);
-								break;
-							}
-						}
-						free(dispositivo);
+						encolarExit(pcb);
+						break;
 					}
-					else if (mensaje == 4)
+					if(mensaje2 == 0)
 					{
-//						FD_CLR(i, &fdRPCP);
-//						FD_SET(i, &fdWPCP);
-						printf("Llegó un pedido de semáforo.\n");
-						int tamanio = 0;
-						recv(i,&tamanio,sizeof(int),0);
-						char* semaforo = malloc(tamanio);
-						printf("Tamanio del nombre del semaforo: %d\n",tamanio);
-						recv(i,semaforo,tamanio,0);
-						semaforo[tamanio] = '\0';
-						printf("Nombre del semaforo: %s\n",semaforo);
-						char mensaje2;
-						recv(i,&mensaje2,sizeof(char),0);
-						printf("Operación: %d\n",mensaje2);
-						//Busco afuera cuál es el semaforo,
-						int j, semaforoEncontrado = -1;
-						for(j = 0; j < cantidadSemaforos; j++)
-						{
-							printf("Busco el semáforo. Buscado: %s, actual: %s\n", semaforo, arraySemaforos[j].nombreSemaforo);
-							if(string_equals_ignore_case(semaforo, arraySemaforos[j].nombreSemaforo))
-							{
-								semaforoEncontrado = j;
-							}
-						}
-						if(semaforoEncontrado == -1)
+						//WAIT
+						printf("Wait\n");
+						arraySemaforos[semaforoEncontrado].valor--;
+						if(arraySemaforos[semaforoEncontrado].valor < 0)
 						{
 							FD_CLR(i, &fdRPCP);
 							FD_SET(i, &fdWPCP);
-							mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
+							//Se bloquea el programa.
+							printf("Se bloquea el PCB.\n");
+							mensaje2 = 0; //Se bloquea el programa. Hay que pedir PCB.
 							send(i,&mensaje2,sizeof(char),0);
-							printf("No se encontró el semáforo solicitado. Se destruye el PCB");
+							//Recepción del PCB
 							recv(i,&superMensaje,sizeof(superMensaje),0);
-							printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
+							printf("PCB a bloquear: %d\n", superMensaje[0]);
 							pcb = recibirSuperMensaje(superMensaje);
 							desencolarExec(pcb);
 							pcb->siguiente = NULL;
-							encolarExit(pcb);
-							break;
-						}
-						if(mensaje2 == 0)
-						{
-							//WAIT
-							printf("Wait\n");
-							arraySemaforos[semaforoEncontrado].valor--;
-							if(arraySemaforos[semaforoEncontrado].valor < 0)
+							//Encolar en la cola del semáforo.
+							if(arraySemaforos[semaforoEncontrado].pcb == NULL)
 							{
-								FD_CLR(i, &fdRPCP);
-								FD_SET(i, &fdWPCP);
-								//Se bloquea el programa.
-								printf("Se bloquea el PCB.\n");
-								mensaje2 = 0; //Se bloquea el programa. Hay que pedir PCB.
-								send(i,&mensaje2,sizeof(char),0);
-								//Recepción del PCB
-								recv(i,&superMensaje,sizeof(superMensaje),0);
-								printf("PCB a bloquear: %d\n", superMensaje[0]);
-								pcb = recibirSuperMensaje(superMensaje);
-								desencolarExec(pcb);
-								pcb->siguiente = NULL;
-								//Encolar en la cola del semáforo.
-								if(arraySemaforos[semaforoEncontrado].pcb == NULL)
-								{
-									arraySemaforos[semaforoEncontrado].pcb = pcb;
-									break;
-								}
-								else
-								{
-									t_pcb* listaAux = arraySemaforos[semaforoEncontrado].pcb;
-									while(listaAux->siguiente != NULL) listaAux = arraySemaforos[semaforoEncontrado].pcb->siguiente;
-									listaAux->siguiente = pcb;
-									break;
-								}
+								arraySemaforos[semaforoEncontrado].pcb = pcb;
+								break;
 							}
 							else
 							{
-								//Puede seguir ejecutando
-								printf("Puede seguir ejecutando\n");
-								char mensaje3 = 1; //Enviar confirmación: Puede seguir ejecutando.
-								send(i,&mensaje3,sizeof(char),0);
-								break;
-							}
-						}
-						else if (mensaje2 == 1)
-						{
-							//SIGNAL
-							printf("Signal\n");
-							arraySemaforos[semaforoEncontrado].valor++;
-							if(arraySemaforos[semaforoEncontrado].pcb != NULL)
-							{
-								t_pcb* aux = arraySemaforos[semaforoEncontrado].pcb;
-								printf("Se pasa a ready un PCB: %d\n", aux->pid);
-								arraySemaforos[semaforoEncontrado].pcb = arraySemaforos[semaforoEncontrado].pcb->siguiente;
-								encolarEnReady(aux);
+								t_pcb* listaAux = arraySemaforos[semaforoEncontrado].pcb;
+								while(listaAux->siguiente != NULL) listaAux = arraySemaforos[semaforoEncontrado].pcb->siguiente;
+								listaAux->siguiente = pcb;
 								break;
 							}
 						}
 						else
 						{
-							//Error.
-							printf("Error en la recepción de la operación.\n");
+							//Puede seguir ejecutando
+							printf("Puede seguir ejecutando\n");
+							char mensaje3 = 1; //Enviar confirmación: Puede seguir ejecutando.
+							send(i,&mensaje3,sizeof(char),0);
 							break;
 						}
-						free(semaforo);
 					}
-					else if(mensaje == 5)	//Imprimir
+					else if (mensaje2 == 1)
 					{
-						operacion = 0;
-						recv(i, &pid, sizeof(int), 0);
-						recv(i, &valorAImprimir, sizeof(int), 0);
-						send(pid, &operacion, sizeof(char), 0);
-						send(pid, &valorAImprimir, sizeof(int), 0);
-						operacion = 1;
-						send(i, &operacion, sizeof(char), 0);
+						//SIGNAL
+						printf("Signal\n");
+						arraySemaforos[semaforoEncontrado].valor++;
+						if(arraySemaforos[semaforoEncontrado].pcb != NULL)
+						{
+							t_pcb* aux = arraySemaforos[semaforoEncontrado].pcb;
+							printf("Se pasa a ready un PCB: %d\n", aux->pid);
+							arraySemaforos[semaforoEncontrado].pcb = arraySemaforos[semaforoEncontrado].pcb->siguiente;
+							encolarEnReady(aux);
+							break;
+						}
 					}
-					else if (mensaje == 6)
+					else
 					{
-						recv(i, &pid, sizeof(int), 0);
-						recv(i, &tamanioTexto, sizeof(int), 0);
-						texto = malloc(tamanioTexto);	//TODO: Revisar malloc
-						recv(i, texto, tamanioTexto, 0);
-						printf("%d\n", tamanioTexto);
-						//sleep(5);
-						//texto[tamanioTexto]='\0';
-						Programa_imprimirTexto(pid, texto);
-						operacion = 1;
-						send(i, &operacion, sizeof(char), 0);
-						free(texto);
+						//Error.
+						printf("Error en la recepción de la operación con SEMAFORO.\n");
+						break;
 					}
+					free(semaforo);
 				}
+				else if(mensaje == 5)	//Imprimir
+				{
+					operacion = 0;
+					recv(i, &pid, sizeof(int), 0);
+					recv(i, &valorAImprimir, sizeof(int), 0);
+					send(pid, &operacion, sizeof(char), 0);
+					send(pid, &valorAImprimir, sizeof(int), 0);
+					operacion = 1;
+					send(i, &operacion, sizeof(char), 0);
+				}
+				else if (mensaje == 6)
+				{
+					recv(i, &pid, sizeof(int), 0);
+					recv(i, &tamanioTexto, sizeof(int), 0);
+					texto = malloc(tamanioTexto);	//TODO: Revisar malloc
+					recv(i, texto, tamanioTexto, 0);
+					printf("%d\n", tamanioTexto);
+					//sleep(5);
+					//texto[tamanioTexto]='\0';
+					Programa_imprimirTexto(pid, texto);
+					operacion = 1;
+					send(i, &operacion, sizeof(char), 0);
+					free(texto);
+				}
+
 			}
 			else if(FD_ISSET(i, &writePCP))
 			{
@@ -610,6 +626,7 @@ void* f_hiloPCP()
 
 			}
 		}
+		sem_post(&s_hayCPU);
 	}
 }
 
@@ -1144,8 +1161,8 @@ void conexionUMV(void)
 
 	socketUMV = socket(umvInfo->ai_family, umvInfo->ai_socktype, umvInfo->ai_protocol);
 
-	int a = connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
-	printf("Conexión con la UMV: %d", a);
+	connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
+	printf("Conexión con la UMV: %d\n", socketUMV);
 	freeaddrinfo(umvInfo);	// No lo necesitamos mas
 	send(socketUMV, &id, sizeof(char), 0);
 	recv(socketUMV, &conf, sizeof(char), 0);

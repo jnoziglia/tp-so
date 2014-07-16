@@ -182,7 +182,7 @@ int main(){
 		{
 			if(matarCPU == 1)
 			{
-				estadoCPU = 0;
+				estadoCPU = -1;
 				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
 				close(kernelSocket);
 				close(socketUMV);
@@ -259,6 +259,7 @@ void conectarConKernel()
 	kernelSocket = socket(kernelInfo->ai_family, kernelInfo->ai_socktype, kernelInfo->ai_protocol);
 	while (a == -1){
 		a = connect(kernelSocket, kernelInfo->ai_addr, kernelInfo->ai_addrlen);
+		printf("Intento Conectar con Kernel\n");
 	}
 	recv(kernelSocket, &quantum, sizeof(int), 0);
 	printf("quantun: %d\n", quantum);
