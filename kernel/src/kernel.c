@@ -97,6 +97,7 @@ typedef struct cpu
 {
 	int socketID;
 	struct cpu *siguiente;
+	t_pcb *pcb;
 }t_cpu;
 
 enum
@@ -327,6 +328,7 @@ void* f_hiloPCP()
 					printf("Nueva CPU: %d\n", socketPCP);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 					FD_SET(socketAux, &fdRPCP);
+					agregarCpu(socketAux);
 					//FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximoCpu) maximoCpu = socketAux;
 					send(socketAux, &quantum, sizeof(int), 0);
@@ -347,7 +349,7 @@ void* f_hiloPCP()
 					if(mensaje == 10)
 					{
 						//sem_post(&s_CpuDisponible);
-						agregarCpu(i);
+						//agregarCpu(i);
 					}
 					else if(mensaje == 0) //todo:podria ser ENUM
 					{
@@ -711,6 +713,7 @@ void agregarCpu(int socketID)
 	t_cpu* nodo = malloc(sizeof(t_cpu));
 	nodo->socketID = socketID;
 	nodo->siguiente = NULL;
+	nodo->pcb = NULL;
 	if(l_cpu == NULL)
 	{
 		l_cpu = nodo;
@@ -730,14 +733,17 @@ void agregarCpu(int socketID)
 	}
 }
 
-void quitarCpu(void)
-{
-	sem_wait(&s_ColaCpu);
-	t_cpu* aux = l_cpu;
-	l_cpu = l_cpu->siguiente;
-	free(aux);
-	sem_post(&s_ColaCpu);
-}
+//void quitarCpu(void)
+//{
+//	printf("Entro a sacar cpu\n");
+//	sem_wait(&s_ColaCpu);
+//	printf("CPU: %p\n", l_cpu);
+//	t_cpu* aux = l_cpu;
+//	l_cpu = l_cpu->siguiente;
+//	free(aux);
+//	sem_post(&s_ColaCpu);
+//	printf("Salgo de sacar cpu\n");
+//}
 
 void* f_hiloHabilitarCpu(void)
 {
@@ -745,12 +751,13 @@ void* f_hiloHabilitarCpu(void)
 	int status;
 	while(1)
 	{
-		sem_wait(&s_CpuDisponible);
-		printf("hay cpu disponible\n");
 		sem_wait(&s_ProgramasEnReady);
 		printf("hay programa en ready\n");
+		sem_wait(&s_CpuDisponible);
+		printf("hay cpu disponible\n");
 		t_pcb* pcbAux;
 		pcbAux = desencolarReady();
+		printf("PCB: %p\n", pcbAux);
 		//					t_pcb* pcbAux;
 		//					pcbAux = desencolarReady();
 		superMensaje[0] = pcbAux->pid;
@@ -765,10 +772,11 @@ void* f_hiloHabilitarCpu(void)
 		superMensaje[9] = pcbAux->tamanioIndiceCodigo;
 		superMensaje[10] = pcbAux->peso;
 		//					//free(l_new);
+		printf("arme supermensaje\n");
 		//					//l_new = NULL;
 		encolarExec(pcbAux);
+		printf("Encole en exec\n");
 		status = send(l_cpu->socketID, superMensaje, 11*sizeof(int), 0);
-		quitarCpu();
 	}
 
 }
@@ -1409,31 +1417,31 @@ void serializarPcb(t_pcb* pcb, void* package)
 
 t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 {
-	sem_wait(&s_ColaExec);
+	sem_wait(&s_ColaCpu);
 	int i;
-	t_pcb* pcb = l_exec;
-	while(pcb->pid != superMensaje[0] && pcb != NULL)
+	t_cpu* aux = l_cpu;
+	while(aux->pcb->pid != superMensaje[0] && aux != NULL)
 	{
-		pcb= pcb->siguiente;
+		aux= aux->siguiente;
 	}
-	if(pcb == NULL) printf("El PCB no existe\n");
-	pcb->pid = superMensaje[0];
-	pcb->segmentoCodigo = superMensaje[1];
-	pcb->segmentoStack=	superMensaje[2] ;
-	pcb->cursorStack=superMensaje[3]  ;
-	pcb->indiceCodigo=superMensaje[4] ;
-	pcb->indiceEtiquetas=superMensaje[5]  ;
-	pcb->programCounter=superMensaje[6] ;
-	pcb->tamanioContextoActual=superMensaje[7] ;
-	pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
-	pcb->tamanioIndiceCodigo=superMensaje[9] ;
-	pcb->peso=superMensaje[10] ;
+	if(aux == NULL) printf("El PCB no existe\n");
+	aux->pcb->pid = superMensaje[0];
+	aux->pcb->segmentoCodigo = superMensaje[1];
+	aux->pcb->segmentoStack=	superMensaje[2] ;
+	aux->pcb->cursorStack=superMensaje[3]  ;
+	aux->pcb->indiceCodigo=superMensaje[4] ;
+	aux->pcb->indiceEtiquetas=superMensaje[5]  ;
+	aux->pcb->programCounter=superMensaje[6] ;
+	aux->pcb->tamanioContextoActual=superMensaje[7] ;
+	aux->pcb->tamanioIndiceEtiquetas=superMensaje[8] ;
+	aux->pcb->tamanioIndiceCodigo=superMensaje[9] ;
+	aux->pcb->peso=superMensaje[10] ;
 
 	for(i=0; i<11; i++){
 		printf("pcb: %d\n", superMensaje[i]);
 	}
-	//sem_post(&s_ColaExec);
-	return pcb;
+	sem_post(&s_ColaCpu);
+	return aux->pcb;
 }
 
 void cargarConfig(void)
@@ -1654,61 +1662,41 @@ t_pcb* desencolarReady(void)
 
 void encolarExec(t_pcb* pcb)
 {
-	sem_wait(&s_ColaExec);
-	t_pcb* aux = l_exec;
-	if(l_exec == NULL)
-	{
-		l_exec = pcb;
-		pcb->siguiente = NULL;
-		//return;
-	}
-	else
-	{
-		while(aux->siguiente != NULL)
-		{
-			aux = aux->siguiente;
-		}
-		aux->siguiente = pcb;
-		pcb->siguiente = NULL;
-		//return;
-	}
-	aux = l_exec;
+	sem_wait(&s_ColaCpu);
+	t_cpu* aux = l_cpu;
 	while(aux != NULL)
 	{
-		printf("PID en exec: %d\t", aux->pid);
+		if(aux->pcb == NULL)
+		{
+			aux->pcb = pcb;
+			sem_post(&s_ColaCpu);
+			return;
+		}
 		aux = aux->siguiente;
 	}
-	sem_post(&s_ColaExec);
+	printf("No hay cpus disponibles\n");
+	sem_post(&s_ColaCpu);
 	return;
 }
 
 void desencolarExec(t_pcb* pcb)
 {
-	//sem_wait(&s_ColaExec);
-	t_pcb* aux = l_exec;
-	t_pcb* auxAnt;
-	if (aux->pid == pcb->pid)
-	{
-		l_exec = l_exec->siguiente;
-		sem_post(&s_ColaExec);
-		return;
-	}
-	auxAnt = l_exec;
-	aux = aux->siguiente;
+	sem_wait(&s_ColaCpu);
+	t_cpu* aux = l_cpu;
 	while(aux != NULL)
 	{
-		if(aux->pid == pcb->pid)
+		if(aux->pcb->pid == pcb->pid)
 		{
-			auxAnt->siguiente = aux->siguiente;
-			//free(aux);
-			sem_post(&s_ColaExec);
+			aux->pcb = NULL;
+			sem_post(&s_ColaCpu);
+			sem_post(&s_CpuDisponible);
 			return;
-
 		}
-		auxAnt = aux;
 		aux = aux->siguiente;
 	}
-	printf("no se encontro el pcb\n");
+	printf("El pcb no estaba en ejecucion\n");
+	sem_post(&s_ColaCpu);
+	return;
 }
 
 void encolarExit(t_pcb* pcb)
