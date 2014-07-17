@@ -307,7 +307,7 @@ void* mainConsola()
 		if(string_starts_with(parametros,"retardo "))
 		{
 			char* resto = string_substring_from(parametros,8);
-			retardo = atoi(resto)/1000;
+			retardo = atoi(resto);
 			printf("Retardo Cambiado\n");
 			continue;
 		}
@@ -437,6 +437,7 @@ void* f_hiloKernel(void* socketCliente)
 	while(status != 0)
 	{
 		recv(socketKernel, &operacion, sizeof(char), 0);
+		//usleep(retardo*1000);
 		sem_wait(&s_cpu);
 		printf("OPERACION: %d\n", operacion);
 		if (operacion == operCrearSegmento)
@@ -491,21 +492,27 @@ void* f_hiloCpu(void* socketCliente)
 	char operacion;
 	char confirmacion;
 	char enviarError;
+	int hiceWait = 1;
 	int pid, base, offset, tamanio;
 	void* buffer;
 	int i;
 	while(status != 0)
 	{
-		printf("Recibo operacion\n");
-		if(recv(socketCPU, &operacion, sizeof(char), 0) == 0) break;
-		sem_wait(&s_cpu);
+		printf("Recibo operacion de un cpu\n");
+		if(recv(socketCPU, &operacion, sizeof(char), 0) == 0)
+		{
+			hiceWait = 0;
+			break;
+		}
+		//sem_wait(&s_cpu);
 		//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
 		printf("La operacion es: %d\n", operacion);
 		if (operacion == operSolicitarBytes)
 		{
 			confirmacion = 1;
 			send(socketCPU, &confirmacion, sizeof(char), 0);
-			status = recv(socketCPU, mensaje, 4*sizeof(int), 0);
+			usleep(retardo*1000);
+			if(recv(socketCPU, mensaje, 4*sizeof(int), 0) == 0) break;
 			buffer = malloc(mensaje[3]);
 			cambioProcesoActivo(mensaje[0]);
 			for(i=0; i<4; i++)
@@ -517,14 +524,16 @@ void* f_hiloCpu(void* socketCliente)
 //			memcpy(&aux, buffer, sizeof(int));
 //			printf("AUX: %d\n", aux);
 			if (buffer == NULL) printf("buffer nulo\n");
-			send(socketCPU, buffer, mensaje[3], 0);
+			if(send(socketCPU, buffer, mensaje[3], 0) == 0) break;
 			free(buffer);
+
 		}
 		else if(operacion == operEnviarBytes)
 		{
 			confirmacion = 1;
 			send(socketCPU, &confirmacion, sizeof(char), 0);
-			status = recv(socketCPU, &pid, sizeof(int), 0);
+			usleep(retardo*1000);
+			if(recv(socketCPU, &pid, sizeof(int), 0) == 0) break;
 			status = recv(socketCPU, &base, sizeof(int), 0);
 			status = recv(socketCPU, &offset, sizeof(int), 0);
 			status = recv(socketCPU, &tamanio, sizeof(int), 0);
@@ -533,24 +542,32 @@ void* f_hiloCpu(void* socketCliente)
 			cambioProcesoActivo(pid);
 			enviarError = enviarBytes(base, offset, tamanio, buffer);
 			printf("CONFIRMACION: %d\n", enviarError);
-			send(socketCPU, &enviarError, sizeof(char), 0);
+			if(send(socketCPU, &enviarError, sizeof(char), 0) == 0) break;
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
 		{
 			confirmacion = 1;
 			send(socketCPU, &confirmacion, sizeof(char), 0);
+			usleep(retardo*1000);
 			status = recv(socketCPU, &pid, sizeof(int), 0);
 			if(status != 0)
 			{
 				destruirSegmentos(pid);
+			}
+			else
+			{
+				break;
 			}
 		}
 		else
 		{
 			printf("ERROR");
 		}
-		sem_post(&s_cpu);
+	}
+	if(hiceWait)
+	{
+		//sem_post(&s_cpu);
 	}
 	//exit(0);
 	return 0;
@@ -566,7 +583,8 @@ int handshake(int id)
 }
 
 void destruirSegmentos( int id){
-	mostrarEstructuras();
+	//mostrarEstructuras();
+	//usleep(retardo*1000);
 	sem_wait(&s_TablaSegmentos);
 	t_segmento* aux = NULL;
 	t_segmento* auxSiguiente = tablaSegmentos;
@@ -602,13 +620,14 @@ void destruirSegmentos( int id){
 		}
 	}
 	sem_post(&s_TablaSegmentos);
-	mostrarEstructuras();
+	//mostrarEstructuras();
 	return;
 }
 
 /* Funcion solicitar bytes */
 void* solicitarBytes(int base, int offset, int tamanio)
 {
+	//usleep(retardo*1000);
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
@@ -629,6 +648,7 @@ void* solicitarBytes(int base, int offset, int tamanio)
 
 int enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
+	//usleep(retardo*1000);
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
@@ -650,6 +670,7 @@ int enviarBytes(int base, int offset, int tamanio, void* buffer)
 
 int crearSegmento(int idProceso, int tamanio)
 {
+	//usleep(retardo*1000);
 	sem_wait(&s_TablaSegmentos);
 	void* inicioNuevo = posicionarSegmento(algoritmo,tamanio);
 	t_segmento* segmentoNuevo;
@@ -943,8 +964,8 @@ void mostrarContenidoDeMemoria(int offset, int tamanio)
 	//printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
 	for (i=0; i<tamanio; i++)
 	{
-		log_info(logi, "%p --- %d\t",contador+i,*(contador+i));
-		log_info(logi, "%c",*(contador+i));
+		log_info(logi, "%p --- %d \t %c",contador+i,*(contador+i), *(contador+i));
+		//log_info(logi, "%c",*(contador+i));
 //		printf("%p --- %d\t",contador+i,*(contador+i));
 //		printf("%c\n",*(contador+i));
 	}

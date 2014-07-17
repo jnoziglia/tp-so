@@ -166,7 +166,7 @@ int main(){
 		terminarPrograma = 0;
 		bloquearPrograma = 0;
 
-		send(kernelSocket, &puedeRecibir, sizeof(char), 0);
+		//send(kernelSocket, &puedeRecibir, sizeof(char), 0);
 		//recv(kernelSocket, &ping, sizeof(char), 0);
 		int recibido = recv(kernelSocket,superMensaje,sizeof(t_pcb),0);
 		sem_wait(&s_terminarCPU);
@@ -215,7 +215,7 @@ int main(){
 			}
 			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
-			sleep(2);
+			//sleep(2);
 
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
 			pcb->programCounter++;

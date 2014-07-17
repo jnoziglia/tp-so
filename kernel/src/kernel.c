@@ -320,7 +320,7 @@ void* f_hiloPCP()
 	while(1)
 	{
 		FD_ZERO(&readPCP);
-		FD_ZERO(&writePCP);
+		//FD_ZERO(&writePCP);
 		readPCP = fdRPCP;
 		//writePCP = fdWPCP;
 		statusSelect = select(maximoCpu + 1, &readPCP, NULL, NULL, NULL);
@@ -664,6 +664,7 @@ void* f_hiloPCP()
 						if(pcb != NULL)
 						{
 							pcb->siguiente = NULL;
+							Programa_imprimirTexto(pcb->pid, "Se desconecto el cpu abruptamente y no se pudo finalizar la ejecucion\n");
 							encolarExit(pcb);
 						}
 						//Hago la desconexion
