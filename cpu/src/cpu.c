@@ -215,7 +215,7 @@ int main(){
 			}
 			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
-			//sleep(2);
+			sleep(2);
 
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
 			pcb->programCounter++;
