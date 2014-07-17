@@ -151,6 +151,7 @@ void socketDesconectado(void);
 void agregarCpu(int socketID);
 void quitarCpu();
 t_pcb* sacarCpuDeEjecucion(int socketID);
+void* f_hiloColaExit(void);
 
 
 /* Variables Globales */
@@ -202,6 +203,7 @@ sem_t s_Semaforos; //Semáforo para habilitar revisar la lista de IO y atender p
 sem_t s_ProgramaImprimir;
 sem_t s_ProgramasEnReady;
 sem_t s_ProgramasEnNew;
+sem_t s_ProgramasEnExit;
 sem_t s_CpuDisponible;
 sem_t s_ColaCpu;
 sem_t s_ColaExec;
@@ -226,6 +228,7 @@ int main(void) {
 	sem_init(&s_CpuDisponible,0,0);
 	sem_init(&s_ProgramasEnNew,0,0);
 	sem_init(&s_ColaCpu,0,1);
+	sem_init(&s_ProgramasEnExit,0,0);
 	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
 	cargarVariablesCompartidas();
@@ -867,7 +870,7 @@ void* f_hiloHabilitarCpu(void)
 
 void* f_hiloPLP()
 {
-	pthread_t hiloRespuestaPrograma;
+	pthread_t hiloColaExit;
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int socketServidor;
@@ -892,7 +895,7 @@ void* f_hiloPLP()
 	listen(socketServidor, BACKLOG);
 	printf("SocketServidor: %d\n",socketServidor);
 
-	//pthread_create(&hiloRespuestaPrograma, NULL, f_hiloRespuestaPrograma, NULL);
+	pthread_create(&hiloColaExit, NULL, f_hiloColaExit, NULL);
 
 
 	FD_ZERO(&readPLP);
@@ -929,7 +932,7 @@ void* f_hiloPLP()
 					if (status != 0)
 					{
 						FD_CLR(i, &fdRPLP);
-						FD_SET(i, &fdWPLP);
+						//FD_SET(i, &fdWPLP);
 						//t_pcb* nuevoPCB;
 						//printf("%s", package);
 						//nuevoPCB = crearPcb(package, i);
@@ -950,154 +953,90 @@ void* f_hiloPLP()
 					{
 						FD_CLR(i, &fdRPLP);
 						close(i);
-						if (i == maximo)
+					}
+					if (i == maximo)
+					{
+						for(j=3; j<maximo; j++)
 						{
-							for(j=3; j<maximo; j++)
+							if(FD_ISSET(j, &fdRPLP) || FD_ISSET(j, &fdWPLP))
 							{
-								if(FD_ISSET(j, &fdRPLP) || FD_ISSET(j, &fdWPLP))
-								{
-									printf("baje maximo\n");
-									maximoAnterior = j;
-								}
+								printf("baje maximo\n");
+								maximoAnterior = j;
 							}
-							maximo = maximoAnterior;
 						}
+						maximo = maximoAnterior;
 					}
 				}
 			}
-			else if (FD_ISSET(i, &writePLP))
-			{
-//				listaImprimir = l_imprimir;
-//				while(listaImprimir != NULL)
+//			else if (FD_ISSET(i, &writePLP))
+//			{
+//				//printf("entro al isset %d\n", i);
+//				listaExit = l_exit;
+//				while(listaExit != NULL)
 //				{
-//					if(i == listaImprimir->pid)
+//					if(i == listaExit->pid)
 //					{
-//						send(listaImprimir->pid, &(listaImprimir->mensaje), sizeof(char), 0);
-//						if(listaImprimir->mensaje == 0)
+//						printf("entro al exit %d\n", i);
+//						mensajePrograma = 2;
+//						send(i, &mensajePrograma, sizeof(char), 0);
+//						UMV_destruirSegmentos(i);
+//						close(i);
+//						if (i == maximo)
 //						{
-//							send(listaImprimir->pid, &(listaImprimir->valor), sizeof(int), 0);
+//							for(j=3; j<maximo; j++)
+//							{
+//								if(FD_ISSET(j, &fdWPLP) || FD_ISSET(j, &fdRPLP))
+//								{
+//									printf("baje maximo\n");
+//									maximoAnterior = j;
+//								}
+//							}
+//							maximo = maximoAnterior;
 //						}
-//						else
-//						{
-//							tamanioTexto = strlen(listaImprimir->texto);
-//							send(listaImprimir->pid, &tamanioTexto, sizeof(int), 0);
-//							send(listaImprimir->pid, listaImprimir->texto, tamanioTexto, 0);
-//						}
-//						l_imprimir = listaImprimir->siguiente;
-//						free(listaImprimir);
+//						FD_CLR(i, &fdWPLP);
+//						destruirPCB(i);
+//						sem_post(&s_Multiprogramacion);
+//						break;
+//					}
+//					else
+//					{
+//						listaExit = listaExit->siguiente;
 //					}
 //				}
-				//printf("entro al isset %d\n", i);
-				listaExit = l_exit;
-				while(listaExit != NULL)
-				{
-					if(i == listaExit->pid)
-					{
-						printf("entro al exit %d\n", i);
-						mensajePrograma = 2;
-						send(i, &mensajePrograma, sizeof(char), 0);
-						UMV_destruirSegmentos(i);
-						close(i);
-						if (i == maximo)
-						{
-							for(j=3; j<maximo; j++)
-							{
-								if(FD_ISSET(j, &fdWPLP) || FD_ISSET(j, &fdRPLP))
-								{
-									printf("baje maximo\n");
-									maximoAnterior = j;
-								}
-							}
-							maximo = maximoAnterior;
-						}
-						FD_CLR(i, &fdWPLP);
-						destruirPCB(i);
-						sem_post(&s_Multiprogramacion);
-						break;
-					}
-					else
-					{
-						listaExit = listaExit->siguiente;
-					}
-				}
-				if(listaExit == NULL)
-				{
-					//El programa esta para imprimir
-
-				}
-			}
+//				if(listaExit == NULL)
+//				{
+//					//El programa esta para imprimir
+//
+//				}
+//			}
 		}
 	}
 	return NULL;
 }
 
-//void* f_hiloRespuestaPrograma(void)
-//{
-//	t_imprimir* listaImprimir = l_imprimir;
-//	t_pcb* listaExit = l_exit;
-//	int tamanioTexto;
-//	while(1)
-//	{
-//		sem_wait(&s_ColaExit);	//MUTEX
-//		while(l_imprimir != NULL)
-//		{
-//			send(listaImprimir->pid, &(listaImprimir->mensaje), sizeof(char), 0);
-//			if(listaImprimir->mensaje == 0)
-//			{
-//				sem_wait(&s_hayProgramas);
-//				send(listaImprimir->pid, &(listaImprimir->valor), sizeof(int), 0);
-//			}
-//			else
-//			{
-//				sem_wait(&s_hayProgramas);
-//				tamanioTexto = strlen(listaImprimir->texto);
-//				send(listaImprimir->pid, &tamanioTexto, sizeof(int), 0);
-//				send(listaImprimir->pid, listaImprimir->texto, tamanioTexto, 0);
-//			}
-//			l_imprimir = listaImprimir->siguiente;
-//			free(listaImprimir);
-//		}
-//		while(l_exit != NULL)
-//		{
-//
-//		}
-//
-//	}
-//	return NULL;
-//}
-
-/*escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
-	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
-	listen(escucharConexiones, BACKLOG);		// IMPORTANTE: listen() es una syscall BLOQUEANTE.
-
-	FD_SET(escucharConexiones, &readfds);
-
-	struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
-	socklen_t addrlen = sizeof(programa);
-
-	int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
-	char package[PACKAGESIZE];
-	int status = 1;		// Estructura que maneja el status de los recieve.
-	printf("Proceso Programa conectado. Recibiendo codigo.\n");
-
-	//while (status != 0){
-		status = recv(socketCliente, (void*) package, PACKAGESIZE, 0);
-		printf("Codigo Recibido. %d\n", status);
-		if (status != 0)
+void* f_hiloColaExit(void)
+{
+	t_pcb* listaExit;
+	int mensajePrograma;
+	while(1)
+	{
+		listaExit = l_exit;
+		sem_wait(&s_ProgramasEnExit);
+		sem_wait(&s_ColaExit);
+		while(listaExit != NULL)
 		{
-			t_pcb* nuevoPCB;
-			printf("Llegó acá.\n");
-			printf("%s", package);
-			nuevoPCB = crearPcb(package);
-			if(nuevoPCB != NULL)
-			{
-				printf("Nuevo PCB Creado\n");
-			}
+			printf("entro al exit %d\n", listaExit->pid);
+			mensajePrograma = 2;
+			send(listaExit->pid, &mensajePrograma, sizeof(char), 0);
+			UMV_destruirSegmentos(listaExit->pid);
+			close(listaExit->pid);
+			destruirPCB(listaExit->pid);
+			sem_post(&s_Multiprogramacion);
+			listaExit = listaExit->siguiente;
 		}
-	//}
-	select(escucharConexiones+1, &readfds, NULL, NULL, NULL);
-	return 0;
-}*/
+		sem_post(&s_ColaExit);
+	}
+}
 
 void* f_hiloIO(void* pos)
 {
@@ -1636,7 +1575,7 @@ void cargarSemaforos(void)
 
 void destruirPCB(int pid)
 {
-	sem_wait(&s_ColaExit);
+	//sem_wait(&s_ColaExit);
 	t_pcb* listaExit = l_exit;
 	t_pcb* listaAux = NULL;
 	t_pcb* aux = l_exit;
@@ -1651,7 +1590,7 @@ void destruirPCB(int pid)
 		l_exit = l_exit->siguiente;
 		free(listaAux);
 		printf("Destrui unico PCB\n");
-		sem_post(&s_ColaExit);
+		//sem_post(&s_ColaExit);
 		return;
 	}
 	listaAux = listaExit;
@@ -1663,7 +1602,7 @@ void destruirPCB(int pid)
 			printf("destruyo pcb\n");
 			listaAux->siguiente = listaExit->siguiente;
 			free(listaExit);
-			sem_post(&s_ColaExit);
+			//sem_post(&s_ColaExit);
 			return;
 		}
 		listaAux = listaExit;
@@ -1812,6 +1751,7 @@ void encolarExit(t_pcb* pcb)
 		pcb->siguiente = NULL;
 		printf("Encolando PRIMERO en exit %d\n", pcb->pid);
 		sem_post(&s_ColaExit);
+		sem_post(&s_ProgramasEnExit);
 		return;
 	}
 	else
@@ -1824,6 +1764,7 @@ void encolarExit(t_pcb* pcb)
 		pcb->siguiente = NULL;
 		printf("Encolando ULTIMO en exit %d\n", pcb->pid);
 		sem_post(&s_ColaExit);
+		sem_post(&s_ProgramasEnExit);
 		return;
 	}
 }

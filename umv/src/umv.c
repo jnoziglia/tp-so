@@ -437,8 +437,8 @@ void* f_hiloKernel(void* socketCliente)
 	while(status != 0)
 	{
 		recv(socketKernel, &operacion, sizeof(char), 0);
-		//usleep(retardo*1000);
-		sem_wait(&s_cpu);
+		usleep(retardo*1000);
+		//sem_wait(&s_cpu);
 		printf("OPERACION: %d\n", operacion);
 		if (operacion == operCrearSegmento)
 		{
@@ -478,7 +478,7 @@ void* f_hiloKernel(void* socketCliente)
 				destruirSegmentos(pid);
 			}
 		}
-		sem_post(&s_cpu);
+		//sem_post(&s_cpu);
 	}
 	//exit(0);
 	return 0;
