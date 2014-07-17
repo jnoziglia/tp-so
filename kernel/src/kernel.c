@@ -793,7 +793,10 @@ t_pcb* sacarCpuDeEjecucion(int socketID)
 		l_cpu = l_cpu->siguiente;
 		pcbRetorno = aux->pcb;
 		free(aux);
-		sem_wait(&s_CpuDisponible);
+		if(pcbRetorno == NULL)
+		{
+			sem_wait(&s_CpuDisponible);
+		}
 		sem_post(&s_ColaCpu);
 		return pcbRetorno;
 	}
@@ -808,7 +811,10 @@ t_pcb* sacarCpuDeEjecucion(int socketID)
 				auxAnt->siguiente = aux->siguiente;
 				pcbRetorno = aux->pcb;
 				free(aux);
-				sem_wait(&s_CpuDisponible);
+				if(pcbRetorno == NULL)
+				{
+					sem_wait(&s_CpuDisponible);
+				}
 				sem_post(&s_ColaCpu);
 				return pcbRetorno;
 			}
