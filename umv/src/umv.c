@@ -492,6 +492,7 @@ void* f_hiloCpu(void* socketCliente)
 	char operacion;
 	char confirmacion;
 	char enviarError;
+	char haySegFault;
 	int hiceWait = 1;
 	int pid, base, offset, tamanio;
 	void* buffer;
@@ -523,8 +524,17 @@ void* f_hiloCpu(void* socketCliente)
 //			int aux;
 //			memcpy(&aux, buffer, sizeof(int));
 //			printf("AUX: %d\n", aux);
-			if (buffer == NULL) printf("buffer nulo\n");
-			if(send(socketCPU, buffer, mensaje[3], 0) == 0) break;
+			if (buffer == NULL)
+			{
+				haySegFault = 1;
+				send(socketCPU, &haySegFault, sizeof(char), 0);
+			}
+			else
+			{
+				haySegFault = 0;
+				send(socketCPU, &haySegFault, sizeof(char), 0);
+				send(socketCPU, buffer, mensaje[3], 0);
+			}
 			free(buffer);
 
 		}
@@ -633,7 +643,7 @@ void* solicitarBytes(int base, int offset, int tamanio)
 	t_segmento* segmentoBuscado = buscarSegmento(base);
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
-		printf("Segmentation Fault");
+		printf("Segmentation Fault\n");
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
 		return NULL;
@@ -676,7 +686,7 @@ int crearSegmento(int idProceso, int tamanio)
 	t_segmento* segmentoNuevo;
 	if(inicioNuevo == NULL)
 	{
-		printf("No pudo posicionarse el segmento nuevo\n");
+		printf("MEMORY OVELOAD\n");
 		sem_post(&s_TablaSegmentos);
 		return -1;
 	}

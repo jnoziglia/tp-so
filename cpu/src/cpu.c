@@ -120,6 +120,7 @@ char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
 bool bloquearPrograma = 0;
+bool errorDeEjecucion = 0;
 t_pcb* pcb;
 int superMensaje[11];
 char* PUERTOUMV;
@@ -357,6 +358,7 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 {
 	char operacion = 0;
 	char confirmacion;
+	char haySegFault;
 	void* buffer = malloc(tamanio);
 	int mensaje[4], status;
 	mensaje[0] = pid;
@@ -368,15 +370,22 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 	if(confirmacion != 0)
 	{
 		send(socketUMV, mensaje, 4*sizeof(int), 0);
-		status = recv(socketUMV, buffer, tamanio, 0);
-		printf("recibo datos segmento\n");
-		if(buffer == NULL)
+		recv(socketUMV, &haySegFault, sizeof(char), 0);
+		if(!haySegFault)
+		{
+			status = recv(socketUMV, buffer, tamanio, 0);
+			printf("recibo datos segmento\n");
+			return buffer;
+		}
+		else
 		{
 			printf("Termino programa\n");
 			terminarPrograma = 1;
+			errorDeEjecucion = 1;
+			printf("HUBO SEG FAULT\n");
+			return NULL;
 		}
 	}
-	return buffer;
 }
 
 void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
@@ -397,6 +406,7 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 		if(conf == -1)
 		{
 			terminarPrograma = 1;
+			errorDeEjecucion = 1;
 		}
 	}
 }
@@ -553,170 +563,246 @@ void liberarDiccionario(void)
 
 t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 {
-	printf("Primitiva Definir Variable\n");
-	int offset;
-	char variable = (char) identificador_variable;
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),5,&variable);
-	offset = pcb->cursorStack + pcb->tamanioContextoActual * 5 + 1;
-	agregarAlDiccionario(variable, offset);
-	pcb->tamanioContextoActual++;
-	//todo:Diccionario de variables. ??? ???
-	return offset;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Definir Variable\n");
+		int offset;
+		char variable = (char) identificador_variable;
+		UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),5,&variable);
+		offset = pcb->cursorStack + pcb->tamanioContextoActual * 5 + 1;
+		agregarAlDiccionario(variable, offset);
+		pcb->tamanioContextoActual++;
+		//todo:Diccionario de variables. ??? ???
+		return offset;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 t_puntero AnSISOP_obtenerPosicionVariable(t_nombre_variable identificador_variable)
 {
-	printf("Primitiva Obtener Posicion Variable\n");
-	int offset = -1;
-	int aux = 0;
-	t_diccionario* diccionarioAux = diccionarioVariables;
-	//char* buffer = malloc(pcb->tamanioContextoActual * 5);
-	//buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
-	while(diccionarioAux != NULL)
+	if(!errorDeEjecucion)
 	{
-		if(diccionarioAux->variable == identificador_variable)
+		printf("Primitiva Obtener Posicion Variable\n");
+		int offset = -1;
+		int aux = 0;
+		t_diccionario* diccionarioAux = diccionarioVariables;
+		//char* buffer = malloc(pcb->tamanioContextoActual * 5);
+		//buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
+		while(diccionarioAux != NULL)
 		{
-			//free(buffer);
-			offset = diccionarioAux->offset;
-			return (offset);
+			if(diccionarioAux->variable == identificador_variable)
+			{
+				//free(buffer);
+				offset = diccionarioAux->offset;
+				return (offset);
+			}
+			diccionarioAux = diccionarioAux->siguiente;
 		}
-		diccionarioAux = diccionarioAux->siguiente;
+		//free(buffer);
+		return offset;
 	}
-	//free(buffer);
-	return offset;
+	else
+	{
+		return 0;
+	}
 }
 
 t_valor_variable AnSISOP_dereferenciar(t_puntero direccion_variable)
 {
-	printf("Primitiva Dereferenciar Variable\n");
-	int* valor;
-	valor = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4);
-	printf("Dereferenciar puntero: %d, valor: %d\n", direccion_variable, *valor);
-	return *valor;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Dereferenciar Variable\n");
+		int* valor;
+		valor = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4);
+		if(valor == NULL)
+		{
+			printf("VALOR ES NULL\n");
+			return 0;
+		}
+		printf("Dereferenciar puntero: %d, valor: %d\n", direccion_variable, *valor);
+		return *valor;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 void AnSISOP_asignar(t_puntero direccion_variable, t_valor_variable valor)
 {
-	printf("Primitiva Asignar Variable\n");
-	printf("Valor: %d, Dirección: %d\n", valor, direccion_variable);
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4,&valor);
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Asignar Variable\n");
+		printf("Valor: %d, Dirección: %d\n", valor, direccion_variable);
+		UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_variable,4,&valor);
+	}
 }
 
 //TODO:ObtenerValorCompartida, asignarVariableCompartida
 t_valor_variable AnSISOP_obtenerValorCompartida(t_nombre_compartida variable)
 {
-	printf("Primitiva Obtener Valor de Variable Compartida: %s\n", variable);
-	char estadoCPU = 2; //Trabajar con variables compartidas
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	char mensaje2 = 0; //Pedir valor de variable
-	send(kernelSocket,&mensaje2,sizeof(char),0);
-	//todo: Chequear acá si hubo error recibiendo. Marcar terminarPrograma = 1.
-	int tamanio = strlen(variable);
-	printf("Tamanio: %d\n", tamanio);
-	send(kernelSocket,&tamanio,sizeof(int),0);
-	send(kernelSocket,variable,tamanio,0);
-	t_valor_variable valorVariable;
-	recv(kernelSocket,&valorVariable,sizeof(int),0);
-	if(valorVariable == -1) printf("Error recibiendo el valor de la variable");
-	printf("Valor de la variable: %d\n", valorVariable);
-	return valorVariable;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Obtener Valor de Variable Compartida: %s\n", variable);
+		char estadoCPU = 2; //Trabajar con variables compartidas
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		char mensaje2 = 0; //Pedir valor de variable
+		send(kernelSocket,&mensaje2,sizeof(char),0);
+		//todo: Chequear acá si hubo error recibiendo. Marcar terminarPrograma = 1.
+		int tamanio = strlen(variable);
+		printf("Tamanio: %d\n", tamanio);
+		send(kernelSocket,&tamanio,sizeof(int),0);
+		send(kernelSocket,variable,tamanio,0);
+		t_valor_variable valorVariable;
+		recv(kernelSocket,&valorVariable,sizeof(int),0);
+		if(valorVariable == -1) printf("Error recibiendo el valor de la variable");
+		printf("Valor de la variable: %d\n", valorVariable);
+		return valorVariable;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 t_valor_variable AnSISOP_asignarValorCompartida(t_nombre_compartida variable, t_valor_variable valor)
 {
-	printf("Primitiva Asignar Valor de Variable Compartida: %s\n", variable);
-	estadoCPU = 2; //Trabajar con variables compartidas
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	char mensaje2 = 1; //Asignar valor de variable
-	send(kernelSocket,&mensaje2,sizeof(char),0);
-	//todo: Chequear acá si hubo error recibiendo. Marcar terminarPrograma = 1.
-	int tamanio = strlen(variable);
-	printf("Tamanio: %d\n", tamanio);
-	send(kernelSocket,&tamanio,sizeof(int),0);
-	send(kernelSocket,variable,tamanio,0);
-	send(kernelSocket,&valor,sizeof(int),0);
-	return valor;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Asignar Valor de Variable Compartida: %s\n", variable);
+		estadoCPU = 2; //Trabajar con variables compartidas
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		char mensaje2 = 1; //Asignar valor de variable
+		send(kernelSocket,&mensaje2,sizeof(char),0);
+		//todo: Chequear acá si hubo error recibiendo. Marcar terminarPrograma = 1.
+		int tamanio = strlen(variable);
+		printf("Tamanio: %d\n", tamanio);
+		send(kernelSocket,&tamanio,sizeof(int),0);
+		send(kernelSocket,variable,tamanio,0);
+		send(kernelSocket,&valor,sizeof(int),0);
+		return valor;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 void AnSISOP_irAlLabel(t_nombre_etiqueta nombre_etiqueta)
 {
-	printf("Primitiva Ir al Label\n");
-	void* buffer = malloc(pcb->tamanioIndiceEtiquetas);
-	if(string_ends_with(nombre_etiqueta, "\n")) string_trim(&nombre_etiqueta);
-//	char* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
-	printf("tamanio indice etiquetas: %d\n", pcb->tamanioIndiceEtiquetas);
-	t_puntero_instruccion instruccion;
-	memcpy(buffer, UMV_solicitarBytes(pcb->pid,pcb->indiceEtiquetas,0,pcb->tamanioIndiceEtiquetas), pcb->tamanioIndiceEtiquetas);
-//	memcpy(etiquetas,buffer,pcb->tamanioIndiceEtiquetas);
-	instruccion = metadata_buscar_etiqueta(nombre_etiqueta,buffer,pcb->tamanioIndiceEtiquetas);
-	//char* n = etiquetas;
-	//printf("etiquetas: \n");
-	//printf("%s \n", etiquetas);
-//	printf("largo etiquetas: %d\n", strlen(etiquetas));
-	printf("etiqueta: %s\n", nombre_etiqueta);
-	printf("instruccion: %d\n", instruccion);
-	//scanf("%d", &instruccion);
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Ir al Label\n");
+		void* buffer = malloc(pcb->tamanioIndiceEtiquetas);
+		if(string_ends_with(nombre_etiqueta, "\n")) string_trim(&nombre_etiqueta);
+	//	char* etiquetas = malloc(pcb->tamanioIndiceEtiquetas);
+		printf("tamanio indice etiquetas: %d\n", pcb->tamanioIndiceEtiquetas);
+		t_puntero_instruccion instruccion;
+		memcpy(buffer, UMV_solicitarBytes(pcb->pid,pcb->indiceEtiquetas,0,pcb->tamanioIndiceEtiquetas), pcb->tamanioIndiceEtiquetas);
+	//	memcpy(etiquetas,buffer,pcb->tamanioIndiceEtiquetas);
+		instruccion = metadata_buscar_etiqueta(nombre_etiqueta,buffer,pcb->tamanioIndiceEtiquetas);
+		//char* n = etiquetas;
+		//printf("etiquetas: \n");
+		//printf("%s \n", etiquetas);
+	//	printf("largo etiquetas: %d\n", strlen(etiquetas));
+		printf("etiqueta: %s\n", nombre_etiqueta);
+		printf("instruccion: %d\n", instruccion);
+		//scanf("%d", &instruccion);
 
-	pcb->programCounter = instruccion - 1;
+		pcb->programCounter = instruccion - 1;
 
-//	free(etiquetas);
-	return;
+	//	free(etiquetas);
+		return;
+	}
 }
 
 void AnSISOP_llamarSinRetorno(t_nombre_etiqueta etiqueta)
 {
-	printf("Primitiva Llamar Sin Retorno\n");
-	printf("Etiqueta: %s\n", etiqueta);
-	void* buffer = malloc(8);
-	memcpy(buffer,&(pcb->cursorStack),4);
-	memcpy((buffer+4),&(pcb->programCounter),4);
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),8,buffer);
-	pcb->cursorStack = pcb->cursorStack + 8 + (pcb->tamanioContextoActual*5);
-	AnSISOP_irAlLabel(etiqueta);
-	pcb->tamanioContextoActual = 0;
-	liberarDiccionario();
-	free(buffer);
-	return;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Llamar Sin Retorno\n");
+		printf("Etiqueta: %s\n", etiqueta);
+		void* buffer = malloc(8);
+		memcpy(buffer,&(pcb->cursorStack),4);
+		memcpy((buffer+4),&(pcb->programCounter),4);
+		UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),8,buffer);
+		pcb->cursorStack = pcb->cursorStack + 8 + (pcb->tamanioContextoActual*5);
+		AnSISOP_irAlLabel(etiqueta);
+		pcb->tamanioContextoActual = 0;
+		liberarDiccionario();
+		free(buffer);
+		return;
+	}
 }
 
 
 void AnSISOP_llamarConRetorno(t_nombre_etiqueta etiqueta, t_puntero donde_retornar)
 {
-	printf("Primitiva Llamar Con Retorno\n");
-	void* buffer = malloc(12);
-	memcpy(buffer,&(pcb->cursorStack),4);
-	memcpy((buffer+4),&donde_retornar,4);
-	memcpy((buffer+8),&(pcb->programCounter),4);
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),12,buffer);
-	pcb->cursorStack = pcb->cursorStack + 12 + (pcb->tamanioContextoActual*5);
-	AnSISOP_irAlLabel(etiqueta);
-	pcb->tamanioContextoActual = 0;
-	liberarDiccionario();
-	free(buffer);
-	return;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Llamar Con Retorno\n");
+		void* buffer = malloc(12);
+		memcpy(buffer,&(pcb->cursorStack),4);
+		memcpy((buffer+4),&donde_retornar,4);
+		memcpy((buffer+8),&(pcb->programCounter),4);
+		UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + (pcb->tamanioContextoActual*5)),12,buffer);
+		pcb->cursorStack = pcb->cursorStack + 12 + (pcb->tamanioContextoActual*5);
+		AnSISOP_irAlLabel(etiqueta);
+		pcb->tamanioContextoActual = 0;
+		liberarDiccionario();
+		free(buffer);
+		return;
+	}
 }
 
 void AnSISOP_finalizar(void)
 {
-	printf("Primitiva Finalizar. ");
-	if(pcb->cursorStack == 0)
+	if(!errorDeEjecucion)
 	{
-		printf("El programa termina\n");
-		terminarPrograma = 1;
-		return;
+		printf("Primitiva Finalizar. ");
+		if(pcb->cursorStack == 0)
+		{
+			printf("El programa termina\n");
+			terminarPrograma = 1;
+			return;
+		}
+		else
+		{
+			liberarDiccionario();
+			printf("Termina la funcion\n");
+			int contexto_anterior, instruccion_a_ejecutar;
+			void* buffer = malloc(8);
+			buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 8),8);
+			memcpy(&instruccion_a_ejecutar,(buffer+4),4);
+			memcpy(&contexto_anterior,buffer,4);
+			pcb->tamanioContextoActual = (pcb->cursorStack - 8 - contexto_anterior) / 5;
+			printf("Contexto Actual: %d\n", pcb->tamanioContextoActual);
+			pcb->programCounter = instruccion_a_ejecutar;
+			pcb->cursorStack = contexto_anterior;
+			generarDiccionarioVariables();
+			free(buffer);
+			return;
+		}
 	}
-	else
+}
+
+void AnSISOP_retornar(t_valor_variable retorno)
+{
+	if(!errorDeEjecucion)
 	{
+		int contexto_anterior, instruccion_a_ejecutar, direccion_a_retornar;
+		void* buffer = malloc(12);
 		liberarDiccionario();
-		printf("Termina la funcion\n");
-		int contexto_anterior, instruccion_a_ejecutar;
-		void* buffer = malloc(8);
-		buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 8),8);
-		memcpy(&instruccion_a_ejecutar,(buffer+4),4);
+		buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 12),12);
+		memcpy(&instruccion_a_ejecutar,(buffer+8),4);
+		memcpy(&direccion_a_retornar,(buffer+4),4);
 		memcpy(&contexto_anterior,buffer,4);
-		pcb->tamanioContextoActual = (pcb->cursorStack - 8 - contexto_anterior) / 5;
-		printf("Contexto Actual: %d\n", pcb->tamanioContextoActual);
+		UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_a_retornar,4,&retorno);
 		pcb->programCounter = instruccion_a_ejecutar;
+		pcb->tamanioContextoActual = (pcb->cursorStack - 12 - contexto_anterior) / 5;
 		pcb->cursorStack = contexto_anterior;
 		generarDiccionarioVariables();
 		free(buffer);
@@ -724,111 +810,108 @@ void AnSISOP_finalizar(void)
 	}
 }
 
-void AnSISOP_retornar(t_valor_variable retorno)
-{
-	int contexto_anterior, instruccion_a_ejecutar, direccion_a_retornar;
-	void* buffer = malloc(12);
-	liberarDiccionario();
-	buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack - 12),12);
-	memcpy(&instruccion_a_ejecutar,(buffer+8),4);
-	memcpy(&direccion_a_retornar,(buffer+4),4);
-	memcpy(&contexto_anterior,buffer,4);
-	UMV_enviarBytes(pcb->pid,pcb->segmentoStack,direccion_a_retornar,4,&retorno);
-	pcb->programCounter = instruccion_a_ejecutar;
-	pcb->tamanioContextoActual = (pcb->cursorStack - 12 - contexto_anterior) / 5;
-	pcb->cursorStack = contexto_anterior;
-	generarDiccionarioVariables();
-	free(buffer);
-	return;
-}
-
 void AnSISOP_imprimir(t_valor_variable valor_mostrar)
 {
-	char confirmacion;
-	printf("Primitiva imprimir: %d\n", valor_mostrar);
-	estadoCPU = 5; //Imprimir
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	send(kernelSocket,&pcb->pid,sizeof(int),0);
-	send(kernelSocket,&valor_mostrar,sizeof(int),0);
-	recv(kernelSocket,&confirmacion,sizeof(char),0);
-	return;
+	if(!errorDeEjecucion)
+	{
+		char confirmacion;
+		printf("Primitiva imprimir: %d\n", valor_mostrar);
+		estadoCPU = 5; //Imprimir
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		send(kernelSocket,&pcb->pid,sizeof(int),0);
+		send(kernelSocket,&valor_mostrar,sizeof(int),0);
+		recv(kernelSocket,&confirmacion,sizeof(char),0);
+		return;
+	}
 }
 
 void AnSISOP_imprimirTexto(char* texto)
 {
-	char confirmacion;
-	int tamanio = strlen(texto);
-	printf("Primitiva imprimir texto: %s\n", texto);
-	estadoCPU = 6; //Imprimir
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	send(kernelSocket,&pcb->pid,sizeof(int),0);
-	send(kernelSocket,&tamanio,sizeof(int),0);
-	send(kernelSocket,texto,tamanio,0);
-	recv(kernelSocket,&confirmacion,sizeof(char),0);
-	return;
+	if(!errorDeEjecucion)
+	{
+		char confirmacion;
+		int tamanio = strlen(texto);
+		printf("Primitiva imprimir texto: %s\n", texto);
+		estadoCPU = 6; //Imprimir
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		send(kernelSocket,&pcb->pid,sizeof(int),0);
+		send(kernelSocket,&tamanio,sizeof(int),0);
+		send(kernelSocket,texto,tamanio,0);
+		recv(kernelSocket,&confirmacion,sizeof(char),0);
+		return;
+	}
 }
 
 void AnSISOP_entradaSalida(t_nombre_dispositivo dispositivo, int tiempo)
 {
-	printf("Primitiva Entrada Salida: %s\n", dispositivo);
-	estadoCPU = 3; //Trabajar con entrada/Salida
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	int tamanio = strlen(dispositivo);
-	printf("Tamanio del nombre del dispositivo: %d\n", tamanio);
-	send(kernelSocket,&tamanio,sizeof(int),0);
-	send(kernelSocket,dispositivo,tamanio,0);
-	send(kernelSocket,&tiempo,sizeof(int),0);
-	bloquearPrograma = 1;
-	return;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Entrada Salida: %s\n", dispositivo);
+		estadoCPU = 3; //Trabajar con entrada/Salida
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		int tamanio = strlen(dispositivo);
+		printf("Tamanio del nombre del dispositivo: %d\n", tamanio);
+		send(kernelSocket,&tamanio,sizeof(int),0);
+		send(kernelSocket,dispositivo,tamanio,0);
+		send(kernelSocket,&tiempo,sizeof(int),0);
+		bloquearPrograma = 1;
+		return;
+	}
 }
 
 void AnSISOP_wait(t_nombre_semaforo identificador_semaforo)
 {
-	printf("Primitiva Wait Semaforo: %s\n", identificador_semaforo);
-	estadoCPU = 4; //Trabajar con entrada/Salida
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	int tamanio = strlen(identificador_semaforo);
-	//tamanio--;
-	printf("Tamanio del nombre del semaforo: %d\n", tamanio);
-	send(kernelSocket,&tamanio,sizeof(int),0);
-	send(kernelSocket,identificador_semaforo,tamanio,0);
-	char operacion = 0, confirmacion = -1; //Wait
-	send(kernelSocket,&operacion,sizeof(char),0);
-	recv(kernelSocket,&confirmacion,sizeof(char),0);
-	if(confirmacion == 0)
+	if(!errorDeEjecucion)
 	{
-		//Se bloquea el programa. Hay que enviar PCB
-		printf("Se bloquea el programa\n");
-		bloquearPrograma = 1;
-		return;
-	}
-	else if (confirmacion == 1)
-	{
-		//Se puede seguir ejecutando.
-		printf("Puedo seguir ejecutando\n");
-		return;
-	}
-	else
-	{
-		//Error de comunicación. No llegó la confirmación.
-		printf("No se pudo recibir la confirmación\n");
-		terminarPrograma = 1;
-		return;
+		printf("Primitiva Wait Semaforo: %s\n", identificador_semaforo);
+		estadoCPU = 4; //Trabajar con entrada/Salida
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		int tamanio = strlen(identificador_semaforo);
+		//tamanio--;
+		printf("Tamanio del nombre del semaforo: %d\n", tamanio);
+		send(kernelSocket,&tamanio,sizeof(int),0);
+		send(kernelSocket,identificador_semaforo,tamanio,0);
+		char operacion = 0, confirmacion = -1; //Wait
+		send(kernelSocket,&operacion,sizeof(char),0);
+		recv(kernelSocket,&confirmacion,sizeof(char),0);
+		if(confirmacion == 0)
+		{
+			//Se bloquea el programa. Hay que enviar PCB
+			printf("Se bloquea el programa\n");
+			bloquearPrograma = 1;
+			return;
+		}
+		else if (confirmacion == 1)
+		{
+			//Se puede seguir ejecutando.
+			printf("Puedo seguir ejecutando\n");
+			return;
+		}
+		else
+		{
+			//Error de comunicación. No llegó la confirmación.
+			printf("No se pudo recibir la confirmación\n");
+			terminarPrograma = 1;
+			return;
+		}
 	}
 }
 
 void AnSISOP_signal(t_nombre_semaforo identificador_semaforo)
 {
-	printf("Primitiva Signal Semaforo: %s\n", identificador_semaforo);
-	estadoCPU = 4; //Trabajar con entrada/Salida
-	send(kernelSocket,&estadoCPU,sizeof(char),0);
-	int tamanio = strlen(identificador_semaforo);
-	//tamanio--;
-	printf("Tamanio del nombre del semaforo: %d\n", tamanio);
-	send(kernelSocket,&tamanio,sizeof(int),0);
-	send(kernelSocket,identificador_semaforo,tamanio,0);
-	char operacion = 1; //Signal
-	send(kernelSocket,&operacion,sizeof(char),0);
-	return;
+	if(!errorDeEjecucion)
+	{
+		printf("Primitiva Signal Semaforo: %s\n", identificador_semaforo);
+		estadoCPU = 4; //Trabajar con entrada/Salida
+		send(kernelSocket,&estadoCPU,sizeof(char),0);
+		int tamanio = strlen(identificador_semaforo);
+		//tamanio--;
+		printf("Tamanio del nombre del semaforo: %d\n", tamanio);
+		send(kernelSocket,&tamanio,sizeof(int),0);
+		send(kernelSocket,identificador_semaforo,tamanio,0);
+		char operacion = 1; //Signal
+		send(kernelSocket,&operacion,sizeof(char),0);
+		return;
+	}
 }
 

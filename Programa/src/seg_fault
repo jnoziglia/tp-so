@@ -1,20 +1,7 @@
 #!./Programa
 begin
-	f 0
+variables a
+	#Imprimi 300 lugares despues de donde se definio a
+	print *&a+10000
 end
 
-function f
-	variables a
-	io LPT1 5
-	a=$0+1
-	print a
-	g a
-end
-
-function g
-	variables a
-	io HDD1 30
-	a=$0+1
-	print a
-	f a
-end
