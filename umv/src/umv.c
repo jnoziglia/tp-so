@@ -133,6 +133,7 @@ void* mainConsola()
 	while(1)
 	{
 		gets(parametros);
+		//scanf("%s",parametros);
 		//sleep(retardo);
 		log_info(logi, "Llego una solicitud desde consola");
 		if(string_equals_ignore_case(parametros,"man"))
@@ -299,7 +300,7 @@ void* mainConsola()
 		if(string_equals_ignore_case(parametros,"dump"))
 		{
 			printf("Desea mostrarlo en pantalla? (S/N): ");
-			scanf("%c \n", &mostrarPantalla);
+			scanf("%c", &mostrarPantalla);
 			printf("\n");
 			if(mostrarPantalla == 's' || mostrarPantalla == 'S') dump(1);
 			if(mostrarPantalla == 'n' || mostrarPantalla == 'N') dump(0);
@@ -310,7 +311,7 @@ void* mainConsola()
 		{
 			char* resto = string_substring_from(parametros,5);
 			printf("Desea mostrarlo en pantalla? (S/N): ");
-			scanf("%c \n", &mostrarPantalla);
+			scanf("%c", &mostrarPantalla);
 			printf("\n");
 			if(string_equals_ignore_case(resto,"tabla-segmentos"))
 			{
@@ -329,18 +330,21 @@ void* mainConsola()
 			if(string_equals_ignore_case(resto,"contenido-memoria"))
 			{
 				printf("Ingrese offset: ");
-				scanf("%d \n", &offset);
+				scanf("%d", &offset);
 				printf("Ingrese tamanio (negativo para mostrar hasta el fin): ");
-				scanf("%d \n", &tamanio);
-				if(tamanio <= 0) tamanio = memPpal-finMemPpal;
+				scanf("%d", &tamanio);
+				if(tamanio <= 0) tamanio = finMemPpal - memPpal;
 				if(mostrarPantalla == 's' || mostrarPantalla == 'S') mostrarContenidoDeMemoria(1, offset, tamanio);
 				if(mostrarPantalla == 'n' || mostrarPantalla == 'N') mostrarContenidoDeMemoria(0, offset, tamanio);
 				printf("Fin de dump\n");
 				continue;
 			}
 		}
-		printf("Argumentos incorrectos.\n");
-		continue;
+		else
+		{
+			printf("Argumentos incorrectos.\n");
+			continue;
+		}
 	}
 	return NULL;
 
@@ -561,6 +565,8 @@ void* f_hiloCpu(void* socketCliente)
 		//sem_post(&s_cpu);
 	}
 	//exit(0);
+	close(socketCPU);
+	log_trace(logi, "Termine conexion con el cpu %d", socketCPU);
 	return 0;
 }
 
