@@ -65,10 +65,10 @@ void* worst_fit(int tamanio);
 int nuevoIDSegmento(int idProceso);
 void insertarSegmento(t_segmento* segmento);
 void* compactar(void);
-void dump(void);
-void mostrarEstructuras();
-void mostrarMemoria();
-void mostrarContenidoDeMemoria();
+void dump(bool mostrarPantalla);
+void mostrarEstructuras(bool mostrarPantalla);
+void mostrarMemoria(bool mostrarPantalla);
+void mostrarContenidoDeMemoria(bool mostrarPantalla, int offset, int tamanio);
 void imprimirSegmento(t_segmento* segmento);
 int cambioProcesoActivo(int idProceso);
 int handshake(int id);
@@ -102,7 +102,7 @@ int main (void)
 	sem_init(&s_TablaSegmentos,0,1);
 	sem_init(&s_cpu,0,1);
 
-	logi = log_create("/home/utnso/tp-2014-1c-unnamed/umv/src/log", "UMV", 0, LOG_LEVEL_INFO);
+	logi = log_create("/home/utnso/tp-2014-1c-unnamed/umv/src/log", "UMV", 0, LOG_LEVEL_TRACE);
 
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/umv/src/config.txt");
 	int sizeMem = config_get_int_value(configuracion, "sizeMemoria");
@@ -124,72 +124,14 @@ int main (void)
 	exit(0);
 }
 
-
-/* Prueba funciones */
-/*{
-	srand(time(NULL));
-	printf("c");
-		memPpal = malloc (65536);
-		finMemPpal = memPpal+65536;
-		char* buffer = malloc(70);
-		buffer = "Holis";
-		printf("%p \n\n", memPpal);
-
-		crearSegmento(1,50);
-		crearSegmento(2,50);
-		crearSegmento(1,100);
-		crearSegmento(2,30);
-		crearSegmento(1,20);
-		crearSegmento(2,20);
-
-		t_segmento* aux = tablaSegmentos;
-		printf("b");
-		while (aux!=NULL)
-		{
-			printf("id: %d\n",aux->idProceso);
-			printf("idSeg: %d\n",aux->idSegmento);
-			printf("base: %d\n",aux->base);
-			printf("tamaño: %d\n",aux->tamanio);
-			printf("dir: %p\n\n",aux->dirInicio);
-			aux = aux->siguiente;
-		}
-		destruirSegmentos(1);
-		aux = tablaSegmentos;
-		printf("-----------------------------\n");
-		while (aux!=NULL)
-		{
-			printf("id: %d\n",aux->idProceso);
-			printf("idSeg: %d\n",aux->idSegmento);
-			printf("base: %d\n",aux->base);
-			printf("tamaño: %d\n",aux->tamanio);
-			printf("dir: %p\n\n",aux->dirInicio);
-			aux = aux->siguiente;
-		}
-		printf("-----------------------------\n");
-		crearSegmento(1,50);
-		aux = tablaSegmentos;
-		while (aux!=NULL)
-		{
-			printf("id: %d\n",aux->idProceso);
-			printf("idSeg: %d\n",aux->idSegmento);
-			printf("base: %d\n",aux->base);
-			printf("tamaño: %d\n",aux->tamanio);
-			printf("dir: %p\n\n",aux->dirInicio);
-			aux = aux->siguiente;
-		}
-
-		enviarBytes(tablaSegmentos->base,0,1,buffer);
-		printf("%s \n",(char*)solicitarBytes(tablaSegmentos->base,0,70));
-		dump();
-		return 0;
-}*/
-
 /* Hilo consola */
 void* mainConsola()
 {
-	printf("Bienvenido a la consola\n\n");
-
 	char* parametros = malloc(1000);
+	char mostrarPantalla;
+	int offset;
+	int tamanio;
+	int confirmacion;
 	while(1)
 	{
 		gets(parametros);
@@ -205,7 +147,7 @@ void* mainConsola()
 			printf("\tretardo [tiempo]\n");
 			printf("\talgoritmo first-fit / worst-fit\n");
 			printf("\tcompactacion\n");
-			printf("\tdump\n");
+			printf("\tdump (tabla-segmentos / mostrar-memoria / contenido-memoria)\n");
 			continue;
 		}
 		if(string_starts_with(parametros,"operacion "))
@@ -227,8 +169,14 @@ void* mainConsola()
 					char* buffer = malloc(atoi(tamanio));
 					cambioProcesoActivo(atoi(pid));
 					buffer = solicitarBytes(atoi(base), atoi(offset), atoi(tamanio));
-					printf("%s",buffer);
-					//cambioProcesoActivo(procesoAux);
+					if(buffer == NULL)
+					{
+						printf("SEGMENTATION FAULT\n");
+					}
+					else
+					{
+						printf("%s",buffer);
+					}
 					free(buffer);
 				}
 				else
@@ -257,9 +205,16 @@ void* mainConsola()
 					gets(buffer);
 					printf("\n");
 					cambioProcesoActivo(atoi(pid));
-					enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
+					confirmacion = enviarBytes(atoi(base), atoi(offset), atoi(tamanio), buffer);
+					if(confirmacion != -1)
+					{
+						printf("Los bytes se enviaron correctamente\n");
+					}
+					else
+					{
+						printf("SEGMENTATION FAULT\n");
+					}
 					free(buffer);
-					//cambioProcesoActivo(procesoAux);
 				}
 				else
 				{
@@ -276,8 +231,15 @@ void* mainConsola()
 				tamanio = strtok(NULL, " ");
 				if (tamanio != 0 || pid != 0)
 				{
-					crearSegmento(atoi(pid), atoi(tamanio));
-					printf("Segmento creado\n");
+					confirmacion = crearSegmento(atoi(pid), atoi(tamanio));
+					if(confirmacion != -1)
+					{
+						printf("Segmento creado\n");
+					}
+					else
+					{
+						printf("MEMORY OVERLOAD\n");
+					}
 				}
 				else
 				{
@@ -326,44 +288,60 @@ void* mainConsola()
 				printf("Algoritmo cambiado a First-Fit\n");
 				continue;
 			}
-			printf("Argumento incorrecto");
+			printf("Argumento incorrecto\n");
 			continue;
 		}
 		if(string_equals_ignore_case(parametros,"compactacion"))
 		{
+			//TODO: ponerle un semaforo
 			compactar();
 			printf("Compactado.\n");
 			continue;
 		}
 		if(string_equals_ignore_case(parametros,"dump"))
 		{
-			dump();
+			printf("Desea mostrarlo en pantalla? (S/N): ");
+			scanf("%c \n", &mostrarPantalla);
+			printf("\n");
+			if(mostrarPantalla == 's' || mostrarPantalla == 'S') dump(1);
+			if(mostrarPantalla == 'n' || mostrarPantalla == 'N') dump(0);
 			printf("Fin de dump\n");
 			continue;
 		}
-//		if(string_starts_with(parametros,"dump "))
-//		{
-//			char* resto = string_substring_from(parametros,5);
-//			if(string_equals_ignore_case(resto,"tabla-segmentos"))
-//			{
-//				mostrarEstructuras();
-//				printf("Fin de dump\n");
-//				continue;
-//			}
-//			if(string_equals_ignore_case(resto,"mostrar-memoria"))
-//			{
-//				mostrarMemoria();
-//				printf("Fin de dump\n");
-//				continue;
-//			}
-//			if(string_equals_ignore_case(resto,"mostrar-estructura"))
-//			{
-//				mostrarContenidoDeMemoria(0, memPpal-finMemPpal);
-//				printf("Fin de dump\n");
-//				continue;
-//			}
-//		}
-		printf("Argumentos incorrectos.");
+		if(string_starts_with(parametros,"dump "))
+		{
+			char* resto = string_substring_from(parametros,5);
+			printf("Desea mostrarlo en pantalla? (S/N): ");
+			scanf("%c \n", &mostrarPantalla);
+			printf("\n");
+			if(string_equals_ignore_case(resto,"tabla-segmentos"))
+			{
+				if(mostrarPantalla == 's' || mostrarPantalla == 'S') mostrarEstructuras(1);
+				if(mostrarPantalla == 'n' || mostrarPantalla == 'N') mostrarEstructuras(0);
+				printf("Fin de dump\n");
+				continue;
+			}
+			if(string_equals_ignore_case(resto,"mostrar-memoria"))
+			{
+				if(mostrarPantalla == 's' || mostrarPantalla == 'S') mostrarMemoria(1);
+				if(mostrarPantalla == 'n' || mostrarPantalla == 'N') mostrarMemoria(0);
+				printf("Fin de dump\n");
+				continue;
+			}
+			if(string_equals_ignore_case(resto,"contenido-memoria"))
+			{
+				printf("Ingrese offset: ");
+				scanf("%d \n", &offset);
+				printf("Ingrese tamanio (negativo para mostrar hasta el fin): ");
+				scanf("%d \n", &tamanio);
+				if(tamanio <= 0) tamanio = memPpal-finMemPpal;
+				if(mostrarPantalla == 's' || mostrarPantalla == 'S') mostrarContenidoDeMemoria(1, offset, tamanio);
+				if(mostrarPantalla == 'n' || mostrarPantalla == 'N') mostrarContenidoDeMemoria(0, offset, tamanio);
+				printf("Fin de dump\n");
+				continue;
+			}
+		}
+		printf("Argumentos incorrectos.\n");
 		continue;
 	}
 
@@ -380,7 +358,6 @@ void* mainEsperarConexiones()
 	int escucharConexiones;
 	char id = -1;
 	char confirmacion;
-	printf("Inicio del UMV.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
@@ -388,7 +365,6 @@ void* mainEsperarConexiones()
 	getaddrinfo(NULL, PUERTO, &hints, &serverInfo); // Notar que le pasamos NULL como IP, ya que le indicamos que use localhost en AI_PASSIVE
 	escucharConexiones = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 	bind(escucharConexiones,serverInfo->ai_addr, serverInfo->ai_addrlen);
-	printf("Bienvenido a la escucha %d\n", escucharConexiones);
 	while(1)
 	{
 		id = -1;
@@ -397,7 +373,6 @@ void* mainEsperarConexiones()
 		struct sockaddr_in programa;			// Esta estructura contendra los datos de la conexion del cliente. IP, puerto, etc.
 		socklen_t addrlen = sizeof(programa);
 		int socketCliente = accept(escucharConexiones, (struct sockaddr *) &programa, &addrlen);
-		printf("%d\n", socketCliente);
 		recv(socketCliente, &id, sizeof(char), 0);
 		confirmacion = handshake(id);
 		send(socketCliente, &confirmacion, sizeof(char), 0);
@@ -405,19 +380,20 @@ void* mainEsperarConexiones()
 		{
 			if (id == kernel)
 			{
-				printf("soy kernel\n");
+				log_trace(logi, "Se conecto el kernel con socket %d", socketCliente);
 				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
 				continue;
 			}
 			if (id == cpu)
 			{
-				printf("Soy CPU :D\n");
+				log_trace(logi, "Se conecto un cpu con socket %d", socketCliente);
 				rhHiloCpu = pthread_create(&hiloCpu, NULL, f_hiloCpu, (void*)socketCliente);
 				continue;
 			}
 		}
 		else
 		{
+			log_error(logi, "Se trato de conectar un dispositivo desconocido");
 			continue;
 		}
 	}
@@ -433,23 +409,23 @@ void* f_hiloKernel(void* socketCliente)
 	char confirmacion;
 	int pid, base, offset, tamanio;
 	char* buffer;
-	int i,j = 0;
 	while(status != 0)
 	{
 		recv(socketKernel, &operacion, sizeof(char), 0);
 		usleep(retardo*1000);
 		//sem_wait(&s_cpu);
-		printf("OPERACION: %d\n", operacion);
+		log_trace(logi, "Llego una operacion del kernel");
 		if (operacion == operCrearSegmento)
 		{
 			confirmacion = 1;
 			send(socketKernel, &confirmacion, sizeof(char), 0);
-			j=0;
 			status = recv(socketKernel, mensaje, 2*sizeof(int), 0);
 			if(status != 0)
 			{
 				respuesta = crearSegmento(mensaje[0], mensaje[1]);
 				send(socketKernel, &respuesta, sizeof(int), 0);
+				if(respuesta != -1) log_trace(logi, "Se envio la base del nuevo segmento al kernel");
+				if(respuesta == -1) log_trace(logi, "Se le informo al kernel del memory overload");
 			}
 		}
 		else if(operacion == operEnviarBytes)
@@ -460,13 +436,13 @@ void* f_hiloKernel(void* socketCliente)
 			status = recv(socketKernel, &base, sizeof(int), 0);
 			status = recv(socketKernel, &offset, sizeof(int), 0);
 			status = recv(socketKernel, &tamanio, sizeof(int), 0);
-			printf("El tamaño es: %d\n", tamanio);
 			buffer = malloc(tamanio);
 			status = recv(socketKernel, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
 			enviarBytes(base, offset, tamanio, buffer);
 			free(buffer);
 			send(socketKernel,&confirmacion,sizeof(char),0);
+			log_trace(logi, "Se envio confirmacion al kernel");
 		}
 		else if(operacion == operDestruirSegmentos)
 		{
@@ -496,44 +472,42 @@ void* f_hiloCpu(void* socketCliente)
 	int hiceWait = 1;
 	int pid, base, offset, tamanio;
 	void* buffer;
-	int i;
 	while(status != 0)
 	{
-		printf("Recibo operacion de un cpu\n");
 		if(recv(socketCPU, &operacion, sizeof(char), 0) == 0)
 		{
+			log_info(logi, "Se desconecto el cpu %d", socketCPU);
 			hiceWait = 0;
 			break;
 		}
 		//sem_wait(&s_cpu);
 		//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
-		printf("La operacion es: %d\n", operacion);
+		log_trace(logi, "Llego una operacion del cpu %d", socketCPU);
 		if (operacion == operSolicitarBytes)
 		{
 			confirmacion = 1;
 			send(socketCPU, &confirmacion, sizeof(char), 0);
 			usleep(retardo*1000);
-			if(recv(socketCPU, mensaje, 4*sizeof(int), 0) == 0) break;
+			if(recv(socketCPU, mensaje, 4*sizeof(int), 0) == 0)
+			{
+				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				break;
+			}
 			buffer = malloc(mensaje[3]);
 			cambioProcesoActivo(mensaje[0]);
-			for(i=0; i<4; i++)
-			{
-				printf("MEnsaje %d: %d\n", i, mensaje[i]);
-			}
 			buffer = solicitarBytes(mensaje[1], mensaje[2], mensaje[3]);
-//			int aux;
-//			memcpy(&aux, buffer, sizeof(int));
-//			printf("AUX: %d\n", aux);
 			if (buffer == NULL)
 			{
 				haySegFault = 1;
 				send(socketCPU, &haySegFault, sizeof(char), 0);
+				log_trace(logi, "Se le informo al cpu %d del segmentation fault", socketCPU);
 			}
 			else
 			{
 				haySegFault = 0;
 				send(socketCPU, &haySegFault, sizeof(char), 0);
 				send(socketCPU, buffer, mensaje[3], 0);
+				log_trace(logi, "Se le enviaron al cpu %d los bytes solicitados", socketCPU);
 			}
 			free(buffer);
 
@@ -543,7 +517,11 @@ void* f_hiloCpu(void* socketCliente)
 			confirmacion = 1;
 			send(socketCPU, &confirmacion, sizeof(char), 0);
 			usleep(retardo*1000);
-			if(recv(socketCPU, &pid, sizeof(int), 0) == 0) break;
+			if(recv(socketCPU, &pid, sizeof(int), 0) == 0)
+			{
+				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				break;
+			}
 			status = recv(socketCPU, &base, sizeof(int), 0);
 			status = recv(socketCPU, &offset, sizeof(int), 0);
 			status = recv(socketCPU, &tamanio, sizeof(int), 0);
@@ -551,8 +529,12 @@ void* f_hiloCpu(void* socketCliente)
 			status = recv(socketCPU, buffer, tamanio, 0);
 			cambioProcesoActivo(pid);
 			enviarError = enviarBytes(base, offset, tamanio, buffer);
-			printf("CONFIRMACION: %d\n", enviarError);
-			if(send(socketCPU, &enviarError, sizeof(char), 0) == 0) break;
+			if(send(socketCPU, &enviarError, sizeof(char), 0) == 0)
+			{
+				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				break;
+			}
+			log_trace(logi, "Se le envio confirmacion al cpu %d", socketCPU);
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
@@ -567,12 +549,13 @@ void* f_hiloCpu(void* socketCliente)
 			}
 			else
 			{
+				log_info(logi, "Se desconecto el cpu %d", socketCPU);
 				break;
 			}
 		}
 		else
 		{
-			printf("ERROR");
+			log_error(logi, "OPERACION INCORRECTA");
 		}
 	}
 	if(hiceWait)
@@ -595,6 +578,7 @@ int handshake(int id)
 void destruirSegmentos( int id){
 	//mostrarEstructuras();
 	//usleep(retardo*1000);
+	log_trace(logi, "Se solicita destruir los segmentos del programa %d", id);
 	sem_wait(&s_TablaSegmentos);
 	t_segmento* aux = NULL;
 	t_segmento* auxSiguiente = tablaSegmentos;
@@ -629,6 +613,7 @@ void destruirSegmentos( int id){
 			auxSiguiente = auxSiguiente->siguiente;
 		}
 	}
+	log_trace(logi, "Se destruyeron los segmentos del programa %d", id);
 	sem_post(&s_TablaSegmentos);
 	//mostrarEstructuras();
 	return;
@@ -638,12 +623,13 @@ void destruirSegmentos( int id){
 void* solicitarBytes(int base, int offset, int tamanio)
 {
 	//usleep(retardo*1000);
+	log_trace(logi, "Se solicitan los bytes del programa %d, base %d, desde %d, tamanio %d", procesoActivo, base, offset, tamanio);
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
-		printf("Segmentation Fault\n");
+		log_error(logi, "SEGMENTATION FAULT");
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
 		return NULL;
@@ -659,14 +645,13 @@ void* solicitarBytes(int base, int offset, int tamanio)
 int enviarBytes(int base, int offset, int tamanio, void* buffer)
 {
 	//usleep(retardo*1000);
+	log_trace(logi, "Se solicita enviar bytes al programa %d, base %d, desde %d, tamanio %d", procesoActivo, base, offset, tamanio);
 	sem_wait(&s_TablaSegmentos);
 	void* pComienzo;
 	t_segmento* segmentoBuscado = buscarSegmento(base);
-	printf("CHEQUEO SI HAY SEG FAULT\n");
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
-		printf("Segmentation Fault");
-		sleep(10);
+		log_error(logi, "SEGMENTATION FAULT");
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
 		return -1;
@@ -681,12 +666,13 @@ int enviarBytes(int base, int offset, int tamanio, void* buffer)
 int crearSegmento(int idProceso, int tamanio)
 {
 	//usleep(retardo*1000);
+	log_trace(logi, "Se solicita crear un segmento del programa %d con tamanio %d", idProceso, tamanio);
 	sem_wait(&s_TablaSegmentos);
 	void* inicioNuevo = posicionarSegmento(algoritmo,tamanio);
 	t_segmento* segmentoNuevo;
 	if(inicioNuevo == NULL)
 	{
-		printf("MEMORY OVELOAD\n");
+		log_error(logi, "MEMORY OVERLOAD");
 		sem_post(&s_TablaSegmentos);
 		return -1;
 	}
@@ -698,20 +684,24 @@ int crearSegmento(int idProceso, int tamanio)
 	segmentoNuevo->dirInicio = inicioNuevo;
 	insertarSegmento(segmentoNuevo);
 	sem_post(&s_TablaSegmentos);
+	log_info(logi, "El segmento se creo correctamente");
 	return segmentoNuevo->base;
 }
 
 t_segmento* buscarSegmento(int base)
 {
+	log_trace(logi, "Se busca el segmento del programa %d, base %d", procesoActivo, base);
 	t_segmento* aux = tablaSegmentos;
 	while(aux != NULL)
 	{
 		if(aux->base == base && aux->idProceso == procesoActivo)
 		{
+			log_info(logi, "Se encontro el segmento");
 			return aux;
 		}
 		aux = aux->siguiente;
 	}
+	log_error(logi, "No se encontro el segmento");
 	return NULL;
 }
 
@@ -733,6 +723,7 @@ void* posicionarSegmento(int algoritmo, int tamanio)
 /* Algoritmos First fit y Worst fit */
 void* first_fit(int tamanio)
 {
+	log_trace(logi, "Posicionando segmento de tamanio %d en memoria segun First Fit", tamanio);
 	int compactado = 0;
 	t_segmento* aux;
 	aux = tablaSegmentos;
@@ -741,6 +732,7 @@ void* first_fit(int tamanio)
 	{
 		if(tamanio <= (int)(aux->dirInicio - auxinicio))
 		{
+			log_info(logi, "Se posiciono el segmento correctamente");
 			return auxinicio;
 		}
 		else
@@ -753,6 +745,7 @@ void* first_fit(int tamanio)
 	{
 		if(tamanio <= (int)(finMemPpal - auxinicio))
 		{
+			log_info(logi, "Se posiciono el segmento correctamente");
 			return auxinicio;
 		}
 		else
@@ -773,6 +766,7 @@ void* first_fit(int tamanio)
 
 void* worst_fit(int tamanio)
 {
+	log_trace(logi, "Posicionando segmento de tamanio %d en memoria segun Worst Fit", tamanio);
 	int compactado = 0;
 	t_segmento* aux = tablaSegmentos;
 	void* auxinicio = memPpal;
@@ -782,6 +776,7 @@ void* worst_fit(int tamanio)
 	{
 		if(tamanio < (int)(finMemPpal - memPpal))
 		{
+			log_info(logi, "Se posiciono el segmento correctamente");
 			return memPpal;
 		}
 		else
@@ -815,14 +810,16 @@ void* worst_fit(int tamanio)
 		{
 			if(tamMax >= tamanio)
 			{
+				log_info(logi, "Se posiciono el segmento correctamente");
 				return dirTamMax;
 			}
 			else
 			{
 				if(compactado == 0)
 				{
-					auxinicio = compactar();
+					dirTamMax = compactar();
 					compactado = 1;
+					tamMax = finMemPpal - dirTamMax;
 				}
 				else
 				{
@@ -851,6 +848,7 @@ int nuevoIDSegmento(int idProceso)
 
 void insertarSegmento(t_segmento* segmento)
 {
+	log_trace(logi, "Insertando segmento en tabla segun su posicion en memoria");
 	t_segmento* auxAnterior = tablaSegmentos;
 	t_segmento* aux;
 	if(tablaSegmentos == NULL)
@@ -894,6 +892,7 @@ void insertarSegmento(t_segmento* segmento)
 
 void* compactar(void)
 {
+	log_trace(logi, "Se solicita compactar");
 	t_segmento* auxSegmento = tablaSegmentos;
 	void* aux = memPpal;
 
@@ -907,43 +906,53 @@ void* compactar(void)
 		aux = auxSegmento->dirInicio+auxSegmento->tamanio;
 		auxSegmento = auxSegmento->siguiente;
 	}
+	log_info(logi, "Compactacion completada");
 	return aux;
 }
 
-void dump(void)
+void dump(bool mostrarPantalla)
 {
+	log_trace(logi, "Se solicito dump de memoria completo");
 	sem_wait(&s_TablaSegmentos);
-	mostrarEstructuras();
-	//mostrarMemoria();
-	mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
+	mostrarEstructuras(mostrarPantalla);
+	mostrarMemoria(mostrarPantalla);
+	mostrarContenidoDeMemoria(mostrarPantalla,0,finMemPpal-memPpal);
 	sem_post(&s_TablaSegmentos);
 }
 
-void mostrarEstructuras(void)
+void mostrarEstructuras(bool mostrarPantalla)
 {
 	t_segmento* auxSegmento = tablaSegmentos;
 	log_info(logi, "Tabla de Segmentos:");
+	if(mostrarPantalla) printf("Tabla de Segmentos:\n");
 	//printf("\nTabla de Segmentos:\n\n");
 		while (auxSegmento != NULL)
 		{
-			imprimirSegmento(auxSegmento);
+			log_info(logi, "Proceso: %d \t Segmento: %d \t Base: %d" ,auxSegmento->idProceso, auxSegmento->idSegmento, auxSegmento->base);
+			if(mostrarPantalla) printf("Proceso: %d \t Segmento: %d \t Base: %d\n" ,auxSegmento->idProceso, auxSegmento->idSegmento, auxSegmento->base);
 			auxSegmento = auxSegmento->siguiente;
 		}
 	log_info(logi, "----------------------------------------------");
+	if(mostrarPantalla) printf("----------------------------------------------\n");
 	//printf("--------------------\n");
 }
 
-void mostrarMemoria(void)
+void mostrarMemoria(bool mostrarPantalla)
 {
 	t_segmento* auxSegmento = tablaSegmentos;
 	int tamanioSegmentos = 0;
 	void* contador = memPpal;
-	printf("Memoria principal:\n\n");
+	log_info(logi, "Memoria principal:\n\n");
+	if(mostrarPantalla) printf("Memoria principal:\n\n");
 	while (contador < finMemPpal)
 	{
 		if(auxSegmento != NULL && contador == auxSegmento->dirInicio)
 		{
-			printf("Desde la posicion %p hasta la %p pertenecen al programa %d, segmento %d\n",auxSegmento->dirInicio
+			log_info(logi, "Desde la posicion %p hasta la %p pertenecen al programa %d, segmento %d",auxSegmento->dirInicio
+					,auxSegmento->dirInicio+auxSegmento->tamanio
+					,auxSegmento->idProceso
+					,auxSegmento->idSegmento);
+			if(mostrarPantalla) printf("Desde la posicion %p hasta la %p pertenecen al programa %d, segmento %d\n",auxSegmento->dirInicio
 																						,auxSegmento->dirInicio+auxSegmento->tamanio
 																						,auxSegmento->idProceso
 																						,auxSegmento->idSegmento);
@@ -952,7 +961,8 @@ void mostrarMemoria(void)
 		}
 		else
 		{
-			printf("%p -- Libre\n",contador);
+			log_info(logi, "%p -- Libre",contador);
+			if(mostrarPantalla) printf("%p -- Libre\n",contador);
 			contador++;
 		}
 	}
@@ -962,19 +972,23 @@ void mostrarMemoria(void)
 		tamanioSegmentos += auxSegmento->tamanio;
 		auxSegmento = auxSegmento->siguiente;
 	}
-	printf("\nMemoria libre: %d bytes de %d bytes\n\n",(finMemPpal - memPpal) - tamanioSegmentos, finMemPpal - memPpal);
-	printf("-------------------------------------\n");
+	log_info(logi, "\nMemoria libre: %d bytes de %d bytes",(finMemPpal - memPpal) - tamanioSegmentos, finMemPpal - memPpal);
+	log_info(logi, "-------------------------------------");
+	if(mostrarPantalla) printf("\nMemoria libre: %d bytes de %d bytes\n\n",(finMemPpal - memPpal) - tamanioSegmentos, finMemPpal - memPpal);
+	if(mostrarPantalla) printf("-------------------------------------\n");
 }
 
-void mostrarContenidoDeMemoria(int offset, int tamanio)
+void mostrarContenidoDeMemoria(bool mostrarPantalla, int offset, int tamanio)
 {
 	char* contador = memPpal + offset;
 	int i;
 	log_info(logi, "Contenido de la memoria desde %p hasta %p:", contador,contador+tamanio-1);
+	if(mostrarPantalla) printf("Contenido de la memoria desde %p hasta %p:\n", contador,contador+tamanio-1);
 	//printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
 	for (i=0; i<tamanio; i++)
 	{
 		log_info(logi, "%p --- %d \t %c",contador+i,*(contador+i), *(contador+i));
+		if(mostrarPantalla) printf("%p --- %d \t %c \n",contador+i,*(contador+i), *(contador+i));
 		//log_info(logi, "%c",*(contador+i));
 //		printf("%p --- %d\t",contador+i,*(contador+i));
 //		printf("%c\n",*(contador+i));

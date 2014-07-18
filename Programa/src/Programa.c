@@ -15,6 +15,7 @@
 #include <commons/config.h>
 #include <commons/string.h>
 #include <commons/config.h>
+#include <commons/log.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -33,6 +34,7 @@ char *ANSISOP_CONFIG;
 
 char* IP;
 char* PUERTO;
+t_log* logger;
 
 
 int main(int cantArgs, char **args) {
@@ -40,30 +42,19 @@ int main(int cantArgs, char **args) {
 	FILE *script;
 	char caracter, operacion = -1;
 	char codigo[100000];
-	int num=0, status = 1;
+	int num=0;
 	char* buffer = malloc(1000);
 
 	int valor, tamanioTexto;
 	char* texto;
 
+	//log_create(NULL, "Programa", 1, LOG_LEVEL_TRACE);
+
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/Programa/src/config.txt");
 	IP = config_get_string_value(configuracion, "IP");
 	PUERTO = config_get_string_value(configuracion, "PUERTO");
 
-
-	//Muestro cuantos argumentos se pasan
-	printf("%d\n", cantArgs);
-
-	//Muestro el primer argumento (ruta del script)
-	printf("%s\n", args[1]);
-
-	//Abro archivo de config y defino variable global
-	//ANSISOP_CONFIG = "./config";
-	//archivoConfig = fopen(ANSISOP_CONFIG,"r");
-     //fclose(archivoConfig);
-	/*fread ( void * ptr, size_t size, size_t count, FILE * stream );//lee
-	size_t fwrite(void *puntero, size_t tamano, size_t cantidad, FILE *archivo);//escribe
-	*/
+	//TODO: Variable de entorno ANSISOP_CONFIG
 
 	//Abro script, leo el contenido
 	script = fopen(args[1],"r");
@@ -113,7 +104,7 @@ int main(int cantArgs, char **args) {
 	    printf("Código enviado\n");
 	    while (1)
 	    {
-	    	status = recv(serverSocket, &operacion, sizeof(char), 0);
+	    	recv(serverSocket, &operacion, sizeof(char), 0);
 	    	if(operacion == 0)	//Imprimir valor
 	    	{
 	    		recv(serverSocket, &valor, sizeof(int), 0);

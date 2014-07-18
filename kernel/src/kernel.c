@@ -260,6 +260,7 @@ void* f_hiloColaReady()
 {
 	t_new programa;
 	int conf;
+	char terminarPrograma = 2;
 	printf("ENTRO AL HILO COLA READY\n");
 	while(1)
 	{
@@ -276,6 +277,7 @@ void* f_hiloColaReady()
 		else
 		{
 			sem_post(&s_Multiprogramacion);
+			send(programa.pid, &terminarPrograma, sizeof(char), 0);
 		}
 	}
 }
@@ -1111,7 +1113,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	{
 		printf("NO SE CREO EL SEGMENTO\n");
 		//avisar al programa :D
-		Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
+		Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 		//UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
@@ -1123,7 +1125,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	if(respuesta == -1)
 	{
 		//avisar al programa :D
-		Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
+		Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
@@ -1135,7 +1137,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	if(respuesta == -1)
 	{
 		//avisar al programa :D
-		Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
+		Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 		UMV_destruirSegmentos(pcbAux->pid);
 		printf("no se creo el pcb\n");
 		free (pcbAux);
@@ -1149,7 +1151,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 		if(respuesta == -1)
 		{
 			//avisar al programa :D
-			Programa_imprimirTexto(programa.pid, "Holis, No se pudo crear el programa");
+			Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 			UMV_destruirSegmentos(pcbAux->pid);
 			printf("no se creo el pcb\n");
 			free (pcbAux);
