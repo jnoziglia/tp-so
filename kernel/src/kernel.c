@@ -1556,7 +1556,7 @@ void encolarExit(t_pcb* pcb)
 {
 	sem_wait(&s_ColaExit);
 	t_pcb* aux = l_exit;
-	log_trace(logger,"Encolando PCB en Exit: %d",aux->pid);
+	log_trace(logger,"Encolando PCB en Exit: %d",pcb->pid);
 	if(l_exit == NULL)
 	{
 		l_exit = pcb;
