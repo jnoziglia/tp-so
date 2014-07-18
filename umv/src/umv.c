@@ -292,8 +292,9 @@ void* mainConsola()
 		}
 		if(string_equals_ignore_case(parametros,"compactacion"))
 		{
-			//TODO: ponerle un semaforo
+			sem_wait(&s_TablaSegmentos);
 			compactar();
+			sem_post(&s_TablaSegmentos);
 			printf("Compactado.\n");
 			continue;
 		}
