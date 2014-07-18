@@ -1,1 +1,1 @@
-sizeMemoria=10
+sizeMemoria=1024

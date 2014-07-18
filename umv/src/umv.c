@@ -136,10 +136,10 @@ void* mainConsola()
 	{
 		gets(parametros);
 		//sleep(retardo);
+		log_info(logi, "Llego una solicitud desde consola");
 		if(string_equals_ignore_case(parametros,"man"))
 		{
 			printf("Operaciones:\n");
-			printf("\toperacion solicitar [pid] [base] [offset] [tamanio]\n");
 			printf("\toperacion solicitar [pid] [base] [offset] [tamanio]\n");
 			printf("\toperacion escribir [pid] [base] [offset] [tamanio]\n");
 			printf("\toperacion crear-segmento [pid] [tamanio]\n");
@@ -380,13 +380,13 @@ void* mainEsperarConexiones()
 		{
 			if (id == kernel)
 			{
-				log_trace(logi, "Se conecto el kernel con socket %d", socketCliente);
+				log_info(logi, "Se conecto el kernel con socket %d", socketCliente);
 				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
 				continue;
 			}
 			if (id == cpu)
 			{
-				log_trace(logi, "Se conecto un cpu con socket %d", socketCliente);
+				log_info(logi, "Se conecto un cpu con socket %d", socketCliente);
 				rhHiloCpu = pthread_create(&hiloCpu, NULL, f_hiloCpu, (void*)socketCliente);
 				continue;
 			}
@@ -414,7 +414,7 @@ void* f_hiloKernel(void* socketCliente)
 		recv(socketKernel, &operacion, sizeof(char), 0);
 		usleep(retardo*1000);
 		//sem_wait(&s_cpu);
-		log_trace(logi, "Llego una operacion del kernel");
+		log_info(logi, "Llego una operacion del kernel");
 		if (operacion == operCrearSegmento)
 		{
 			confirmacion = 1;
@@ -482,7 +482,7 @@ void* f_hiloCpu(void* socketCliente)
 		}
 		//sem_wait(&s_cpu);
 		//mostrarContenidoDeMemoria(0,finMemPpal-memPpal);
-		log_trace(logi, "Llego una operacion del cpu %d", socketCPU);
+		log_info(logi, "Llego una operacion del cpu %d", socketCPU);
 		if (operacion == operSolicitarBytes)
 		{
 			confirmacion = 1;

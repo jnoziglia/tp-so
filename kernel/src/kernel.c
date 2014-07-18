@@ -14,6 +14,7 @@
 #include <parser/metadata_program.h>
 #include <commons/string.h>
 #include <commons/config.h>
+#include <commons/log.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -123,7 +124,6 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer);
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer);
 void Programa_imprimirTexto(int pid, char* texto);
 void encolarEnNew(t_new* programa);
-void conexionCPU(void);
 void conexionUMV(void);
 int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
@@ -146,10 +146,8 @@ void encolarExit(t_pcb* pcb);
 t_pcb readyAExec(void);
 void execAReady(t_pcb pcb);
 void execAExit(t_pcb pcb);
-void* f_hiloRespuestaPrograma(void);
 void socketDesconectado(void);
 void agregarCpu(int socketID);
-void quitarCpu();
 t_pcb* sacarCpuDeEjecucion(int socketID);
 void* f_hiloColaExit(void);
 
@@ -192,6 +190,7 @@ int retardo = 0;
 t_imprimir* l_imprimir;
 t_cpu* l_cpu;
 int gradoMultiprogramacion;
+t_log* logger;
 
 
 /* Semáforos */
@@ -217,6 +216,7 @@ t_config* configuracion;
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
+	logger = log_create(NULL, "Kernel", 1, LOG_LEVEL_TRACE);
 	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	cargarConfig();
 	sem_init(&s_Multiprogramacion,0,gradoMultiprogramacion);
@@ -237,7 +237,6 @@ int main(void) {
 	cargarDispositivosIO();
 	cargarSemaforos();
 
-	printf("Puerto %s\n", PUERTOPROGRAMA);
 	conexionUMV();
 	rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
 	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
@@ -261,23 +260,24 @@ void* f_hiloColaReady()
 	t_new programa;
 	int conf;
 	char terminarPrograma = 2;
-	printf("ENTRO AL HILO COLA READY\n");
 	while(1)
 	{
 		sem_wait(&s_ProgramasEnNew);
 		sem_wait(&s_Multiprogramacion);
+		log_trace(logger, "Se puede pasar un programa de NEW a READY");
 		programa = desencolarNew();
 		t_pcb* nuevoPCB = malloc(sizeof(t_pcb));
 		conf = crearPcb(programa, nuevoPCB);
 		if(conf == 1)
 		{
-			printf("Nuevo PCB Creado\n");
 			encolarEnReady(nuevoPCB);
 		}
 		else
 		{
+			log_info(logger, "No se creo el pcb del programa %d", programa.pid);
 			sem_post(&s_Multiprogramacion);
 			send(programa.pid, &terminarPrograma, sizeof(char), 0);
+			log_trace(logger, "Se le informo al programa %d que debe finalizar", programa.pid);
 		}
 	}
 }
@@ -285,6 +285,7 @@ void* f_hiloColaReady()
 
 void* f_hiloPCP()
 {
+	log_trace(logger, "Levanto hilo PCP");
 	pthread_t hiloHabilitarCpu;
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
@@ -304,7 +305,6 @@ void* f_hiloPCP()
 	//void* package = malloc(sizeof(t_pcb));
 	//t_pcb* pcb;
 	//t_pcb* puntero;
-	printf("Inicio del PCP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
@@ -340,15 +340,15 @@ void* f_hiloPCP()
 		{
 			if(FD_ISSET(i, &readPCP))
 			{
-				printf("%d esta listo para escuchar\n", i);
 				if(i == socketPCP)
 				{
-					printf("Nueva CPU: %d\n", socketPCP);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
+					log_info(logger, "Se conecto un cpu por el socket %d", socketAux);
 					FD_SET(socketAux, &fdRPCP);
 					agregarCpu(socketAux);
 					//FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximoCpu) maximoCpu = socketAux;
+					log_trace("Le envio al cpu %d el quantum y retardo", socketAux);
 					send(socketAux, &quantum, sizeof(int), 0);
 					send(socketAux, &retardo, sizeof(int), 0);
 				}
@@ -356,46 +356,26 @@ void* f_hiloPCP()
 				{
 					//Cuando no es un CPU, recibe el PCB o se muere el programa;
 					status = recv(i,&mensaje,sizeof(char),0);
-					puntero = l_exec;
-					printf("SOCKET CPU: %d\n", i);
-					printf("MENSAJE: %d\n", mensaje);
-					printf("STATUS: %d\n", status);
-					//recv(i,&superMensaje,sizeof(superMensaje),0);
-					//t_pcb* pcb = malloc(sizeof(t_pcb));
-					//pcbRecibido = recibirSuperMensaje(superMensaje);
-					//desencolarExec(pcb);
-					//pcb->siguiente = NULL;
 					if(status != 0)
 					{
-						if(mensaje == 10)
+						if(mensaje == 0) //todo:podria ser ENUM
 						{
-							//sem_post(&s_CpuDisponible);
-							//agregarCpu(i);
-						}
-						else if(mensaje == 0) //todo:podria ser ENUM
-						{
-							//FD_CLR(i, &fdRPCP);
-							//FD_SET(i, &fdWPCP);
 							//Se muere el programa
+							log_info(logger, "Llego una solicitud del cpu %d para finalizar un programa", i);
 							recv(i,&superMensaje,sizeof(superMensaje),0);
+							log_trace(logger, "Recibiendo PCB con pid %d del cpu %d", superMensaje[0],i);
 							pcb = recibirSuperMensaje(superMensaje);
-							printf("Llegó un programa para encolar en Exit\n");
-							//encolarEnExit
-							//execAExit(pcbRecibido);
 							desencolarExec(pcb);
 							pcb->siguiente = NULL;
 							encolarExit(pcb);
 						}
 						else if (mensaje == 1)
 						{
-							//						FD_CLR(i, &fdRPCP);
-							//						FD_SET(i, &fdWPCP);
 							//Se termina el quantum
+							log_info(logger, "El cpu %d informa que se le termino el quantum a un proceso", i);
 							recv(i,&superMensaje,sizeof(superMensaje),0);
-							for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
-							printf("RECIBO SUPERMENSAJE\n");
+							log_trace(logger, "Recibiendo PCB con pid %d del cpu %d", superMensaje[0],i);
 							pcb = recibirSuperMensaje(superMensaje);
-							printf("Llegó un programa para encolar en Ready\n");
 							desencolarExec(pcb);
 							pcb->siguiente = NULL;
 							encolarEnReady(pcb);
@@ -403,10 +383,9 @@ void* f_hiloPCP()
 						else if(mensaje == 2) //todo:podria ser ENUM
 						{
 							//Manejo de variables compartidas.
-							printf("Llegó un programa para manejar variables compartidas.\n");
+							log_info(logger, "El cpu %d solicita acceso a variables compartidas", i);
 							char mensaje2;
 							recv(i,&mensaje2,sizeof(char),0);
-							printf("Operación: %d\n", mensaje2);
 							int tamanio = 0, valorVariable = -1;
 							recv(i,&tamanio,sizeof(int),0);
 							char* variable = malloc(tamanio);
@@ -434,8 +413,6 @@ void* f_hiloPCP()
 							}
 							else if (mensaje2 == 1)
 							{
-								//							FD_CLR(i, &fdRPCP);
-								//							FD_SET(i, &fdWPCP);
 								//Asignar variable compartida.
 								recv(i,&valorVariable,sizeof(int),0);
 								printf("Asignar valor variable compartida: %s\n", variable);
@@ -450,7 +427,6 @@ void* f_hiloPCP()
 										break;
 									}
 								}
-								//send(i,&valorVariable,sizeof(int),0);
 								free(variable);
 							}
 							else
@@ -461,10 +437,8 @@ void* f_hiloPCP()
 						}
 						else if (mensaje == 3)
 						{
-							//						FD_CLR(i, &fdRPCP);
-							//						FD_SET(i, &fdWPCP);
-							printf("Llegó un programa para encolar en dispositivo\n");
 							//Se bloquea el PCB
+							log_info(logger, "Llego una solicitud del cpu %d para enviar un programa a entrada/salida", i);
 							int tamanio = 0, tiempo = -1;
 							recv(i,&tamanio,sizeof(int),0);
 							char* dispositivo = malloc(tamanio);
@@ -511,9 +485,7 @@ void* f_hiloPCP()
 						}
 						else if (mensaje == 4)
 						{
-							//						FD_CLR(i, &fdRPCP);
-							//						FD_SET(i, &fdWPCP);
-							printf("Llegó un pedido de semáforo.\n");
+							log_info(logger, "Llego una solicitud del cpu %d para manejo de semaforo");
 							int tamanio = 0;
 							recv(i,&tamanio,sizeof(int),0);
 							char* semaforo = malloc(tamanio);
@@ -536,8 +508,6 @@ void* f_hiloPCP()
 							}
 							if(semaforoEncontrado == -1)
 							{
-								//							FD_CLR(i, &fdRPCP);
-								//							FD_SET(i, &fdWPCP);
 								mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
 								send(i,&mensaje2,sizeof(char),0);
 								printf("No se encontró el semáforo solicitado. Se destruye el PCB");
@@ -556,8 +526,6 @@ void* f_hiloPCP()
 								arraySemaforos[semaforoEncontrado].valor--;
 								if(arraySemaforos[semaforoEncontrado].valor < 0)
 								{
-									//								FD_CLR(i, &fdRPCP);
-									//								FD_SET(i, &fdWPCP);
 									//Se bloquea el programa.
 									printf("Se bloquea el PCB.\n");
 									mensaje2 = 0; //Se bloquea el programa. Hay que pedir PCB.
@@ -615,9 +583,11 @@ void* f_hiloPCP()
 						}
 						else if(mensaje == 5)	//Imprimir
 						{
+							log_info(logger, "Llego una solicitud del cpu %d para imprimir un valor por pantalla");
 							operacion = 0;
 							recv(i, &pid, sizeof(int), 0);
 							recv(i, &valorAImprimir, sizeof(int), 0);
+							log_trace(logger, "Enviando %d al programa %d", valorAImprimir, pid);
 							send(pid, &operacion, sizeof(char), 0);
 							send(pid, &valorAImprimir, sizeof(int), 0);
 							operacion = 1;
@@ -625,13 +595,11 @@ void* f_hiloPCP()
 						}
 						else if (mensaje == 6)
 						{
+							log_info(logger, "Llego una solicitud del cpu %d para imprimir texto por pantalla");
 							recv(i, &pid, sizeof(int), 0);
 							recv(i, &tamanioTexto, sizeof(int), 0);
 							texto = malloc(tamanioTexto);	//TODO: Revisar malloc
 							recv(i, texto, tamanioTexto, 0);
-							printf("%d\n", tamanioTexto);
-							//sleep(5);
-							//texto[tamanioTexto]='\0';
 							Programa_imprimirTexto(pid, texto);
 							operacion = 1;
 							send(i, &operacion, sizeof(char), 0);
@@ -640,19 +608,19 @@ void* f_hiloPCP()
 						else if (mensaje == -1)	//Se cerro el cpu
 						{
 							//Saco el socket del select
+							log_info(logger, "El cpu %d informa que cerrara su conexion", i);
 							FD_CLR(i, &fdRPCP);
 							//Recibo pcb
 							recv(i,&superMensaje,sizeof(superMensaje),0);
-							for(j=0;j<11;j++) printf("supermensaje: %d\n", superMensaje[j]);
-							printf("RECIBO SUPERMENSAJE\n");
 							pcb = recibirSuperMensaje(superMensaje);
-							printf("Llegó un programa para encolar en Ready\n");
+							log_trace(logger, "Recibiendo PCB con pid %d del cpu %d", superMensaje[0], i);
 							desencolarExec(pcb);
 							pcb->siguiente = NULL;
 							encolarEnReady(pcb);
 							sacarCpuDeEjecucion(i);
 							//Hago la desconexion
 							close(i);
+							log_trace(logger, "Finalizada conexion con cpu %d", i);
 							if (i == maximoCpu)
 							{
 								for(j=3; j<maximoCpu; j++)
@@ -670,18 +638,19 @@ void* f_hiloPCP()
 					else
 					{
 						//Saco el socket del select
-						printf("Se desconecto un cpu\n");
+						log_info(logger, "Se desconecto el cpu %d", i);
 						FD_CLR(i, &fdRPCP);
 						pcb = sacarCpuDeEjecucion(i);
-						//desencolarExec(pcb);
 						if(pcb != NULL)
 						{
 							pcb->siguiente = NULL;
 							Programa_imprimirTexto(pcb->pid, "Se desconecto el cpu abruptamente y no se pudo finalizar la ejecucion\n");
+							log_error(logger, "El cpu %d estaba ejecutando un programa cuando se desconecto. Enviando PCB %d a EXIT", i, pcb->pid);
 							encolarExit(pcb);
 						}
 						//Hago la desconexion
 						close(i);
+						log_trace(logger, "Finalizada conexion con cpu %d", i);
 						if (i == maximoCpu)
 						{
 							for(j=3; j<maximoCpu; j++)
@@ -770,6 +739,7 @@ void agregarCpu(int socketID)
 		l_cpu = nodo;
 		sem_post(&s_CpuDisponible);
 		sem_post(&s_ColaCpu);
+		log_trace(logger, "Se agrego el cpu %d a la lista de cpus", socketID);
 	}
 	else
 	{
@@ -781,6 +751,7 @@ void agregarCpu(int socketID)
 		nodo->siguiente = NULL;
 		sem_post(&s_CpuDisponible);
 		sem_post(&s_ColaCpu);
+		log_trace(logger, "Se agrego el cpu %d a la lista de cpus", socketID);
 	}
 }
 
@@ -812,7 +783,7 @@ t_pcb* sacarCpuDeEjecucion(int socketID)
 			sem_wait(&s_CpuDisponible);
 		}
 		sem_post(&s_ColaCpu);
-		printf("Saque primer cpu\n");
+		log_trace(logger, "Se saco el cpu %d de la lista de cpus", socketID);
 		return pcbRetorno;
 	}
 	else
@@ -831,13 +802,14 @@ t_pcb* sacarCpuDeEjecucion(int socketID)
 					sem_wait(&s_CpuDisponible);
 				}
 				sem_post(&s_ColaCpu);
+				log_trace(logger, "Se saco el cpu %d de la lista de cpus", socketID);
 				return pcbRetorno;
 			}
 			auxAnt = aux;
 			aux = aux->siguiente;
 		}
-		printf("No se encontro el cpu\n");
 		sem_post(&s_ColaCpu);
+		log_error(logger, "No se encontro el cpu en la lista de cpus");
 		return NULL;
 	}
 }
@@ -850,14 +822,11 @@ void* f_hiloHabilitarCpu(void)
 	while(1)
 	{
 		sem_wait(&s_ProgramasEnReady);
-		printf("hay programa en ready\n");
+		log_info(logger, "Hay PCBs encolados en READY");
 		sem_wait(&s_CpuDisponible);
-		printf("hay cpu disponible\n");
+		log_info(logger, "Hay cpus listos para ejecutar");
 		t_pcb* pcbAux;
 		pcbAux = desencolarReady();
-		printf("PCB: %p\n", pcbAux);
-		//					t_pcb* pcbAux;
-		//					pcbAux = desencolarReady();
 		superMensaje[0] = pcbAux->pid;
 		superMensaje[1] = pcbAux->segmentoCodigo;
 		superMensaje[2] = pcbAux->segmentoStack;
@@ -869,11 +838,9 @@ void* f_hiloHabilitarCpu(void)
 		superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
 		superMensaje[9] = pcbAux->tamanioIndiceCodigo;
 		superMensaje[10] = pcbAux->peso;
-		//					//free(l_new);
-		printf("arme supermensaje\n");
-		//					//l_new = NULL;
+
 		socketID = encolarExec(pcbAux);
-		printf("Encole en exec\n");
+		log_trace(logger, "Envio al cpu %d el PCB con pid %d", socketID, superMensaje[0]);
 		status = send(socketID, superMensaje, 11*sizeof(int), 0);
 	}
 
@@ -881,6 +848,7 @@ void* f_hiloHabilitarCpu(void)
 
 void* f_hiloPLP()
 {
+	log_trace(logger, "Levanto hilo PLP");
 	pthread_t hiloColaExit;
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
@@ -891,7 +859,6 @@ void* f_hiloPLP()
 	char package[PACKAGESIZE], mensajePrograma;
 	t_pcb* listaExit;
 	t_imprimir* listaImprimir;
-	printf("Inicio del PLP.\n");
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
@@ -904,7 +871,6 @@ void* f_hiloPLP()
 	maximo = socketServidor;
 	bind(socketServidor,serverInfo->ai_addr, serverInfo->ai_addrlen);
 	listen(socketServidor, BACKLOG);
-	printf("SocketServidor: %d\n",socketServidor);
 
 	pthread_create(&hiloColaExit, NULL, f_hiloColaExit, NULL);
 
@@ -918,40 +884,27 @@ void* f_hiloPLP()
 
 	while(1)
 	{
-		//maximoAnterior = 2;
 		readPLP = fdRPLP;
 		writePLP = fdWPLP;
-		//if(FD_ISSET(7, &writePLP)) printf("HOLA %d\n", maximo);
-		select(maximo + 1, &readPLP, &writePLP, NULL, NULL);
-		//printf("salio del select\n");
+		select(maximo + 1, &readPLP, NULL, NULL, NULL);
 		for(i=3; i<=maximo; i++)
 		{
 			if(FD_ISSET(i, &readPLP))
 			{
 				if(i == socketServidor)
 				{
-					printf("conecto program %d\n", socketServidor);
 					socketAux = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
+					log_info(logger, "Se conecto un programa por el socket %d", socketAux);
 					FD_SET(socketAux, &fdRPLP);
 					if (socketAux > maximo) maximo = socketAux;
-					printf("PROGRAMA: %d\n",socketAux);
 				}
 				else
 				{
 					status = recv(i, (void*)package, PACKAGESIZE, 0);
-					printf("Codigo Recibido. %d\n", status);
 					if (status != 0)
 					{
+						log_info(logger, "Se recibio el codigo del programa %d", i);
 						FD_CLR(i, &fdRPLP);
-						//FD_SET(i, &fdWPLP);
-						//t_pcb* nuevoPCB;
-						//printf("%s", package);
-						//nuevoPCB = crearPcb(package, i);
-						//						if(nuevoPCB != NULL)
-						//						{
-						//							printf("Nuevo PCB Creado\n");
-						//							encolarEnNew(nuevoPCB, new);
-						//						}
 						package[status+1] = '\0';
 						t_new* nodoNew = malloc(sizeof(t_new));
 						nodoNew->pid = i;
@@ -962,6 +915,7 @@ void* f_hiloPLP()
 					}
 					else
 					{
+						log_error(logger, "El programa %d se cerro inesperadamente. Terminando conexion", i);
 						FD_CLR(i, &fdRPLP);
 						close(i);
 					}
@@ -971,7 +925,6 @@ void* f_hiloPLP()
 						{
 							if(FD_ISSET(j, &fdRPLP) || FD_ISSET(j, &fdWPLP))
 							{
-								printf("baje maximo\n");
 								maximoAnterior = j;
 							}
 						}
@@ -1032,18 +985,16 @@ void* f_hiloColaExit(void)
 	while(1)
 	{
 		sem_wait(&s_ProgramasEnExit);
-		printf("Hay programas en exit\n");
+		log_info(logger, "Hay programas encolados en EXIT");
 		sem_wait(&s_ColaExit);
-		printf("Entre a cola exit\n");
 		listaExit = l_exit;
-		printf("entro al exit %d\n", listaExit->pid);
 		mensajePrograma = 2;
+		log_trace(logger, "Informo al programa %d que debe terminar su ejecucion", listaExit->pid);
 		send(listaExit->pid, &mensajePrograma, sizeof(char), 0);
 		UMV_destruirSegmentos(listaExit->pid);
 		close(listaExit->pid);
 		destruirPCB(listaExit->pid);
 		sem_post(&s_Multiprogramacion);
-		//listaExit = listaExit->siguiente;
 		sem_post(&s_ColaExit);
 	}
 }
@@ -1092,9 +1043,7 @@ void* f_hiloIO(void* pos)
 
 int crearPcb(t_new programa, t_pcb* pcbAux)
 {
-	//t_pcb* pcbAux = malloc (sizeof(t_pcb));
 	t_medatada_program* metadataAux = metadata_desde_literal(programa.codigo);
-	printf("%s\n", programa.codigo);
 	int mensaje[2];
 	int respuesta, i;
 	pcbAux->pid = programa.pid;
@@ -1106,40 +1055,36 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	pcbAux->tamanioIndiceCodigo = (metadataAux->instrucciones_size*sizeof(t_intructions));
 	mensaje[0] = pcbAux->pid;
 	mensaje[1] = tamanioStack;
-	printf("PID: %d\n", pcbAux->pid);
-	printf("STACK: %d\n", tamanioStack);
+	log_trace(logger, "Solicito a la UMV crear segmento de Stack del programa %d", pcbAux->pid);
 	respuesta = UMV_crearSegmentos(mensaje);
 	if(respuesta == -1)
 	{
-		printf("NO SE CREO EL SEGMENTO\n");
 		//avisar al programa :D
 		Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
-		//UMV_destruirSegmentos(pcbAux->pid);
-		printf("no se creo el pcb\n");
 		free (pcbAux);
 		return -1;
 	}
 	pcbAux->segmentoStack = respuesta;
 	mensaje[1] = strlen(programa.codigo);
+	log_trace(logger, "Solicito a la UMV crear segmento de Codigo del programa %d", pcbAux->pid);
 	respuesta = UMV_crearSegmentos(mensaje);
 	if(respuesta == -1)
 	{
 		//avisar al programa :D
 		Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 		UMV_destruirSegmentos(pcbAux->pid);
-		printf("no se creo el pcb\n");
 		free (pcbAux);
 		return -1;
 	}
 	pcbAux->segmentoCodigo = respuesta;
 	mensaje[1] = (metadataAux->instrucciones_size*sizeof(t_intructions));
+	log_trace(logger, "Solicito a la UMV crear segmento de Indice de Codigo del programa %d", pcbAux->pid);
 	respuesta = UMV_crearSegmentos(mensaje);
 	if(respuesta == -1)
 	{
 		//avisar al programa :D
 		Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 		UMV_destruirSegmentos(pcbAux->pid);
-		printf("no se creo el pcb\n");
 		free (pcbAux);
 		return -1;
 	}
@@ -1147,13 +1092,13 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	mensaje[1] = metadataAux->etiquetas_size;
 	if(mensaje[1] != 0)
 	{
+		log_trace(logger, "Solicito a la UMV crear segmento de Indice de Etiquetas del programa %d", pcbAux->pid);
 		respuesta = UMV_crearSegmentos(mensaje);
 		if(respuesta == -1)
 		{
 			//avisar al programa :D
 			Programa_imprimirTexto(programa.pid, "MEMORY OVERLOAD\n");
 			UMV_destruirSegmentos(pcbAux->pid);
-			printf("no se creo el pcb\n");
 			free (pcbAux);
 			return -1;
 		}
@@ -1163,40 +1108,47 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 	{
 		pcbAux->indiceEtiquetas = -1;
 	}
-	printf("indiceEtiquetas %d\n", pcbAux->indiceEtiquetas);
-	pcbAux->peso = (5* metadataAux->cantidad_de_etiquetas) + (3* metadataAux->cantidad_de_funciones) + (metadataAux->instrucciones_size);
-	printf("Se crea el pcb\n");
-	printf("codigo: %d\n", strlen(programa.codigo));
+	pcbAux->peso = 0;
+	log_trace(logger, "El pcb se creo correctamente");
+	log_trace(logger, "Envio a la UMV el Codigo del programa %d", pcbAux->pid);
 	UMV_enviarBytes(pcbAux->pid, pcbAux->segmentoCodigo,0,strlen(programa.codigo),programa.codigo);
-	printf("Creado segmento Codigo con el tamaño %d\n",strlen(programa.codigo));
 	if(metadataAux->etiquetas_size != 0)
 	{
+		log_trace(logger, "Envio a la UMV el Indice de Etiquetas del programa %d", pcbAux->pid);
 		UMV_enviarBytes(pcbAux->pid, pcbAux->indiceEtiquetas,0,metadataAux->etiquetas_size,metadataAux->etiquetas);
-		printf("Creado indiceEtiquetas de tamaño %d\n", metadataAux->etiquetas_size);
 	}
+	log_trace(logger, "Envio a la UMV el Indice de Codigo del programa %d", pcbAux->pid);
 	UMV_enviarBytes(pcbAux->pid, pcbAux->indiceCodigo,0,pcbAux->tamanioIndiceCodigo,metadataAux->instrucciones_serializado);
-	printf("Creado indiceCodigo de tamaño %d\n",pcbAux->tamanioIndiceCodigo);
 	return 1;
 }
 
 int UMV_crearSegmentos(int mensaje[2])
 {
 	sem_wait(&s_ComUmv);
-	int status = 1;
 	char operacion = 1;
 	char confirmacion;
 	int respuesta;
 	send(socketUMV, &operacion, sizeof(char), 0);
+	log_trace(logger, "Solicito a la UMV crear segmentos");
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
 	if(confirmacion == 1)
 	{
 		send(socketUMV, mensaje, 2*sizeof(int), 0);
-		status = recv(socketUMV, &respuesta, sizeof(int), 0);
-		printf("CONFIRMACION : %d\n",respuesta);
+		log_trace(logger, "Envio segmento tamanio %d", mensaje[1]);
+		recv(socketUMV, &respuesta, sizeof(int), 0);
+		if(respuesta != -1)
+		{
+			log_info(logger, "Segmento creado correctamente");
+		}
+		else
+		{
+			log_error(logger, "MEMORY OVERLOAD");
+		}
 		sem_post(&s_ComUmv);
 		return respuesta;
 	}
 	sem_post(&s_ComUmv);
+	log_error(logger, "No se recibio confirmacion por parte de la UMV");
 	return -1;
 }
 
@@ -1206,13 +1158,16 @@ void UMV_destruirSegmentos(int pid)
 	char operacion = 2;
 	char confirmacion;
 	send (socketUMV, &operacion, sizeof(char), 0);
+	log_trace(logger, "Solicito a la UMV destruir segmentos del programa %d", pid);
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
 	if (confirmacion ==  1)
 	{
 		send(socketUMV, &pid, sizeof(int), 0);
+		log_info(logger, "Segmentos del programa %d destruidos", pid);
 		sem_post(&s_ComUmv);
 		return;
 	}
+	log_error(logger, "No se recibio confirmacion por parte de la UMV");
 	sem_post(&s_ComUmv);
 	return;
 }
@@ -1227,16 +1182,17 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	char confirmacion;
 	char* package;
 	send(socketUMV, &operacion, sizeof(char), 0);
+	log_trace(logger, "Solicito a la UMV enviar bytes");
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
 	if(confirmacion == 1)
 	{
 		package = serializarEnvioBytes(pid, base, offset, tamanio, buffer);
+		log_trace(logger, "Envio datos del programa %d, base %d para almacenar", pid, base);
 		send(socketUMV, package, 4*sizeof(int) + tamanio, 0);
 	}
 	status = recv(socketUMV,&confirmacion, sizeof(char),0);
 	if(status==0)
 	{
-		printf("Cerró\n");
 		sem_post(&s_ComUmv);
 		return;
 	}
@@ -1347,17 +1303,13 @@ void conexionUMV(void)
 
 	socketUMV = socket(umvInfo->ai_family, umvInfo->ai_socktype, umvInfo->ai_protocol);
 
-	int a = connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
-	printf("Conexión con la UMV: %d", a);
+	connect(socketUMV, umvInfo->ai_addr, umvInfo->ai_addrlen);
 	freeaddrinfo(umvInfo);	// No lo necesitamos mas
 	send(socketUMV, &id, sizeof(char), 0);
 	recv(socketUMV, &conf, sizeof(char), 0);
-	//		int idKernel = 0;
-	//		int confirmacion;
-	//		send(socketUMV, (void*)idKernel, sizeof(int), 0);
-	//		printf("Enviado Tipo:Kernel\n");
-	//		recv(socketUMV, (void*)confirmacion, sizeof(int),0);
-	//		printf("Confirmación: %d \n",confirmacion);
+
+	log_info(logger, "Se establecio conexion con la UMV");
+
 	return;
 }
 
@@ -1509,6 +1461,7 @@ t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 
 void cargarConfig(void)
 {
+	log_trace(logger, "Levanto configuracion");
 	//t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
@@ -1525,6 +1478,7 @@ void cargarConfig(void)
 
 void cargarVariablesCompartidas(void)
 {
+	log_trace(logger, "Cargo variables compartidas");
 	char** vars = malloc(1000);
 	vars = config_get_array_value(configuracion, "VARIABLES_COMPARTIDAS");
 	while(vars[cantidadVariablesCompartidas] != NULL)
@@ -1546,7 +1500,7 @@ void cargarVariablesCompartidas(void)
 
 void cargarDispositivosIO(void) //Todo: Falta agregar Retardo para cada Dispositivo. (Un hilo por cada semáforo?)
 {
-
+	log_trace(logger, "Cargo dispositivos de entrada/salida");
 	pthread_t hiloIO;
 	char** disp = malloc(1000);
 	char** retardo = malloc(1000);
@@ -1580,6 +1534,7 @@ void cargarDispositivosIO(void) //Todo: Falta agregar Retardo para cada Disposit
 
 void cargarSemaforos(void)
 {
+	log_trace(logger, "Cargo semaforos");
 	char** sem = malloc(1000);
 	char** val = malloc(1000);
 	sem = config_get_array_value(configuracion, "SEMAFOROS");
@@ -1660,6 +1615,7 @@ t_new desencolarNew(void)
 		max = *maximo;
 		free(maximo);
 		sem_post(&s_ColaNew);
+		log_trace(logger, "Desencolo el programa %d de new", max.pid);
 		return max;
 	}
 	else
@@ -1685,12 +1641,14 @@ t_new desencolarNew(void)
 			max = (*maximo);
 			free(maximo);
 			sem_post(&s_ColaNew);
+			log_trace(logger, "Desencolo el programa %d de new", max.pid);
 			return max;
 		}
 		maxAnt->siguiente = maximo->siguiente;
 		max = *maximo;
 		free(maximo);
 		sem_post(&s_ColaNew);
+		log_trace(logger, "Desencolo el programa %d de new", max.pid);
 		return max;
 	}
 }
@@ -1705,6 +1663,7 @@ void encolarEnReady(t_pcb* pcb)
 		l_ready = pcb;
 		sem_post(&s_ProgramasEnReady);
 		sem_post(&s_ColaReady);
+		log_trace(logger, "Se encolo en ready el pcb con PID %d", pcb->pid);
 		return;
 	}
 	else
@@ -1717,6 +1676,7 @@ void encolarEnReady(t_pcb* pcb)
 		pcb->siguiente = NULL;
 		sem_post(&s_ProgramasEnReady);
 		sem_post(&s_ColaReady);
+		log_trace(logger, "Se encolo en ready el pcb con PID %d", pcb->pid);
 		return;
 	}
 }
