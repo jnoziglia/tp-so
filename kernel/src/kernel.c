@@ -1365,6 +1365,56 @@ void* f_hiloMostrarNew()
 			sem_post(&s_ColaCpu);
 			continue;
 		}
+		else if(string_equals_ignore_case(ingreso,"mostrar-semaforos"))
+		{
+			printf("Listado de semáforos, valor y PCB's bloqueados si los hay\n");
+			printf("Semáforo\t Valor\t PID Bloqueados\n");
+			printf("-----------------------\n");
+			int i;
+			for(i = 0; i < cantidadSemaforos; i++)
+			{
+				printf("%s\t\t %d\t",arraySemaforos[i].nombreSemaforo,arraySemaforos[i].valor);
+				t_pcb* aux = arraySemaforos[i].pcb;
+				if(aux == NULL) printf("No tiene PCB's bloqueados\n");
+				else
+				{
+					while(aux != NULL)
+					{
+						printf("%d,\t",aux->pid);
+						aux = aux->siguiente;
+					}
+					printf("\n");
+				}
+			}
+			continue;
+		}
+		else if(string_equals_ignore_case(ingreso,"mostrar-io"))
+		{
+			printf("Listado de dispositivos de Entrada y Salida, y su Retardo\n");
+			printf("Dispositivo\t Retardo\n");
+			printf("-----------------------\n");
+			int i;
+			for(i = 0; i < cantidadDispositivosIO; i++)
+			{
+				printf("%s\t\t %d\t\n",arrayDispositivosIO[i].nombreIO,arrayDispositivosIO[i].retardo);
+			}
+			continue;
+		}
+		if(string_equals_ignore_case(ingreso,"mostrar-exit"))
+				{
+					sem_wait(&s_ColaExit);
+					printf("Procesos encolados en Exit\n");
+					printf("PID:\n");
+					printf("-----------------------\n");
+					t_pcb* aux = l_exit;
+					while(aux != NULL)
+					{
+						printf("%d\t\t",aux->pid);
+						aux = aux->siguiente;
+					}
+					sem_post(&s_ColaExit);
+					continue;
+				}
 		//TODO: MOSTRAR PCBS EN I/O Y SEMAFOROS. NO TENGO IDEA COMO SE MANEJAN ESAS LISTAS
 		else
 		{
