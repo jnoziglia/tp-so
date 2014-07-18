@@ -181,15 +181,15 @@ int main(){
 
 		while(quantumUtilizado<=quantum)
 		{
-			printf("Program counter: %d\n", pcb->programCounter);
+			log_trace(logger, "Ejecuto rafaga del programa %d", pcb->pid);
+			log_trace(logger, "Calculo instruccion a buscar");
 			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter*8,sizeof(t_intructions));
-			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
-			printf("offset: %d\n", instruccionABuscar->offset);
 			instruccionAEjecutar = realloc(instruccionAEjecutar, instruccionABuscar->offset);
+			log_trace(logger, "Busco instruccion a ejecutar");
 			instruccionAEjecutar = UMV_solicitarBytes(pcb->pid,pcb->segmentoCodigo,instruccionABuscar->start,instruccionABuscar->offset);
 			if(instruccionAEjecutar == NULL)
 			{
-				printf("Error en la lectura de memoria. Finalizando la ejecución del programa");
+				log_error(logger, "Error en la lectura de memoria. Finalizando la ejecución del programa");
 				estadoCPU = 0;
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
@@ -197,16 +197,16 @@ int main(){
 				break;
 			}
 			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
-			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
+			log_info(logger, "Instruccion: %s", instruccionAEjecutar);
 
+			log_trace(logger, "Llamo al parser");
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
 			usleep(retardo*1000);
 			pcb->programCounter++;
 			quantumUtilizado++;
-			printf("Terminar programa: %d\n", terminarPrograma);
 			if(terminarPrograma)
 			{
-				printf("Se termina el programa \n");
+				log_info(logger, "El programa %d finalizo su ejecucion", pcb->pid);
 				estadoCPU = 0;
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
@@ -214,9 +214,9 @@ int main(){
 				liberarDiccionario();
 				break;
 			}
-			printf("Bloquear programa: %d\n", bloquearPrograma);
 			if(bloquearPrograma)
 			{
+				log_info(logger, "El programa %d se bloqueo", pcb->pid);
 				generarSuperMensaje();
 				send(kernelSocket,superMensaje, sizeof(int)*11,0);
 				liberarDiccionario();
@@ -226,7 +226,7 @@ int main(){
 			if(matarCPU == 1)
 			{
 				estadoCPU = -1;
-				log_trace(logger, "Aviso al kernel que termino la ejecucion");
+				log_trace(logger, "Aviso al kernel que voy a terminar la ejecucion");
 				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
 				generarSuperMensaje();
 				send(kernelSocket,superMensaje, sizeof(int)*11,0);
@@ -236,6 +236,7 @@ int main(){
 				return 0;
 			}
 		}
+		log_trace(logger, "El programa %d finalizo su quantum", pcb->pid);
 		quantumUtilizado = 1;
 		if(terminarPrograma || bloquearPrograma)
 		{
