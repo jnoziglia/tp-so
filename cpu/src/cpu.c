@@ -116,6 +116,7 @@ AnSISOP_kernel kernel_functions = {
 int kernelSocket;
 int socketUMV;
 int quantum = 3; //todo:quantum que lee de archivo de configuración
+int retardo = 0;
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -216,9 +217,9 @@ int main(){
 			}
 			instruccionAEjecutar[instruccionABuscar->offset-1] = '\0';
 			printf("Instruccion a ejecutar: %s\n", instruccionAEjecutar);
-			//sleep(2);
 
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
+			usleep(retardo*1000);
 			pcb->programCounter++;
 			quantumUtilizado++;
 			printf("Terminar programa: %d\n", terminarPrograma);
@@ -276,6 +277,7 @@ void conectarConKernel()
 	}
 	recv(kernelSocket, &quantum, sizeof(int), 0);
 	printf("quantun: %d\n", quantum);
+	recv(kernelSocket, &retardo, sizeof(int), 0);
 	freeaddrinfo(kernelInfo);	// No lo necesitamos mas
 
 }

@@ -188,8 +188,10 @@ int cantidadDispositivosIO = 0;
 t_semaforo* arraySemaforos;
 int cantidadSemaforos = 0;
 int quantum = 1;
+int retardo = 0;
 t_imprimir* l_imprimir;
 t_cpu* l_cpu;
+int gradoMultiprogramacion;
 
 
 /* Semáforos */
@@ -215,7 +217,9 @@ t_config* configuracion;
 int main(void) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
-	sem_init(&s_Multiprogramacion,0,4);
+	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
+	cargarConfig();
+	sem_init(&s_Multiprogramacion,0,gradoMultiprogramacion);
 	sem_init(&s_ColaReady,0,1);
 	sem_init(&s_ColaExit,0,1);
 	sem_init(&s_ColaNew,0,1);
@@ -229,8 +233,6 @@ int main(void) {
 	sem_init(&s_ProgramasEnNew,0,0);
 	sem_init(&s_ColaCpu,0,1);
 	sem_init(&s_ProgramasEnExit,0,0);
-	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
-	cargarConfig();
 	cargarVariablesCompartidas();
 	cargarDispositivosIO();
 	cargarSemaforos();
@@ -270,6 +272,10 @@ void* f_hiloColaReady()
 		{
 			printf("Nuevo PCB Creado\n");
 			encolarEnReady(nuevoPCB);
+		}
+		else
+		{
+			sem_post(&s_Multiprogramacion);
 		}
 	}
 }
@@ -342,6 +348,7 @@ void* f_hiloPCP()
 					//FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximoCpu) maximoCpu = socketAux;
 					send(socketAux, &quantum, sizeof(int), 0);
+					send(socketAux, &retardo, sizeof(int), 0);
 				}
 				else
 				{
@@ -350,7 +357,7 @@ void* f_hiloPCP()
 					puntero = l_exec;
 					printf("SOCKET CPU: %d\n", i);
 					printf("MENSAJE: %d\n", mensaje);
-
+					printf("STATUS: %d\n", status);
 					//recv(i,&superMensaje,sizeof(superMensaje),0);
 					//t_pcb* pcb = malloc(sizeof(t_pcb));
 					//pcbRecibido = recibirSuperMensaje(superMensaje);
@@ -661,6 +668,7 @@ void* f_hiloPCP()
 					else
 					{
 						//Saco el socket del select
+						printf("Se desconecto un cpu\n");
 						FD_CLR(i, &fdRPCP);
 						pcb = sacarCpuDeEjecucion(i);
 						//desencolarExec(pcb);
@@ -678,7 +686,7 @@ void* f_hiloPCP()
 							{
 								if(FD_ISSET(j, &fdWPCP) || FD_ISSET(j, &fdRPCP))
 								{
-									printf("baje maximo\n");
+									printf("baje maximo cpu\n");
 									maximoAnterior = j;
 								}
 							}
@@ -802,6 +810,7 @@ t_pcb* sacarCpuDeEjecucion(int socketID)
 			sem_wait(&s_CpuDisponible);
 		}
 		sem_post(&s_ColaCpu);
+		printf("Saque primer cpu\n");
 		return pcbRetorno;
 	}
 	else
@@ -1020,20 +1029,19 @@ void* f_hiloColaExit(void)
 	int mensajePrograma;
 	while(1)
 	{
-		listaExit = l_exit;
 		sem_wait(&s_ProgramasEnExit);
+		printf("Hay programas en exit\n");
 		sem_wait(&s_ColaExit);
-		while(listaExit != NULL)
-		{
-			printf("entro al exit %d\n", listaExit->pid);
-			mensajePrograma = 2;
-			send(listaExit->pid, &mensajePrograma, sizeof(char), 0);
-			UMV_destruirSegmentos(listaExit->pid);
-			close(listaExit->pid);
-			destruirPCB(listaExit->pid);
-			sem_post(&s_Multiprogramacion);
-			listaExit = listaExit->siguiente;
-		}
+		printf("Entre a cola exit\n");
+		listaExit = l_exit;
+		printf("entro al exit %d\n", listaExit->pid);
+		mensajePrograma = 2;
+		send(listaExit->pid, &mensajePrograma, sizeof(char), 0);
+		UMV_destruirSegmentos(listaExit->pid);
+		close(listaExit->pid);
+		destruirPCB(listaExit->pid);
+		sem_post(&s_Multiprogramacion);
+		//listaExit = listaExit->siguiente;
 		sem_post(&s_ColaExit);
 	}
 }
@@ -1359,6 +1367,7 @@ void* f_hiloMostrarNew()
 		gets(ingreso);
 		if(string_equals_ignore_case(ingreso,"mostrar-new"))
 		{
+			sem_wait(&s_ColaNew);
 			printf("Procesos encolados en New\n");
 			printf("PID:\n");
 			printf("-----------------------\n");
@@ -1369,10 +1378,12 @@ void* f_hiloMostrarNew()
 				//printf("%d\n",aux->peso);
 				aux = aux->siguiente;
 			}
+			sem_post(&s_ColaNew);
 			continue;
 		}
 		else if(string_equals_ignore_case(ingreso,"mostrar-ready"))
 		{
+			sem_wait(&s_ColaReady);
 			printf("Procesos encolados en Ready\n");
 			printf("PID:\n");
 			printf("-----------------------\n");
@@ -1382,8 +1393,25 @@ void* f_hiloMostrarNew()
 				printf("%d\t\t",aux->pid);
 				aux = aux->siguiente;
 			}
+			sem_post(&s_ColaReady);
 			continue;
 		}
+		else if(string_equals_ignore_case(ingreso,"mostrar-exec"))
+		{
+			sem_wait(&s_ColaCpu);
+			printf("Procesos encolados en Ejecucion\n");
+			printf("PID:\n");
+			printf("-----------------------\n");
+			t_cpu* aux = l_cpu;
+			while(aux != NULL)
+			{
+				if(aux->pcb != NULL) printf("%d\t\t",aux->pcb->pid);
+				aux = aux->siguiente;
+			}
+			sem_post(&s_ColaCpu);
+			continue;
+		}
+		//TODO: MOSTRAR PCBS EN I/O Y SEMAFOROS. NO TENGO IDEA COMO SE MANEJAN ESAS LISTAS
 		else
 		{
 			printf("Error de comando.");
@@ -1489,6 +1517,8 @@ void cargarConfig(void)
 	IPCPU = config_get_string_value(configuracion, "IPCPU");
 	tamanioStack = config_get_int_value(configuracion, "TAMANIOSTACK");
 	quantum = config_get_int_value(configuracion, "QUANTUM");
+	retardo = config_get_int_value(configuracion, "RETARDO");
+	gradoMultiprogramacion = config_get_int_value(configuracion, "MULTIPROGRAMACION");
 }
 
 void cargarVariablesCompartidas(void)
