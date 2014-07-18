@@ -204,11 +204,11 @@ sem_t s_ColaIO;
 /*Archivo de Configuración*/
 t_config* configuracion;
 
-int main(void) {
+int main(int cantArgs, char** args) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
 	logger = log_create(NULL, "Kernel", 1, LOG_LEVEL_TRACE);
-	configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
+	configuracion = config_create(args[1]);
 	cargarConfig();
 	sem_init(&s_Multiprogramacion,0,gradoMultiprogramacion);
 	sem_init(&s_ColaReady,0,1);

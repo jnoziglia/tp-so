@@ -50,7 +50,7 @@ int main(int cantArgs, char **args) {
 
 	//log_create(NULL, "Programa", 1, LOG_LEVEL_TRACE);
 
-	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/Programa/src/config.txt");
+	t_config* configuracion = config_create(getenv("ANSISOP_CONFIG"));
 	IP = config_get_string_value(configuracion, "IP");
 	PUERTO = config_get_string_value(configuracion, "PUERTO");
 

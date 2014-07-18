@@ -91,7 +91,7 @@ sem_t s_TablaSegmentos;
 sem_t s_cpu;
 
 
-int main (void)
+int main (int cantArgs, char** args)
 {
 	pthread_t consola, esperarConexiones;
 	int rhConsola, rhEsperarConexiones;
@@ -100,9 +100,10 @@ int main (void)
 	sem_init(&s_TablaSegmentos,0,1);
 	sem_init(&s_cpu,0,1);
 
-	logi = log_create("/home/utnso/tp-2014-1c-unnamed/umv/src/log", "UMV", 0, LOG_LEVEL_TRACE);
 
-	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/umv/src/config.txt");
+
+	t_config* configuracion = config_create(args[1]);
+	logi = log_create(args[2], "UMV", 0, LOG_LEVEL_TRACE);
 	int sizeMem = config_get_int_value(configuracion, "sizeMemoria");
 
 	memPpal = malloc (sizeMem);	//El tamaño va por configuracion

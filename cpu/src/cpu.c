@@ -139,7 +139,7 @@ sem_t s_terminarCPU;
 
 //todo:Primitivas, Hot Plug.
 
-int main(){
+int main(int cantArgs, char** args){
 
 	void* package = malloc(sizeof(t_pcb));
 	void* indiceCodigo;
@@ -147,7 +147,7 @@ int main(){
 	char puedeRecibir = 10;
 	char* instruccionAEjecutar = malloc(1);
 	logger = log_create(NULL, "CPU", 1, LOG_LEVEL_TRACE);
-	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/cpu/src/config.txt");
+	t_config* configuracion = config_create(args[1]);
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
 	PUERTOUMV = config_get_string_value(configuracion, "PUERTOUMV");
@@ -490,7 +490,7 @@ void generarSuperMensaje(void)
 
 void generarDiccionarioVariables(void)
 {
-	printf("Genero diccionario de variables\n");
+	log_trace(logger, "Genero diccionario de variables");
 	int aux = 0;
 	char* buffer = malloc(pcb->tamanioContextoActual * 5);
 	t_diccionario* diccionarioAux;
@@ -499,50 +499,35 @@ void generarDiccionarioVariables(void)
 	buffer = UMV_solicitarBytes(pcb->pid,pcb->segmentoStack,pcb->cursorStack,(pcb->tamanioContextoActual * 5));
 	while(aux < (pcb->tamanioContextoActual * 5))
 	{
-		puntero = diccionarioVariables;
-		while(puntero!= NULL)
-		{
-			printf("%c   %d   %p",puntero->variable, puntero->offset, puntero->siguiente);
-			puntero = puntero->siguiente;
-		}
-		printf("Entre a definir variables\n");
-
 		if(diccionarioVariables == NULL)
 		{
-			printf("El diccionario de variables esta vacio\n");
 			diccionarioVariables = malloc(sizeof(t_diccionario));
 			diccionarioVariables->variable = buffer[aux];
-			printf("La variable es: %c\n", diccionarioVariables->variable);
+			log_trace(logger, "Variable: %c", diccionarioVariables->variable);
 			diccionarioVariables->offset = pcb->cursorStack + aux + 1;
 			diccionarioVariables->siguiente = NULL;
-			//return (offset);
 			aux = aux + 5;
 			diccionarioAux = diccionarioVariables;
 		}
 		else
 		{
-			printf("El diccionario de variables NO esta vacio\n");
 			nodo = malloc(sizeof(t_diccionario));
 			nodo->variable = buffer[aux];
-			printf("La variable es: %c\n", nodo->variable);
+			log_trace(logger, "Variable: %c", nodo->variable);
 			nodo->offset = pcb->cursorStack + aux + 1;
 			nodo->siguiente = NULL;
-			//return (offset);
 			aux = aux + 5;
-			printf("AUX: %d\n", aux);
 			diccionarioAux->siguiente = nodo;
-			printf("Paso al siguiente nodo\n");
-			//diccionarioAux = diccionarioAux->siguiente;
 			diccionarioAux = diccionarioAux->siguiente;
 		}
 	}
-	//free(buffer);
-	printf("Arme diccionario\n");
+	log_trace(logger, "Diccionario de variables armado");
 	return;
 }
 
 void agregarAlDiccionario(char variable, int offset)
 {
+	log_trace(logger, "Agrego variable %c al diccionario", variable);
 	t_diccionario* diccionarioAux = diccionarioVariables;
 	t_diccionario* nodo = malloc(sizeof(t_diccionario));
 	nodo->variable = variable;
@@ -565,8 +550,8 @@ void agregarAlDiccionario(char variable, int offset)
 
 void liberarDiccionario(void)
 {
+	log_trace(logger, "Elimino diccionario");
 	t_diccionario* diccionarioAux = diccionarioVariables;
-	t_diccionario* siguienteNodo;
 	while(diccionarioVariables != NULL)
 	{
 		diccionarioVariables = diccionarioVariables->siguiente;
