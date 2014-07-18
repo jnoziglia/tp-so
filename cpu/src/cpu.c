@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <commons/string.h>
+#include <commons/log.h>
 #include <pthread.h>
 #include <string.h>
 #include <time.h>
@@ -117,6 +118,7 @@ int kernelSocket;
 int socketUMV;
 int quantum = 3; //todo:quantum que lee de archivo de configuración
 int retardo = 0;
+int estaEjecutando = 0;
 char estadoCPU;
 bool matarCPU = 0;
 bool terminarPrograma = 0;
@@ -131,6 +133,7 @@ char* IPKERNEL;
 int BACKLOG;	// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 int PACKAGESIZE;
 t_diccionario* diccionarioVariables;
+t_log* logger;
 
 sem_t s_terminarCPU;
 
@@ -143,6 +146,7 @@ int main(){
 	char ping;
 	char puedeRecibir = 10;
 	char* instruccionAEjecutar = malloc(1);
+	logger = log_create(NULL, "CPU", 1, LOG_LEVEL_TRACE);
 	t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/cpu/src/config.txt");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
@@ -156,50 +160,27 @@ int main(){
 	sem_init(&s_terminarCPU,0,1);
 	conectarConUMV();
 	conectarConKernel();
-	printf("socketK: %d\n", kernelSocket);
-	printf("socketU: %d\n", socketUMV);
-	printf("Conexiones establecidas.\n");
 	pcb = malloc (sizeof(t_pcb));
 
 	int i,a;
 	while(1)
 	{
-		printf("Espero pcb\n");
 		terminarPrograma = 0;
 		bloquearPrograma = 0;
 
-		//send(kernelSocket, &puedeRecibir, sizeof(char), 0);
-		//recv(kernelSocket, &ping, sizeof(char), 0);
+		log_trace(logger, "Esperando PCB");
 		int recibido = recv(kernelSocket,superMensaje,sizeof(t_pcb),0);
-		sem_wait(&s_terminarCPU);
+		estaEjecutando = 1;
+		log_info(logger, "Llego el PCB con pid %d para ejecutar", superMensaje[0]);
 		recibirSuperMensaje(superMensaje);
-
-		printf("%d",recibido);
-		printf("PCB recibido.\n");
-		//pcb = deserializarPcb(package);
-		printf("prog counter: %d\n",pcb->programCounter);
-		printf("indice codigo: %d\n",pcb->indiceCodigo);
-		printf("pid: %d\n", pcb->pid);
-		printf("peso: %d\n", pcb->peso);
 
 		if(pcb->tamanioContextoActual != 0)
 		{
 			generarDiccionarioVariables();
-			printf("Sali de la funcion\n");
 		}
 
 		while(quantumUtilizado<=quantum)
 		{
-			if(matarCPU == 1)
-			{
-				estadoCPU = -1;
-				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
-				close(kernelSocket);
-				close(socketUMV);
-				free(pcb);
-				printf("Se envio señal\n");
-				return 0;
-			}
 			printf("Program counter: %d\n", pcb->programCounter);
 			instruccionABuscar = UMV_solicitarBytes(pcb->pid,pcb->indiceCodigo,pcb->programCounter*8,sizeof(t_intructions));
 			printf("instruccionABuscar: %d\n", instruccionABuscar->start);
@@ -241,20 +222,40 @@ int main(){
 				liberarDiccionario();
 				break;
 			}
+
+			if(matarCPU == 1)
+			{
+				estadoCPU = -1;
+				log_trace(logger, "Aviso al kernel que termino la ejecucion");
+				send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se muere
+				generarSuperMensaje();
+				send(kernelSocket,superMensaje, sizeof(int)*11,0);
+				close(kernelSocket);
+				close(socketUMV);
+				free(pcb);
+				return 0;
+			}
 		}
 		quantumUtilizado = 1;
 		if(terminarPrograma || bloquearPrograma)
 		{
-			sem_post(&s_terminarCPU);
+			estaEjecutando = 0;
 			continue; //Si el programa ya salió por algo, no mandarlo de vuelta.
 		}
 		estadoCPU = 1;
 		send(kernelSocket,&estadoCPU,sizeof(char),0); //avisar que se termina el quantum
 		generarSuperMensaje();
 		send(kernelSocket,superMensaje, sizeof(int)*11,0);
+		estaEjecutando = 0;
 		printf("Retorno PCB al Kernel\n");
 		liberarDiccionario();
-		sem_post(&s_terminarCPU);
+		if(matarCPU == 1)
+		{
+			log_trace(logger, "Finalizo ejecucion");
+			close(kernelSocket);
+			close(socketUMV);
+			return 0;
+		}
 	}
 	return 0;
 }
@@ -275,9 +276,11 @@ void conectarConKernel()
 	while (a == -1){
 		a = connect(kernelSocket, kernelInfo->ai_addr, kernelInfo->ai_addrlen);
 	}
+	log_info(logger, "Se establecio conexion con el kernel por el socket %d", kernelSocket);
 	recv(kernelSocket, &quantum, sizeof(int), 0);
-	printf("quantun: %d\n", quantum);
+	log_trace(logger, "Recibo valor de quantum: %d", quantum);
 	recv(kernelSocket, &retardo, sizeof(int), 0);
+	log_trace(logger, "Recibo valor de retardo: %d", retardo);
 	freeaddrinfo(kernelInfo);	// No lo necesitamos mas
 
 }
@@ -301,14 +304,14 @@ void conectarConUMV()
 
 	send(socketUMV, &id, sizeof(char), 0);
 	recv(socketUMV, &conf, sizeof(char), 0);
+
+	log_info(logger, "Se establecio conexion con la UMV por el socket %d", socketUMV);
 }
 
 void dejarDeDarServicio()
 {
-	printf("LLEGO LA SEÑAL\n");
 	matarCPU = 1;
-	sem_wait(&s_terminarCPU);
-	kill(getpid(), SIGKILL);
+	if(!estaEjecutando) kill(getpid(), SIGKILL);
 }
 
 t_pcb* deserializarPcb(void* package)

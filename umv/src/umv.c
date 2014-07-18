@@ -75,8 +75,6 @@ int handshake(int id);
 void* f_hiloKernel(void* socketCliente);
 void* f_hiloCpu(void* socketCliente);
 
-//TODO: Retardo(), handshake, conexiones, DUMP();
-
 
 /* Variables globales */
 void* memPpal;
@@ -344,15 +342,14 @@ void* mainConsola()
 		printf("Argumentos incorrectos.\n");
 		continue;
 	}
+	return NULL;
 
 }
 
 /* Hilo para escuchar conexiones */
-//TODO: Desarrollar funcion
 void* mainEsperarConexiones()
 {
 	pthread_t hiloKernel, hiloCpu;
-	int rhHiloKernel, rhHiloCpu;
 	struct addrinfo hints;
 	struct addrinfo *serverInfo;
 	int escucharConexiones;
@@ -381,13 +378,13 @@ void* mainEsperarConexiones()
 			if (id == kernel)
 			{
 				log_info(logi, "Se conecto el kernel con socket %d", socketCliente);
-				rhHiloKernel = pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
+				pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
 				continue;
 			}
 			if (id == cpu)
 			{
 				log_info(logi, "Se conecto un cpu con socket %d", socketCliente);
-				rhHiloCpu = pthread_create(&hiloCpu, NULL, f_hiloCpu, (void*)socketCliente);
+				pthread_create(&hiloCpu, NULL, f_hiloCpu, (void*)socketCliente);
 				continue;
 			}
 		}
@@ -397,6 +394,7 @@ void* mainEsperarConexiones()
 			continue;
 		}
 	}
+	return NULL;
 }
 
 void* f_hiloKernel(void* socketCliente)
