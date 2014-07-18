@@ -1,0 +1,1962 @@
+[INFO] 15:00:28:969 UMV/(4042:4044): Se conecto el kernel con socket 5
+[INFO] 15:00:30:80 UMV/(4042:4044): Se conecto un cpu con socket 6
+[INFO] 15:00:39:20 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:21 UMV/(4042:4048): Se solicita crear un segmento del programa 7 con tamanio 300
+[TRACE] 15:00:39:21 UMV/(4042:4048): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 15:00:39:21 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:39:21 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:39:21 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:39:21 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:39:22 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:23 UMV/(4042:4048): Se solicita crear un segmento del programa 7 con tamanio 104
+[TRACE] 15:00:39:23 UMV/(4042:4048): Posicionando segmento de tamanio 104 en memoria segun First Fit
+[INFO] 15:00:39:23 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:39:23 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:39:23 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:39:23 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:39:24 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:25 UMV/(4042:4048): Se solicita crear un segmento del programa 7 con tamanio 40
+[TRACE] 15:00:39:25 UMV/(4042:4048): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 15:00:39:25 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:39:25 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:39:25 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:39:25 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:39:27 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:28 UMV/(4042:4048): Se solicita crear un segmento del programa 7 con tamanio 13
+[TRACE] 15:00:39:28 UMV/(4042:4048): Posicionando segmento de tamanio 13 en memoria segun First Fit
+[INFO] 15:00:39:28 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:39:28 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:39:28 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:39:29 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:39:37 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:38 UMV/(4042:4048): Se solicita enviar bytes al programa 7, base 6202, desde 0, tamanio 104
+[TRACE] 15:00:39:38 UMV/(4042:4048): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:39:38 UMV/(4042:4048): Se encontro el segmento
+[TRACE] 15:00:39:38 UMV/(4042:4048): Se envio confirmacion al kernel
+[INFO] 15:00:39:39 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:40 UMV/(4042:4048): Se solicita enviar bytes al programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:00:39:40 UMV/(4042:4048): Se busca el segmento del programa 7, base 5469
+[INFO] 15:00:39:40 UMV/(4042:4048): Se encontro el segmento
+[TRACE] 15:00:39:40 UMV/(4042:4048): Se envio confirmacion al kernel
+[INFO] 15:00:39:42 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:39:43 UMV/(4042:4048): Se solicita enviar bytes al programa 7, base 4625, desde 0, tamanio 40
+[TRACE] 15:00:39:43 UMV/(4042:4048): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:39:43 UMV/(4042:4048): Se encontro el segmento
+[TRACE] 15:00:39:43 UMV/(4042:4048): Se envio confirmacion al kernel
+[INFO] 15:00:39:44 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:39:45 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:00:39:45 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:39:45 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:39:46 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:39:84 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:39:85 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:00:39:85 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:39:85 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:39:85 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:40:127 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:40:128 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:00:40:128 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:40:128 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:40:129 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:40:169 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:40:170 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:00:40:170 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:40:170 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:40:170 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:41:252 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:41:253 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:00:41:253 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:41:254 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:41:254 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:41:293 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:41:294 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:00:41:294 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:41:294 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:41:295 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:42:342 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:42:343 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:00:42:343 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:42:343 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:42:344 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:42:385 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:42:385 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:00:42:385 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:42:385 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:42:385 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:42:425 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:42:426 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:00:42:426 UMV/(4042:4056): Se busca el segmento del programa 7, base 5469
+[INFO] 15:00:42:426 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:42:426 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:43:465 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:43:467 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:00:43:467 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:43:467 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:43:467 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:43:506 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:43:507 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:00:43:507 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:43:507 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:43:508 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:45:230 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:231 UMV/(4042:4048): Se solicita crear un segmento del programa 8 con tamanio 300
+[TRACE] 15:00:45:231 UMV/(4042:4048): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 15:00:45:231 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:45:231 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:45:231 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:45:231 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:45:232 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:233 UMV/(4042:4048): Se solicita crear un segmento del programa 8 con tamanio 98
+[TRACE] 15:00:45:233 UMV/(4042:4048): Posicionando segmento de tamanio 98 en memoria segun First Fit
+[INFO] 15:00:45:233 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:45:233 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:45:233 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:45:233 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:45:234 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:235 UMV/(4042:4048): Se solicita crear un segmento del programa 8 con tamanio 40
+[TRACE] 15:00:45:235 UMV/(4042:4048): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 15:00:45:235 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:45:235 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:45:235 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:45:235 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:45:237 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:238 UMV/(4042:4048): Se solicita crear un segmento del programa 8 con tamanio 13
+[TRACE] 15:00:45:238 UMV/(4042:4048): Posicionando segmento de tamanio 13 en memoria segun First Fit
+[INFO] 15:00:45:238 UMV/(4042:4048): Se posiciono el segmento correctamente
+[TRACE] 15:00:45:238 UMV/(4042:4048): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:00:45:238 UMV/(4042:4048): El segmento se creo correctamente
+[TRACE] 15:00:45:239 UMV/(4042:4048): Se envio la base del nuevo segmento al kernel
+[INFO] 15:00:45:241 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:242 UMV/(4042:4048): Se solicita enviar bytes al programa 8, base 5916, desde 0, tamanio 98
+[TRACE] 15:00:45:242 UMV/(4042:4048): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:45:242 UMV/(4042:4048): Se encontro el segmento
+[TRACE] 15:00:45:242 UMV/(4042:4048): Se envio confirmacion al kernel
+[INFO] 15:00:45:249 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:250 UMV/(4042:4048): Se solicita enviar bytes al programa 8, base 5533, desde 0, tamanio 13
+[TRACE] 15:00:45:250 UMV/(4042:4048): Se busca el segmento del programa 8, base 5533
+[INFO] 15:00:45:250 UMV/(4042:4048): Se encontro el segmento
+[TRACE] 15:00:45:250 UMV/(4042:4048): Se envio confirmacion al kernel
+[INFO] 15:00:45:252 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:00:45:253 UMV/(4042:4048): Se solicita enviar bytes al programa 8, base 3405, desde 0, tamanio 40
+[TRACE] 15:00:45:253 UMV/(4042:4048): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:45:253 UMV/(4042:4048): Se encontro el segmento
+[TRACE] 15:00:45:253 UMV/(4042:4048): Se envio confirmacion al kernel
+[INFO] 15:00:45:257 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:45:258 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 0, tamanio 8
+[TRACE] 15:00:45:258 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:45:258 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:45:259 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:45:297 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:45:297 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 19, tamanio 8
+[TRACE] 15:00:45:297 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:45:297 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:45:297 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:46:340 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:46:341 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 8, tamanio 8
+[TRACE] 15:00:46:341 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:46:341 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:46:342 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:46:381 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:46:382 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 27, tamanio 15
+[TRACE] 15:00:46:383 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:46:383 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:46:383 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:47:503 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:47:504 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 16, tamanio 8
+[TRACE] 15:00:47:505 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:47:505 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:47:505 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:47:545 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:47:546 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 42, tamanio 10
+[TRACE] 15:00:47:546 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:47:546 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:47:547 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:48:592 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:48:594 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:00:48:594 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:48:594 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:48:595 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:48:633 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:48:633 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:00:48:633 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:48:633 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:48:634 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:49:714 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:49:715 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:00:49:716 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:49:716 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:49:716 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:49:757 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:49:758 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:00:49:758 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:49:758 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:49:759 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:50:799 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:50:801 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:00:50:801 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:50:801 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:50:802 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:50:842 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:50:843 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:00:50:843 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:50:843 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:50:844 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:50:886 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:50:887 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:00:50:887 UMV/(4042:4056): Se busca el segmento del programa 7, base 5469
+[INFO] 15:00:50:887 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:50:888 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:51:934 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:51:935 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 24, tamanio 8
+[TRACE] 15:00:51:936 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:51:936 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:51:936 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:51:978 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:51:979 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 78, tamanio 15
+[TRACE] 15:00:51:979 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:51:979 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:51:980 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:52:20 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:52:21 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5533, desde 0, tamanio 13
+[TRACE] 15:00:52:21 UMV/(4042:4056): Se busca el segmento del programa 8, base 5533
+[INFO] 15:00:52:21 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:52:21 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:53:61 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:53:63 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 0, tamanio 8
+[TRACE] 15:00:53:64 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:53:64 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:53:64 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:53:105 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:53:107 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 19, tamanio 8
+[TRACE] 15:00:53:107 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:53:107 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:53:107 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:54:191 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:54:192 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 8, tamanio 8
+[TRACE] 15:00:54:192 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:54:192 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:54:193 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:54:234 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:54:235 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 27, tamanio 15
+[TRACE] 15:00:54:236 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:54:236 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:54:236 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:55:405 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:55:406 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:00:55:406 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:55:406 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:55:406 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:55:445 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:55:445 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:00:55:445 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:55:445 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:55:446 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:56:529 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:56:531 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 16, tamanio 8
+[TRACE] 15:00:56:531 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:56:531 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:56:531 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:56:570 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:56:571 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 42, tamanio 10
+[TRACE] 15:00:56:571 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:56:571 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:56:572 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:57:613 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:57:615 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 24, tamanio 8
+[TRACE] 15:00:57:615 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:57:615 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:57:616 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:57:657 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:57:658 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 78, tamanio 15
+[TRACE] 15:00:57:658 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:57:658 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:57:659 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:57:697 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:57:698 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5533, desde 0, tamanio 13
+[TRACE] 15:00:57:698 UMV/(4042:4056): Se busca el segmento del programa 8, base 5533
+[INFO] 15:00:57:698 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:57:699 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:58:738 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:58:739 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 0, tamanio 8
+[TRACE] 15:00:58:739 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:00:58:739 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:58:740 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:58:781 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:58:782 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 19, tamanio 8
+[TRACE] 15:00:58:782 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:00:58:782 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:58:783 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:59:827 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:59:828 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:00:59:829 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:00:59:829 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:59:829 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:00:59:870 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:00:59:871 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:00:59:871 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:00:59:872 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:00:59:872 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:00:955 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:00:956 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:01:00:956 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:00:956 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:00:956 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:00:998 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:00:999 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:01:00:999 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:00:999 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:00:0 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:02:43 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:02:44 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:01:02:45 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:02:45 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:02:45 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:02:86 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:02:87 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:01:02:88 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:02:88 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:02:88 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:02:129 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:02:130 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:01:02:131 UMV/(4042:4056): Se busca el segmento del programa 7, base 5469
+[INFO] 15:01:02:131 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:02:131 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:03:175 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:03:177 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 8, tamanio 8
+[TRACE] 15:01:03:178 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:03:178 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:03:178 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:03:217 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:03:217 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 27, tamanio 15
+[TRACE] 15:01:03:217 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:03:217 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:03:218 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:04:337 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:04:338 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 16, tamanio 8
+[TRACE] 15:01:04:338 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:04:338 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:04:338 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:04:378 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:04:379 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 42, tamanio 10
+[TRACE] 15:01:04:379 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:04:379 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:04:379 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:05:419 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:05:420 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 24, tamanio 8
+[TRACE] 15:01:05:420 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:05:420 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:05:421 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:05:461 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:05:462 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 78, tamanio 15
+[TRACE] 15:01:05:462 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:05:462 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:05:463 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:05:501 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:05:502 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5533, desde 0, tamanio 13
+[TRACE] 15:01:05:503 UMV/(4042:4056): Se busca el segmento del programa 8, base 5533
+[INFO] 15:01:05:503 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:05:503 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:06:547 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:06:549 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:01:06:549 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:06:549 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:06:549 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:06:590 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:06:591 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:01:06:591 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:06:591 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:06:591 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:07:674 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:07:676 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:01:07:676 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:07:676 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:07:676 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:07:717 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:07:718 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:01:07:718 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:07:718 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:07:719 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:08:799 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:08:801 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:01:08:801 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:08:801 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:08:801 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:08:842 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:08:843 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:01:08:843 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:08:843 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:08:844 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:09:896 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:09:899 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 0, tamanio 8
+[TRACE] 15:01:09:899 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:09:899 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:09:900 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:09:941 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:09:942 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 19, tamanio 8
+[TRACE] 15:01:09:942 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:09:942 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:09:942 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:11:21 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:11:23 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 8, tamanio 8
+[TRACE] 15:01:11:23 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:11:23 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:11:23 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:11:61 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:11:62 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 27, tamanio 15
+[TRACE] 15:01:11:63 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:11:63 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:11:63 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:12:184 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:12:185 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 16, tamanio 8
+[TRACE] 15:01:12:185 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:12:185 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:12:186 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:12:225 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:12:226 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 42, tamanio 10
+[TRACE] 15:01:12:226 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:12:226 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:12:226 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:13:272 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:13:274 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:01:13:274 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:13:275 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:13:275 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:13:314 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:13:315 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:01:13:315 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:13:315 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:13:315 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:13:357 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:13:357 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:01:13:357 UMV/(4042:4056): Se busca el segmento del programa 7, base 5469
+[INFO] 15:01:13:357 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:13:358 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:14:397 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:14:398 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:01:14:399 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:14:399 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:14:399 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:14:438 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:14:439 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:01:14:439 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:14:439 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:14:440 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:15:523 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:15:525 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:01:15:525 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:15:525 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:15:525 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:15:565 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:15:566 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:01:15:566 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:15:566 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:15:567 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:16:652 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:16:654 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 24, tamanio 8
+[TRACE] 15:01:16:654 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:16:654 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:16:654 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:16:693 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:16:694 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 78, tamanio 15
+[TRACE] 15:01:16:694 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:16:694 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:16:694 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:16:732 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:16:733 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5533, desde 0, tamanio 13
+[TRACE] 15:01:16:733 UMV/(4042:4056): Se busca el segmento del programa 8, base 5533
+[INFO] 15:01:16:733 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:16:733 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:17:775 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:17:776 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 0, tamanio 8
+[TRACE] 15:01:17:776 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:17:776 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:17:776 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:17:817 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:17:818 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 19, tamanio 8
+[TRACE] 15:01:17:818 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:17:818 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:17:819 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:18:903 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:18:904 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:01:18:905 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:18:905 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:18:905 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:18:945 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:18:946 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:01:18:946 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:18:946 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:18:946 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:19:985 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:19:987 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:01:19:987 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:19:987 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:19:987 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:20:30 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:20:31 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:01:20:31 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:20:31 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:20:32 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:20:74 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:20:75 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:01:20:75 UMV/(4042:4056): Se busca el segmento del programa 7, base 5469
+[INFO] 15:01:20:75 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:20:76 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:21:118 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:21:119 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:01:21:119 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:21:119 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:21:120 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:21:162 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:21:163 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:01:21:163 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:21:164 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:21:164 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:22:212 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:22:213 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 8, tamanio 8
+[TRACE] 15:01:22:214 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:22:214 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:22:214 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:22:254 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:22:256 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 27, tamanio 15
+[TRACE] 15:01:22:256 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:22:256 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:22:256 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:23:378 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:23:380 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 16, tamanio 8
+[TRACE] 15:01:23:380 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:23:380 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:23:380 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:23:421 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:23:422 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 42, tamanio 10
+[TRACE] 15:01:23:422 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:23:422 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:23:423 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:24:462 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:24:464 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 24, tamanio 8
+[TRACE] 15:01:24:464 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:24:465 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:24:465 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:24:506 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:24:507 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 78, tamanio 15
+[TRACE] 15:01:24:507 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:24:507 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:24:508 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:24:551 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:24:551 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5533, desde 0, tamanio 13
+[TRACE] 15:01:24:552 UMV/(4042:4056): Se busca el segmento del programa 8, base 5533
+[INFO] 15:01:24:552 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:24:552 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:25:599 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:25:601 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:01:25:602 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:25:602 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:25:602 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:25:642 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:25:643 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:01:25:643 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:25:644 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:25:644 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:26:727 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:26:729 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:01:26:729 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:26:729 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:26:730 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:26:769 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:26:770 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:01:26:770 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:26:770 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:26:771 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:27:812 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:27:814 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:01:27:814 UMV/(4042:4056): Se busca el segmento del programa 7, base 4625
+[INFO] 15:01:27:814 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:27:814 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:27:853 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:27:854 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:01:27:854 UMV/(4042:4056): Se busca el segmento del programa 7, base 6202
+[INFO] 15:01:27:854 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:27:855 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:27:893 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:27:894 UMV/(4042:4056): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:01:27:894 UMV/(4042:4056): Se busca el segmento del programa 7, base 5469
+[INFO] 15:01:27:894 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:27:895 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:28:939 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:28:940 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 0, tamanio 8
+[TRACE] 15:01:28:940 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[INFO] 15:01:28:941 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:28:941 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:28:981 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:28:982 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 5916, desde 19, tamanio 8
+[TRACE] 15:01:28:982 UMV/(4042:4056): Se busca el segmento del programa 8, base 5916
+[INFO] 15:01:28:982 UMV/(4042:4056): Se encontro el segmento
+[TRACE] 15:01:28:982 UMV/(4042:4056): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:29:651 UMV/(4042:4043): Llego una solicitud desde consola
+[TRACE] 15:01:29:651 UMV/(4042:4043): Se solicita destruir los segmentos del programa 8
+[TRACE] 15:01:29:652 UMV/(4042:4043): Se destruyeron los segmentos del programa 8
+[INFO] 15:01:30:62 UMV/(4042:4056): Llego una operacion del cpu 6
+[TRACE] 15:01:30:63 UMV/(4042:4056): Se solicitan los bytes del programa 8, base 3405, desde 8, tamanio 8
+[TRACE] 15:01:30:63 UMV/(4042:4056): Se busca el segmento del programa 8, base 3405
+[ERROR] 15:01:30:63 UMV/(4042:4056): No se encontro el segmento
+[ERROR] 15:01:30:63 UMV/(4042:4056): SEGMENTATION FAULT
+[TRACE] 15:01:30:64 UMV/(4042:4056): Se le informo al cpu 6 del segmentation fault
+[INFO] 15:01:30:383 UMV/(4042:4056): Se desconecto el cpu 6
+[TRACE] 15:01:30:383 UMV/(4042:4056): Termine conexion con el cpu 6
+[INFO] 15:01:30:391 UMV/(4042:4048): Llego una operacion del kernel
+[TRACE] 15:01:30:391 UMV/(4042:4048): Se solicita destruir los segmentos del programa 8
+[TRACE] 15:01:30:391 UMV/(4042:4048): Se destruyeron los segmentos del programa 8
+[INFO] 15:01:37:218 UMV/(4042:4048): Llego una operacion del kernel
+[INFO] 15:01:38:842 UMV/(4042:4044): Se conecto el kernel con socket 7
+[INFO] 15:01:39:603 UMV/(4042:4044): Se conecto un cpu con socket 6
+[INFO] 15:01:40:662 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:663 UMV/(4042:4066): Se solicita crear un segmento del programa 7 con tamanio 300
+[TRACE] 15:01:40:663 UMV/(4042:4066): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 15:01:40:663 UMV/(4042:4066): Se posiciono el segmento correctamente
+[TRACE] 15:01:40:663 UMV/(4042:4066): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:01:40:663 UMV/(4042:4066): El segmento se creo correctamente
+[TRACE] 15:01:40:663 UMV/(4042:4066): Se envio la base del nuevo segmento al kernel
+[INFO] 15:01:40:664 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:665 UMV/(4042:4066): Se solicita crear un segmento del programa 7 con tamanio 104
+[TRACE] 15:01:40:665 UMV/(4042:4066): Posicionando segmento de tamanio 104 en memoria segun First Fit
+[INFO] 15:01:40:665 UMV/(4042:4066): Se posiciono el segmento correctamente
+[TRACE] 15:01:40:665 UMV/(4042:4066): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:01:40:665 UMV/(4042:4066): El segmento se creo correctamente
+[TRACE] 15:01:40:665 UMV/(4042:4066): Se envio la base del nuevo segmento al kernel
+[INFO] 15:01:40:666 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:667 UMV/(4042:4066): Se solicita crear un segmento del programa 7 con tamanio 40
+[TRACE] 15:01:40:667 UMV/(4042:4066): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 15:01:40:667 UMV/(4042:4066): Se posiciono el segmento correctamente
+[TRACE] 15:01:40:667 UMV/(4042:4066): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:01:40:667 UMV/(4042:4066): El segmento se creo correctamente
+[TRACE] 15:01:40:667 UMV/(4042:4066): Se envio la base del nuevo segmento al kernel
+[INFO] 15:01:40:669 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:676 UMV/(4042:4066): Se solicita crear un segmento del programa 7 con tamanio 13
+[TRACE] 15:01:40:676 UMV/(4042:4066): Posicionando segmento de tamanio 13 en memoria segun First Fit
+[INFO] 15:01:40:676 UMV/(4042:4066): Se posiciono el segmento correctamente
+[TRACE] 15:01:40:676 UMV/(4042:4066): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:01:40:677 UMV/(4042:4066): El segmento se creo correctamente
+[TRACE] 15:01:40:677 UMV/(4042:4066): Se envio la base del nuevo segmento al kernel
+[INFO] 15:01:40:679 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:680 UMV/(4042:4066): Se solicita enviar bytes al programa 7, base 2469, desde 0, tamanio 104
+[TRACE] 15:01:40:680 UMV/(4042:4066): Se busca el segmento del programa 7, base 2469
+[INFO] 15:01:40:680 UMV/(4042:4066): Se encontro el segmento
+[TRACE] 15:01:40:680 UMV/(4042:4066): Se envio confirmacion al kernel
+[INFO] 15:01:40:681 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:682 UMV/(4042:4066): Se solicita enviar bytes al programa 7, base 4992, desde 0, tamanio 13
+[TRACE] 15:01:40:683 UMV/(4042:4066): Se busca el segmento del programa 7, base 4992
+[INFO] 15:01:40:683 UMV/(4042:4066): Se encontro el segmento
+[TRACE] 15:01:40:683 UMV/(4042:4066): Se envio confirmacion al kernel
+[INFO] 15:01:40:684 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:01:40:685 UMV/(4042:4066): Se solicita enviar bytes al programa 7, base 9853, desde 0, tamanio 40
+[TRACE] 15:01:40:685 UMV/(4042:4066): Se busca el segmento del programa 7, base 9853
+[INFO] 15:01:40:685 UMV/(4042:4066): Se encontro el segmento
+[TRACE] 15:01:40:685 UMV/(4042:4066): Se envio confirmacion al kernel
+[INFO] 15:01:40:688 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:40:689 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 9853, desde 0, tamanio 8
+[TRACE] 15:01:40:689 UMV/(4042:4074): Se busca el segmento del programa 7, base 9853
+[INFO] 15:01:40:689 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:40:690 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:40:728 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:40:729 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 2469, desde 19, tamanio 8
+[TRACE] 15:01:40:729 UMV/(4042:4074): Se busca el segmento del programa 7, base 2469
+[INFO] 15:01:40:729 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:40:729 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:41:780 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:41:781 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 9853, desde 8, tamanio 8
+[TRACE] 15:01:41:781 UMV/(4042:4074): Se busca el segmento del programa 7, base 9853
+[INFO] 15:01:41:781 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:41:782 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:41:821 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:41:822 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 2469, desde 27, tamanio 21
+[TRACE] 15:01:41:822 UMV/(4042:4074): Se busca el segmento del programa 7, base 2469
+[INFO] 15:01:41:822 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:41:823 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:42:903 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:42:904 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 9853, desde 16, tamanio 8
+[TRACE] 15:01:42:905 UMV/(4042:4074): Se busca el segmento del programa 7, base 9853
+[INFO] 15:01:42:905 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:42:905 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:42:945 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:42:946 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 2469, desde 48, tamanio 10
+[TRACE] 15:01:42:946 UMV/(4042:4074): Se busca el segmento del programa 7, base 2469
+[INFO] 15:01:42:947 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:42:947 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:43:993 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:43:995 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 9853, desde 24, tamanio 8
+[TRACE] 15:01:43:995 UMV/(4042:4074): Se busca el segmento del programa 7, base 9853
+[INFO] 15:01:43:995 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:43:995 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:44:34 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:44:35 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 2469, desde 84, tamanio 15
+[TRACE] 15:01:44:35 UMV/(4042:4074): Se busca el segmento del programa 7, base 2469
+[INFO] 15:01:44:35 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:44:36 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:44:76 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:44:77 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 4992, desde 0, tamanio 13
+[TRACE] 15:01:44:77 UMV/(4042:4074): Se busca el segmento del programa 7, base 4992
+[INFO] 15:01:44:77 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:44:77 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:45:117 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:45:119 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 9853, desde 0, tamanio 8
+[TRACE] 15:01:45:119 UMV/(4042:4074): Se busca el segmento del programa 7, base 9853
+[INFO] 15:01:45:119 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:45:119 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:45:161 UMV/(4042:4074): Llego una operacion del cpu 6
+[TRACE] 15:01:45:162 UMV/(4042:4074): Se solicitan los bytes del programa 7, base 2469, desde 19, tamanio 8
+[TRACE] 15:01:45:162 UMV/(4042:4074): Se busca el segmento del programa 7, base 2469
+[INFO] 15:01:45:162 UMV/(4042:4074): Se encontro el segmento
+[TRACE] 15:01:45:163 UMV/(4042:4074): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:01:46:966 UMV/(4042:4074): Se desconecto el cpu 6
+[TRACE] 15:01:46:966 UMV/(4042:4074): Termine conexion con el cpu 6
+[INFO] 15:34:13:410 UMV/(4042:4066): Llego una operacion del kernel
+[TRACE] 15:34:13:411 UMV/(4042:4066): Se solicita enviar bytes al programa 7, base 9853, desde 0, tamanio 40
+[TRACE] 15:34:13:411 UMV/(4042:4066): Se busca el segmento del programa 7, base 9853
+[INFO] 15:34:13:411 UMV/(4042:4066): Se encontro el segmento
+[INFO] 15:34:18:305 UMV/(4527:4529): Se conecto el kernel con socket 5
+[INFO] 15:34:19:925 UMV/(4527:4529): Se conecto un cpu con socket 6
+[INFO] 15:34:20:574 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:575 UMV/(4527:4533): Se solicita crear un segmento del programa 7 con tamanio 300
+[TRACE] 15:34:20:575 UMV/(4527:4533): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 15:34:20:575 UMV/(4527:4533): Se posiciono el segmento correctamente
+[TRACE] 15:34:20:575 UMV/(4527:4533): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:34:20:575 UMV/(4527:4533): El segmento se creo correctamente
+[TRACE] 15:34:20:576 UMV/(4527:4533): Se envio la base del nuevo segmento al kernel
+[INFO] 15:34:20:577 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:578 UMV/(4527:4533): Se solicita crear un segmento del programa 7 con tamanio 104
+[TRACE] 15:34:20:578 UMV/(4527:4533): Posicionando segmento de tamanio 104 en memoria segun First Fit
+[INFO] 15:34:20:578 UMV/(4527:4533): Se posiciono el segmento correctamente
+[TRACE] 15:34:20:578 UMV/(4527:4533): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:34:20:578 UMV/(4527:4533): El segmento se creo correctamente
+[TRACE] 15:34:20:578 UMV/(4527:4533): Se envio la base del nuevo segmento al kernel
+[INFO] 15:34:20:580 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:580 UMV/(4527:4533): Se solicita crear un segmento del programa 7 con tamanio 40
+[TRACE] 15:34:20:580 UMV/(4527:4533): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 15:34:20:581 UMV/(4527:4533): Se posiciono el segmento correctamente
+[TRACE] 15:34:20:581 UMV/(4527:4533): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:34:20:581 UMV/(4527:4533): El segmento se creo correctamente
+[TRACE] 15:34:20:581 UMV/(4527:4533): Se envio la base del nuevo segmento al kernel
+[INFO] 15:34:20:583 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:584 UMV/(4527:4533): Se solicita crear un segmento del programa 7 con tamanio 13
+[TRACE] 15:34:20:584 UMV/(4527:4533): Posicionando segmento de tamanio 13 en memoria segun First Fit
+[INFO] 15:34:20:584 UMV/(4527:4533): Se posiciono el segmento correctamente
+[TRACE] 15:34:20:584 UMV/(4527:4533): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:34:20:585 UMV/(4527:4533): El segmento se creo correctamente
+[TRACE] 15:34:20:585 UMV/(4527:4533): Se envio la base del nuevo segmento al kernel
+[INFO] 15:34:20:593 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:593 UMV/(4527:4533): Se solicita enviar bytes al programa 7, base 6202, desde 0, tamanio 104
+[TRACE] 15:34:20:593 UMV/(4527:4533): Se busca el segmento del programa 7, base 6202
+[INFO] 15:34:20:593 UMV/(4527:4533): Se encontro el segmento
+[TRACE] 15:34:20:594 UMV/(4527:4533): Se envio confirmacion al kernel
+[INFO] 15:34:20:597 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:599 UMV/(4527:4533): Se solicita enviar bytes al programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:34:20:599 UMV/(4527:4533): Se busca el segmento del programa 7, base 5469
+[INFO] 15:34:20:599 UMV/(4527:4533): Se encontro el segmento
+[TRACE] 15:34:20:599 UMV/(4527:4533): Se envio confirmacion al kernel
+[INFO] 15:34:20:601 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:20:602 UMV/(4527:4533): Se solicita enviar bytes al programa 7, base 4625, desde 0, tamanio 40
+[TRACE] 15:34:20:602 UMV/(4527:4533): Se busca el segmento del programa 7, base 4625
+[INFO] 15:34:20:602 UMV/(4527:4533): Se encontro el segmento
+[TRACE] 15:34:20:602 UMV/(4527:4533): Se envio confirmacion al kernel
+[INFO] 15:34:20:605 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:20:606 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:34:20:606 UMV/(4527:4541): Se busca el segmento del programa 7, base 4625
+[INFO] 15:34:20:606 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:20:606 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:20:646 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:20:646 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:34:20:646 UMV/(4527:4541): Se busca el segmento del programa 7, base 6202
+[INFO] 15:34:20:646 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:20:647 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:21:688 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:21:689 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:34:21:689 UMV/(4527:4541): Se busca el segmento del programa 7, base 4625
+[INFO] 15:34:21:689 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:21:690 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:21:729 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:21:731 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:34:21:731 UMV/(4527:4541): Se busca el segmento del programa 7, base 6202
+[INFO] 15:34:21:731 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:21:732 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:22:816 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:22:818 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:34:22:818 UMV/(4527:4541): Se busca el segmento del programa 7, base 4625
+[INFO] 15:34:22:818 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:22:819 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:22:858 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:22:860 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:34:22:860 UMV/(4527:4541): Se busca el segmento del programa 7, base 6202
+[INFO] 15:34:22:860 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:22:861 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:23:914 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:23:916 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:34:23:916 UMV/(4527:4541): Se busca el segmento del programa 7, base 4625
+[INFO] 15:34:23:916 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:23:916 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:23:962 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:23:964 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:34:23:964 UMV/(4527:4541): Se busca el segmento del programa 7, base 6202
+[INFO] 15:34:23:964 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:23:965 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:24:6 UMV/(4527:4541): Llego una operacion del cpu 6
+[TRACE] 15:34:24:6 UMV/(4527:4541): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:34:24:6 UMV/(4527:4541): Se busca el segmento del programa 7, base 5469
+[INFO] 15:34:24:6 UMV/(4527:4541): Se encontro el segmento
+[TRACE] 15:34:24:7 UMV/(4527:4541): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:34:24:284 UMV/(4527:4541): Se desconecto el cpu 6
+[TRACE] 15:34:24:285 UMV/(4527:4541): Termine conexion con el cpu 6
+[INFO] 15:34:24:292 UMV/(4527:4533): Llego una operacion del kernel
+[TRACE] 15:34:24:294 UMV/(4527:4533): Se solicita destruir los segmentos del programa 7
+[TRACE] 15:34:24:295 UMV/(4527:4533): Se destruyeron los segmentos del programa 7
+[INFO] 15:37:45:365 UMV/(4588:4590): Se conecto el kernel con socket 5
+[INFO] 15:37:47:198 UMV/(4588:4590): Se conecto un cpu con socket 6
+[INFO] 15:37:49:752 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:753 UMV/(4588:4594): Se solicita crear un segmento del programa 7 con tamanio 300
+[TRACE] 15:37:49:753 UMV/(4588:4594): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 15:37:49:753 UMV/(4588:4594): Se posiciono el segmento correctamente
+[TRACE] 15:37:49:753 UMV/(4588:4594): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:37:49:753 UMV/(4588:4594): El segmento se creo correctamente
+[TRACE] 15:37:49:753 UMV/(4588:4594): Se envio la base del nuevo segmento al kernel
+[INFO] 15:37:49:754 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:755 UMV/(4588:4594): Se solicita crear un segmento del programa 7 con tamanio 104
+[TRACE] 15:37:49:755 UMV/(4588:4594): Posicionando segmento de tamanio 104 en memoria segun First Fit
+[INFO] 15:37:49:755 UMV/(4588:4594): Se posiciono el segmento correctamente
+[TRACE] 15:37:49:755 UMV/(4588:4594): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:37:49:755 UMV/(4588:4594): El segmento se creo correctamente
+[TRACE] 15:37:49:755 UMV/(4588:4594): Se envio la base del nuevo segmento al kernel
+[INFO] 15:37:49:756 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:757 UMV/(4588:4594): Se solicita crear un segmento del programa 7 con tamanio 40
+[TRACE] 15:37:49:757 UMV/(4588:4594): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 15:37:49:757 UMV/(4588:4594): Se posiciono el segmento correctamente
+[TRACE] 15:37:49:757 UMV/(4588:4594): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:37:49:757 UMV/(4588:4594): El segmento se creo correctamente
+[TRACE] 15:37:49:757 UMV/(4588:4594): Se envio la base del nuevo segmento al kernel
+[INFO] 15:37:49:760 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:761 UMV/(4588:4594): Se solicita crear un segmento del programa 7 con tamanio 13
+[TRACE] 15:37:49:761 UMV/(4588:4594): Posicionando segmento de tamanio 13 en memoria segun First Fit
+[INFO] 15:37:49:761 UMV/(4588:4594): Se posiciono el segmento correctamente
+[TRACE] 15:37:49:761 UMV/(4588:4594): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:37:49:761 UMV/(4588:4594): El segmento se creo correctamente
+[TRACE] 15:37:49:761 UMV/(4588:4594): Se envio la base del nuevo segmento al kernel
+[INFO] 15:37:49:764 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:765 UMV/(4588:4594): Se solicita enviar bytes al programa 7, base 6202, desde 0, tamanio 104
+[TRACE] 15:37:49:766 UMV/(4588:4594): Se busca el segmento del programa 7, base 6202
+[INFO] 15:37:49:766 UMV/(4588:4594): Se encontro el segmento
+[TRACE] 15:37:49:766 UMV/(4588:4594): Se envio confirmacion al kernel
+[INFO] 15:37:49:767 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:770 UMV/(4588:4594): Se solicita enviar bytes al programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:37:49:770 UMV/(4588:4594): Se busca el segmento del programa 7, base 5469
+[INFO] 15:37:49:770 UMV/(4588:4594): Se encontro el segmento
+[TRACE] 15:37:49:770 UMV/(4588:4594): Se envio confirmacion al kernel
+[INFO] 15:37:49:775 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:49:776 UMV/(4588:4594): Se solicita enviar bytes al programa 7, base 4625, desde 0, tamanio 40
+[TRACE] 15:37:49:776 UMV/(4588:4594): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:49:776 UMV/(4588:4594): Se encontro el segmento
+[TRACE] 15:37:49:776 UMV/(4588:4594): Se envio confirmacion al kernel
+[INFO] 15:37:49:781 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:49:782 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:37:49:782 UMV/(4588:4602): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:49:782 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:49:783 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:49:820 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:49:821 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:37:49:821 UMV/(4588:4602): Se busca el segmento del programa 7, base 6202
+[INFO] 15:37:49:821 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:49:821 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:50:863 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:50:867 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:37:50:867 UMV/(4588:4602): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:50:867 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:50:869 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:50:909 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:50:910 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:37:50:910 UMV/(4588:4602): Se busca el segmento del programa 7, base 6202
+[INFO] 15:37:50:910 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:50:911 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:51:992 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:51:993 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:37:51:993 UMV/(4588:4602): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:51:993 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:51:994 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:52:34 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:52:35 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:37:52:35 UMV/(4588:4602): Se busca el segmento del programa 7, base 6202
+[INFO] 15:37:52:35 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:52:36 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:53:84 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:53:86 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:37:53:86 UMV/(4588:4602): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:53:86 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:53:86 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:53:125 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:53:126 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:37:53:126 UMV/(4588:4602): Se busca el segmento del programa 7, base 6202
+[INFO] 15:37:53:126 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:53:126 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:53:165 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:53:165 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:37:53:165 UMV/(4588:4602): Se busca el segmento del programa 7, base 5469
+[INFO] 15:37:53:165 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:53:166 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:54:205 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:54:206 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:37:54:207 UMV/(4588:4602): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:54:207 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:54:207 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:54:245 UMV/(4588:4602): Llego una operacion del cpu 6
+[TRACE] 15:37:54:246 UMV/(4588:4602): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:37:54:247 UMV/(4588:4602): Se busca el segmento del programa 7, base 6202
+[INFO] 15:37:54:247 UMV/(4588:4602): Se encontro el segmento
+[TRACE] 15:37:54:247 UMV/(4588:4602): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:37:55:475 UMV/(4588:4602): Se desconecto el cpu 6
+[TRACE] 15:37:55:476 UMV/(4588:4602): Termine conexion con el cpu 6
+[INFO] 15:37:56:444 UMV/(4588:4594): Llego una operacion del kernel
+[TRACE] 15:37:56:444 UMV/(4588:4594): Se solicita enviar bytes al programa 7, base 4625, desde 0, tamanio 40
+[TRACE] 15:37:56:445 UMV/(4588:4594): Se busca el segmento del programa 7, base 4625
+[INFO] 15:37:56:445 UMV/(4588:4594): Se encontro el segmento
+[INFO] 15:43:00:360 UMV/(4736:4738): Se conecto el kernel con socket 5
+[INFO] 15:43:01:176 UMV/(4736:4738): Se conecto un cpu con socket 6
+[INFO] 15:43:01:807 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:808 UMV/(4736:4742): Se solicita crear un segmento del programa 7 con tamanio 300
+[TRACE] 15:43:01:808 UMV/(4736:4742): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 15:43:01:808 UMV/(4736:4742): Se posiciono el segmento correctamente
+[TRACE] 15:43:01:808 UMV/(4736:4742): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:43:01:808 UMV/(4736:4742): El segmento se creo correctamente
+[TRACE] 15:43:01:808 UMV/(4736:4742): Se envio la base del nuevo segmento al kernel
+[INFO] 15:43:01:811 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:811 UMV/(4736:4742): Se solicita crear un segmento del programa 7 con tamanio 104
+[TRACE] 15:43:01:811 UMV/(4736:4742): Posicionando segmento de tamanio 104 en memoria segun First Fit
+[INFO] 15:43:01:811 UMV/(4736:4742): Se posiciono el segmento correctamente
+[TRACE] 15:43:01:811 UMV/(4736:4742): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:43:01:811 UMV/(4736:4742): El segmento se creo correctamente
+[TRACE] 15:43:01:812 UMV/(4736:4742): Se envio la base del nuevo segmento al kernel
+[INFO] 15:43:01:814 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:815 UMV/(4736:4742): Se solicita crear un segmento del programa 7 con tamanio 40
+[TRACE] 15:43:01:815 UMV/(4736:4742): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 15:43:01:815 UMV/(4736:4742): Se posiciono el segmento correctamente
+[TRACE] 15:43:01:815 UMV/(4736:4742): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:43:01:815 UMV/(4736:4742): El segmento se creo correctamente
+[TRACE] 15:43:01:815 UMV/(4736:4742): Se envio la base del nuevo segmento al kernel
+[INFO] 15:43:01:817 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:818 UMV/(4736:4742): Se solicita crear un segmento del programa 7 con tamanio 13
+[TRACE] 15:43:01:819 UMV/(4736:4742): Posicionando segmento de tamanio 13 en memoria segun First Fit
+[INFO] 15:43:01:819 UMV/(4736:4742): Se posiciono el segmento correctamente
+[TRACE] 15:43:01:819 UMV/(4736:4742): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 15:43:01:819 UMV/(4736:4742): El segmento se creo correctamente
+[TRACE] 15:43:01:819 UMV/(4736:4742): Se envio la base del nuevo segmento al kernel
+[INFO] 15:43:01:825 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:829 UMV/(4736:4742): Se solicita enviar bytes al programa 7, base 6202, desde 0, tamanio 104
+[TRACE] 15:43:01:829 UMV/(4736:4742): Se busca el segmento del programa 7, base 6202
+[INFO] 15:43:01:829 UMV/(4736:4742): Se encontro el segmento
+[TRACE] 15:43:01:829 UMV/(4736:4742): Se envio confirmacion al kernel
+[INFO] 15:43:01:830 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:832 UMV/(4736:4742): Se solicita enviar bytes al programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:43:01:832 UMV/(4736:4742): Se busca el segmento del programa 7, base 5469
+[INFO] 15:43:01:832 UMV/(4736:4742): Se encontro el segmento
+[TRACE] 15:43:01:833 UMV/(4736:4742): Se envio confirmacion al kernel
+[INFO] 15:43:01:833 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:43:01:835 UMV/(4736:4742): Se solicita enviar bytes al programa 7, base 4625, desde 0, tamanio 40
+[TRACE] 15:43:01:835 UMV/(4736:4742): Se busca el segmento del programa 7, base 4625
+[INFO] 15:43:01:835 UMV/(4736:4742): Se encontro el segmento
+[TRACE] 15:43:01:835 UMV/(4736:4742): Se envio confirmacion al kernel
+[INFO] 15:43:01:838 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:01:838 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:43:01:839 UMV/(4736:4750): Se busca el segmento del programa 7, base 4625
+[INFO] 15:43:01:839 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:01:839 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:01:876 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:01:877 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:43:01:877 UMV/(4736:4750): Se busca el segmento del programa 7, base 6202
+[INFO] 15:43:01:877 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:01:877 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:02:919 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:02:923 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 4625, desde 8, tamanio 8
+[TRACE] 15:43:02:924 UMV/(4736:4750): Se busca el segmento del programa 7, base 4625
+[INFO] 15:43:02:924 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:02:924 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:02:967 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:02:968 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 6202, desde 27, tamanio 21
+[TRACE] 15:43:02:969 UMV/(4736:4750): Se busca el segmento del programa 7, base 6202
+[INFO] 15:43:02:969 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:02:969 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:04:50 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:04:52 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 4625, desde 16, tamanio 8
+[TRACE] 15:43:04:52 UMV/(4736:4750): Se busca el segmento del programa 7, base 4625
+[INFO] 15:43:04:52 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:04:52 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:04:93 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:04:94 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 6202, desde 48, tamanio 10
+[TRACE] 15:43:04:94 UMV/(4736:4750): Se busca el segmento del programa 7, base 6202
+[INFO] 15:43:04:94 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:04:94 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:05:141 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:05:142 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 4625, desde 24, tamanio 8
+[TRACE] 15:43:05:142 UMV/(4736:4750): Se busca el segmento del programa 7, base 4625
+[INFO] 15:43:05:142 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:05:143 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:05:182 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:05:183 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 6202, desde 84, tamanio 15
+[TRACE] 15:43:05:183 UMV/(4736:4750): Se busca el segmento del programa 7, base 6202
+[INFO] 15:43:05:183 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:05:184 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:05:225 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:05:225 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 5469, desde 0, tamanio 13
+[TRACE] 15:43:05:226 UMV/(4736:4750): Se busca el segmento del programa 7, base 5469
+[INFO] 15:43:05:226 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:05:226 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:06:266 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:06:267 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 4625, desde 0, tamanio 8
+[TRACE] 15:43:06:267 UMV/(4736:4750): Se busca el segmento del programa 7, base 4625
+[INFO] 15:43:06:267 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:06:267 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:43:06:310 UMV/(4736:4750): Llego una operacion del cpu 6
+[TRACE] 15:43:06:311 UMV/(4736:4750): Se solicitan los bytes del programa 7, base 6202, desde 19, tamanio 8
+[TRACE] 15:43:06:311 UMV/(4736:4750): Se busca el segmento del programa 7, base 6202
+[INFO] 15:43:06:311 UMV/(4736:4750): Se encontro el segmento
+[TRACE] 15:43:06:312 UMV/(4736:4750): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 15:49:17:229 UMV/(4736:4742): Llego una operacion del kernel
+[TRACE] 15:49:17:230 UMV/(4736:4742): Se solicita enviar bytes al programa 7, base 4625, desde 0, tamanio 40
+[TRACE] 15:49:17:230 UMV/(4736:4742): Se busca el segmento del programa 7, base 4625
+[INFO] 15:49:17:230 UMV/(4736:4742): Se encontro el segmento
+[INFO] 15:49:25:433 UMV/(4917:4919): Se conecto el kernel con socket 5
+[INFO] 15:50:25:274 UMV/(4917:4919): Se conecto un cpu con socket 6
+[INFO] 15:50:58:343 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:344 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:345 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:345 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:345 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:345 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:346 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:346 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:346 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:346 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:347 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:348 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:348 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:349 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:350 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:351 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:352 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:352 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:352 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:353 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:354 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:354 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:355 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:355 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:355 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:356 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:356 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:358 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:358 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:359 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:359 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:359 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:360 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:360 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:361 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:361 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:361 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:362 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:363 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:363 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:363 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:364 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:364 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:370 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:371 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:371 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:372 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:373 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:374 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:375 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:375 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:376 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:377 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:377 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:377 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:378 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:379 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:379 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:379 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:380 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:380 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:381 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:381 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:383 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:384 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:385 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:386 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:386 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:387 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:387 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:388 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:388 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:389 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:390 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:390 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:391 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:391 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:391 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:392 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:393 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:395 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:395 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:396 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:396 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:396 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:398 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:398 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:399 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:400 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:400 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:401 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:403 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:404 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:404 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:406 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:406 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:407 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:407 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:408 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:409 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:410 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:410 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:411 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:411 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:413 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:413 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:415 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:415 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:415 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:416 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:417 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:417 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:418 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:418 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:419 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:419 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:419 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:419 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:420 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:421 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:423 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:423 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:423 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:424 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:424 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:424 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:425 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:425 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:426 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:426 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:426 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:427 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:427 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:428 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:428 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:430 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:430 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:431 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:431 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:431 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:432 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:433 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:433 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:433 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:434 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:434 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:435 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:435 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:435 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:436 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:436 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:436 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:438 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:438 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:438 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:439 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:439 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:440 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:440 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:440 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:441 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:441 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:442 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:442 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:443 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:443 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:443 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:444 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:445 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:446 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:446 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:447 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:447 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:447 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:448 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:448 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:449 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:449 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:449 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:450 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:450 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:451 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:451 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:452 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:452 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:453 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:454 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:455 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:456 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:457 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:457 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:458 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:458 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:458 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:459 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:459 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:459 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:460 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:461 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:461 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:462 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:462 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:462 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:463 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:463 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:463 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:464 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:464 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:465 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:465 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:465 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:466 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:466 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:467 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:467 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:467 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:468 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:468 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:471 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:471 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:471 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:472 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:472 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:472 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:473 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:473 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:473 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:474 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:474 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:474 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:475 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:475 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:476 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:476 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:478 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:478 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:479 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:480 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:480 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:480 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:481 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:481 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:482 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:482 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:482 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:483 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:483 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:484 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:484 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:484 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:486 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:487 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:487 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:488 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:488 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:488 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:489 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:490 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:490 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:490 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:491 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:491 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:492 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:492 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:492 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:493 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:494 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:494 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:494 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:495 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:496 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:496 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:496 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:497 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:497 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:498 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:498 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:498 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:499 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:499 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:500 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:500 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:501 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:502 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:503 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:503 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:504 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:504 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:504 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:505 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:505 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:505 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:506 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:507 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:507 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:508 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:508 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:508 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:510 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:510 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:511 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:511 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:512 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:512 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:512 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:513 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:513 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:513 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:514 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:514 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:515 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:515 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:516 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:516 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:516 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:517 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:519 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:519 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:520 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:520 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:520 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:521 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:521 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:522 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:525 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:526 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:526 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:527 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:527 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:527 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:528 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:529 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:529 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:529 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:530 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:530 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:530 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:531 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:531 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:532 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:532 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:532 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:533 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:533 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:534 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:534 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:535 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:535 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:536 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:536 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:536 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:537 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:537 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:538 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:538 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:538 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:539 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:540 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:540 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:540 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:541 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:541 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:541 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:542 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:543 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:543 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:543 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:543 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:544 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:544 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:545 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:545 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:546 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:546 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:546 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:547 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:547 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:547 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:548 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:548 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:549 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:550 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:550 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:551 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:551 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:551 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:552 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:552 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:552 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:553 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:553 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:554 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:554 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:554 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:555 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:555 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:555 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:556 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:556 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:557 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:557 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:557 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:558 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:558 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:559 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:559 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:560 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:560 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:561 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:561 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:561 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:562 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:562 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:563 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:563 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:563 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:564 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:564 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:564 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:565 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:565 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:565 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:566 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:567 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:567 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:568 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:568 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:568 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:569 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:569 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:569 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:570 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:570 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:570 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:571 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:572 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:572 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:572 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:573 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:573 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:573 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:574 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:574 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:575 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:575 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:576 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:576 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:577 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:577 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:578 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:578 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:578 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:579 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:579 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:580 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:580 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:580 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:581 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:582 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:583 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:583 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:583 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:584 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:584 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:585 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:585 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:586 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:586 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:587 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:587 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:587 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:588 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:588 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:589 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:589 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:589 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:590 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:590 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:591 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:591 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:591 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:591 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:592 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:592 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:593 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:593 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:593 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:594 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:594 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:595 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:595 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:596 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:596 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:597 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:597 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:598 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:598 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:599 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:599 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:599 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:600 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:600 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:601 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:601 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:601 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:602 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:602 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:603 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:603 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:603 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:604 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:604 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:605 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:605 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:606 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:607 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:607 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:607 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:608 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:608 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:608 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:609 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:609 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:610 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:610 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:610 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:611 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:611 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:611 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:612 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:612 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:613 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:613 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:613 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:615 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:615 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:615 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:616 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:616 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:617 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:617 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:617 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:618 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:618 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:618 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:619 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:619 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:620 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:620 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:620 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:621 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:621 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:622 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:622 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:622 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:623 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:623 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:624 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:625 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:625 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:625 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:626 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:626 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:627 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:627 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:627 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:628 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:628 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:628 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:629 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:629 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:630 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:630 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:630 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:631 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:631 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:632 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:632 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:632 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:633 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:633 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:634 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:634 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:635 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:635 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:635 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:636 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:637 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:637 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:637 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:638 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:638 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:639 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:639 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:640 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:640 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:641 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:641 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:641 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:642 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:642 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:642 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:643 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:644 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:644 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:644 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:645 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:645 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:652 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:652 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:653 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:653 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:653 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:654 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:654 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:654 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:655 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:656 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:656 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:657 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:658 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:659 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:659 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:660 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:660 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:660 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:661 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:661 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:662 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:662 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:663 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:663 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:665 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:665 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:666 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:666 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:667 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:667 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:668 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:673 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:673 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:674 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:674 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:675 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:676 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:677 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:679 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:679 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:679 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:680 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:680 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:681 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:683 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:684 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:685 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:685 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:687 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:687 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:688 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:688 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:689 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:691 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:692 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:692 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:693 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:694 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:694 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:694 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:695 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:695 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:696 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:696 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:696 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:697 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:697 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:704 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:704 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:705 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:705 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:705 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:706 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:706 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:706 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:707 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:707 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:708 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:708 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:709 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:709 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:710 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:710 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:710 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:713 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:713 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:713 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:714 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:714 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:715 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:715 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:715 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:715 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:716 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:716 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:717 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:717 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:717 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:719 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:719 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:720 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:720 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:720 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:721 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:721 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:722 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:722 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:722 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:723 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:723 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:724 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:725 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:726 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:726 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:728 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:728 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:728 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:729 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:729 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:730 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:730 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:731 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:731 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:732 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:733 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:733 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:734 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:735 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:735 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:736 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:736 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:737 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:737 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:738 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:738 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:738 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:739 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:739 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:739 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:740 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:740 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:740 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:741 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:741 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:741 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:742 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:742 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:742 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:743 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:744 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:744 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:744 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:745 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:745 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:746 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:746 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:746 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:747 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:747 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:748 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:748 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:748 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:749 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:750 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:750 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:751 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:751 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:752 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:752 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:753 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:753 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:754 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:754 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:754 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:755 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:755 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:756 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:756 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:757 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:758 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:758 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:758 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:759 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:759 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:760 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:763 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:763 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:764 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:764 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:764 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:765 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:766 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:766 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:766 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:766 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:767 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:767 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:768 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:768 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:768 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:769 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:769 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:770 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:770 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:770 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:771 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:771 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:772 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:772 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:773 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:773 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:774 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:774 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:774 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:775 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:775 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:776 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:776 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:776 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:777 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:777 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:777 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:778 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:778 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:778 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:779 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:779 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:780 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:780 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:782 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:783 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:783 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:784 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:785 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:785 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:786 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:786 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:787 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:787 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:787 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:788 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:788 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:788 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:790 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:791 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:791 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:791 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:792 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:792 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:793 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:793 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:793 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:794 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:794 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:794 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:796 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:796 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:796 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:797 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:798 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:798 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:799 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:799 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:800 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:800 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:800 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:801 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:801 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:801 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:802 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:802 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:803 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:803 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:803 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:804 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:804 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:804 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:807 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:807 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:807 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:808 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:808 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:809 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:809 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:809 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:810 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:810 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:811 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:811 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:812 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:812 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:812 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:814 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:814 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:815 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:815 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:815 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:816 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:816 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:817 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:817 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:818 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:819 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:819 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:819 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:820 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:820 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:821 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:822 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:823 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:823 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:823 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:824 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:824 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:825 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:825 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:825 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:826 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:826 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:827 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:827 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:827 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:827 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:828 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:829 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:830 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:831 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:831 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:831 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:832 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:832 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:832 UMV/(4917:4923): Llego una operacion del kernel
+[INFO] 15:50:58:833 UMV/(4917:4923): Llego una operacion del kernel

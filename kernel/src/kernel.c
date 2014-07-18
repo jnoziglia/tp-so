@@ -22,15 +22,6 @@
 #include <signal.h>
 #include <semaphore.h>
 
-/* Definiciones y variables para la conexión por Sockets */
-//#define PUERTOPROGRAMA "6667"
-//#define BACKLOG 5			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
-//#define PACKAGESIZE 1024	// Define cual va a ser el size maximo del paquete a enviar
-//#define PUERTOUMV "6668"
-//#define IPUMV "127.0.0.1"
-//#define PUERTOCPU "6680"
-//#define IPCPU "127.0.0.1"
-
 /* Estructuras de datos */
 typedef struct pcb
 {
@@ -264,7 +255,7 @@ void* f_hiloColaReady()
 	{
 		sem_wait(&s_ProgramasEnNew);
 		sem_wait(&s_Multiprogramacion);
-		log_trace(logger, "Se puede pasar un programa de NEW a READY");
+		log_info(logger, "Se puede pasar un programa de NEW a READY");
 		programa = desencolarNew();
 		t_pcb* nuevoPCB = malloc(sizeof(t_pcb));
 		conf = crearPcb(programa, nuevoPCB);
@@ -280,6 +271,7 @@ void* f_hiloColaReady()
 			log_trace(logger, "Se le informo al programa %d que debe finalizar", programa.pid);
 		}
 	}
+	return NULL;
 }
 
 
@@ -395,7 +387,7 @@ void* f_hiloPCP()
 							printf("Nombre de la variable: %s\n",variable);
 							if(mensaje2 == 0)
 							{
-								//Obtener valor variable compartida.
+								//TODO: Obtener valor variable compartida.
 								printf("Obtener valor variable compartida %s\n", variable);
 								int j;
 								for(j = 0; j < cantidadVariablesCompartidas; j++)
@@ -413,7 +405,7 @@ void* f_hiloPCP()
 							}
 							else if (mensaje2 == 1)
 							{
-								//Asignar variable compartida.
+								//TODO: Asignar variable compartida.
 								recv(i,&valorVariable,sizeof(int),0);
 								printf("Asignar valor variable compartida: %s\n", variable);
 								int j;
@@ -666,62 +658,6 @@ void* f_hiloPCP()
 					}
 				}
 			}
-//			else if(FD_ISSET(i, &writePCP))
-//			{
-//				printf("%d esta listo para escribir\n", i);
-//				//				//FD_SET(i, &writePCP);
-//				//				//Sacar de Ready
-//				if(l_ready != NULL)	//TODO: PONER SEMAFORO!!!
-//				{
-//					status = send(i, &ping, sizeof(char), 0);
-//					printf("STATUS: %d\n", status);
-//					if (status != -1)
-//					{
-//						printf("Envio pcb al cpu %d\n", i);
-//						FD_CLR(i, &fdWPCP);
-//						FD_SET(i, &fdRPCP);
-//						t_pcb* pcbAux;
-//						pcbAux = desencolarReady();
-//						//					t_pcb* pcbAux;
-//						//					pcbAux = desencolarReady();
-//						superMensaje[0] = pcbAux->pid;
-//						superMensaje[1] = pcbAux->segmentoCodigo;
-//						superMensaje[2] = pcbAux->segmentoStack;
-//						superMensaje[3] = pcbAux->cursorStack;
-//						superMensaje[4] = pcbAux->indiceCodigo;
-//						superMensaje[5] = pcbAux->indiceEtiquetas;
-//						superMensaje[6] = pcbAux->programCounter;
-//						superMensaje[7] = pcbAux->tamanioContextoActual;
-//						superMensaje[8] = pcbAux->tamanioIndiceEtiquetas;
-//						superMensaje[9] = pcbAux->tamanioIndiceCodigo;
-//						superMensaje[10] = pcbAux->peso;
-//						//					//free(l_new);
-//						//					//l_new = NULL;
-//						status = send(i, superMensaje, 11*sizeof(int), 0);
-//						encolarExec(pcbAux);
-//					}
-//					else
-//					{
-//						printf("Se desconecto el cpu: %d\n", i);
-//						FD_CLR(i, &fdWPCP);
-//						close(i);
-//						if (i == maximoCpu)
-//						{
-//							for(j=3; j<maximoCpu; j++)
-//							{
-//								if(FD_ISSET(j, &fdWPLP) || FD_ISSET(j, &fdRPLP))
-//								{
-//									printf("baje maximo\n");
-//									maximoAnterior = j;
-//								}
-//							}
-//							maximoCpu = maximoAnterior;
-//						}
-//						status = 1;
-//					}
-//				}
-//
-//			}
 		}
 	}
 }
@@ -755,17 +691,6 @@ void agregarCpu(int socketID)
 	}
 }
 
-//void quitarCpu(void)
-//{
-//	printf("Entro a sacar cpu\n");
-//	sem_wait(&s_ColaCpu);
-//	printf("CPU: %p\n", l_cpu);
-//	t_cpu* aux = l_cpu;
-//	l_cpu = l_cpu->siguiente;
-//	free(aux);
-//	sem_post(&s_ColaCpu);
-//	printf("Salgo de sacar cpu\n");
-//}
 
 t_pcb* sacarCpuDeEjecucion(int socketID)
 {
@@ -932,47 +857,6 @@ void* f_hiloPLP()
 					}
 				}
 			}
-//			else if (FD_ISSET(i, &writePLP))
-//			{
-//				//printf("entro al isset %d\n", i);
-//				listaExit = l_exit;
-//				while(listaExit != NULL)
-//				{
-//					if(i == listaExit->pid)
-//					{
-//						printf("entro al exit %d\n", i);
-//						mensajePrograma = 2;
-//						send(i, &mensajePrograma, sizeof(char), 0);
-//						UMV_destruirSegmentos(i);
-//						close(i);
-//						if (i == maximo)
-//						{
-//							for(j=3; j<maximo; j++)
-//							{
-//								if(FD_ISSET(j, &fdWPLP) || FD_ISSET(j, &fdRPLP))
-//								{
-//									printf("baje maximo\n");
-//									maximoAnterior = j;
-//								}
-//							}
-//							maximo = maximoAnterior;
-//						}
-//						FD_CLR(i, &fdWPLP);
-//						destruirPCB(i);
-//						sem_post(&s_Multiprogramacion);
-//						break;
-//					}
-//					else
-//					{
-//						listaExit = listaExit->siguiente;
-//					}
-//				}
-//				if(listaExit == NULL)
-//				{
-//					//El programa esta para imprimir
-//
-//				}
-//			}
 		}
 	}
 	return NULL;
@@ -1002,39 +886,24 @@ void* f_hiloColaExit(void)
 void* f_hiloIO(void* pos)
 {
 	int i = (int)pos;
-	printf("Numero de entrada salida: %d\n", i);
+	log_trace(logger, "Inicio del Hilo del IO: %s", arrayDispositivosIO[i].nombreIO);
 	while(1)
 	{
 		sem_wait(&s_IO[i]);
-		printf("Entro a buscar IO\n");
-		//for(i=0; i < cantidadDispositivosIO; i++)
-		//{
-			if(arrayDispositivosIO[i].pcbEnLista != NULL)
+		if(arrayDispositivosIO[i].pcbEnLista != NULL)
+		{
+			t_listaIO* aux = arrayDispositivosIO[i].pcbEnLista;
+			while(aux != NULL)
 			{
-				printf("El dispositivo: %s tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
-				t_listaIO* aux = arrayDispositivosIO[i].pcbEnLista;
-				while(aux != NULL)
-				{
-					printf("Dispositivo IO: %s, PID: %d, Espera de: %d ms\n", arrayDispositivosIO[i].nombreIO, aux->pcb->pid, aux->tiempo);
-					//Esperar las unidades de tiempo antes de seguir
-					//usleep(aux->tiempo);
-					printf("Espera terminada\n");
-					usleep(aux->tiempo*arrayDispositivosIO[i].retardo*1000);
-					//Desencolar
-					encolarEnReady(aux->pcb);
-					arrayDispositivosIO[i].pcbEnLista = aux->siguiente;
-					free(aux);
-					aux = arrayDispositivosIO[i].pcbEnLista;
-				}
-				arrayDispositivosIO[i].pcbEnLista = NULL;
-				printf("El dispositivo: %s ya no tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
+				log_trace(logger,"Dispositivo IO: %s, PID: %d, Espera de: %d ms\n", arrayDispositivosIO[i].nombreIO, aux->pcb->pid, aux->tiempo);
+				usleep(aux->tiempo*arrayDispositivosIO[i].retardo*1000);
+				encolarEnReady(aux->pcb);
+				arrayDispositivosIO[i].pcbEnLista = aux->siguiente;
+				free(aux);
+				aux = arrayDispositivosIO[i].pcbEnLista;
 			}
-			else
-			{
-				printf("El dispositivo: %s NO tiene PCB pendiente \n", arrayDispositivosIO[i].nombreIO);
-			}
-		//}
-		//sem_post(&s_IO);
+			arrayDispositivosIO[i].pcbEnLista = NULL;
+		}
 	}
 	return 0;
 }
@@ -1256,35 +1125,6 @@ void encolarEnNew(t_new* programa)
 		sem_post(&s_ProgramasEnNew);
 		return;
 	}
-
-	//		if (l_new->peso > pcb->peso)
-	//		{
-	//			pcb->siguiente = l_new;
-	//			l_new = pcb;
-	//			return;
-	//		}
-	//		else
-	//		{
-	//			auxAnterior = l_new;
-	//			aux = auxAnterior->siguiente;
-	//			while (aux != NULL)
-	//			{
-	//				if (aux->peso > pcb->peso)
-	//				{
-	//					pcb->siguiente = aux;
-	//					auxAnterior->siguiente = pcb;
-	//					return;
-	//				}
-	//				else
-	//				{
-	//					auxAnterior = aux;
-	//					aux = aux->siguiente;
-	//				}
-	//			}
-	//			auxAnterior->siguiente = pcb;
-	//			pcb->siguiente = NULL;
-	//			return;
-	//		}
 }
 
 
@@ -1401,21 +1241,20 @@ void* f_hiloMostrarNew()
 			continue;
 		}
 		if(string_equals_ignore_case(ingreso,"mostrar-exit"))
-				{
-					sem_wait(&s_ColaExit);
-					printf("Procesos encolados en Exit\n");
-					printf("PID:\n");
-					printf("-----------------------\n");
-					t_pcb* aux = l_exit;
-					while(aux != NULL)
-					{
-						printf("%d\t\t",aux->pid);
-						aux = aux->siguiente;
-					}
-					sem_post(&s_ColaExit);
-					continue;
-				}
-		//TODO: MOSTRAR PCBS EN I/O Y SEMAFOROS. NO TENGO IDEA COMO SE MANEJAN ESAS LISTAS
+		{
+			sem_wait(&s_ColaExit);
+			printf("Procesos encolados en Exit\n");
+			printf("PID:\n");
+			printf("-----------------------\n");
+			t_pcb* aux = l_exit;
+			while(aux != NULL)
+			{
+				printf("%d\t\t",aux->pid);
+				aux = aux->siguiente;
+			}
+			sem_post(&s_ColaExit);
+			continue;
+		}
 		else
 		{
 			printf("Error de comando.");
@@ -1424,50 +1263,6 @@ void* f_hiloMostrarNew()
 	}
 	free(ingreso);
 	return 0;
-}
-
-void serializarPcb(t_pcb* pcb, void* package)
-{
-	int offset = 0;
-	//void* package = malloc(sizeof(t_pcb));
-
-	memcpy(package, &(pcb->pid), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->programCounter), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->tamanioIndiceEtiquetas), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->cursorStack), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->tamanioContextoActual), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->siguiente), sizeof(t_pcb*));
-	offset += sizeof(t_pcb*);
-
-	memcpy(package, &(pcb->tamanioIndiceCodigo), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->segmentoStack), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->segmentoCodigo), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->indiceCodigo), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->indiceEtiquetas), sizeof(int));
-	offset += sizeof(int);
-
-	memcpy(package, &(pcb->peso), sizeof(int));
-	offset += sizeof(int);
-
-	return;
 }
 
 t_pcb* recibirSuperMensaje ( int superMensaje[11] )
@@ -1512,7 +1307,6 @@ t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 void cargarConfig(void)
 {
 	log_trace(logger, "Levanto configuracion");
-	//t_config* configuracion = config_create("/home/utnso/tp-2014-1c-unnamed/kernel/src/config.txt");
 	PUERTOPROGRAMA = config_get_string_value(configuracion, "PUERTOPROGRAMA");
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
@@ -1535,16 +1329,10 @@ void cargarVariablesCompartidas(void)
 	{
 		cantidadVariablesCompartidas++;
 	}
-	printf("Cantidad total de variables compartidas: %d\n",cantidadVariablesCompartidas);
-	arrayVariablesCompartidas = malloc(cantidadVariablesCompartidas*sizeof(t_variableCompartida));
-	printf("Variables Compartidas: \t");
 	int i;
-	for(i = 0; i < cantidadVariablesCompartidas; i++)
-	{
-		arrayVariablesCompartidas[i].nombreVariable = vars[i];
-		printf("%s, ", arrayVariablesCompartidas[i].nombreVariable);
-	}
-	printf("\n");
+	arrayVariablesCompartidas = malloc(cantidadVariablesCompartidas*sizeof(t_variableCompartida));
+	for(i = 0; i < cantidadVariablesCompartidas; i++) arrayVariablesCompartidas[i].nombreVariable = vars[i];
+	log_trace(logger, "Variables compartidas cargadas");
 	free(vars);
 }
 
@@ -1556,28 +1344,19 @@ void cargarDispositivosIO(void) //Todo: Falta agregar Retardo para cada Disposit
 	char** retardo = malloc(1000);
 	disp = config_get_array_value(configuracion, "IO");
 	retardo = config_get_array_value(configuracion, "RETARDO_IO");
-	while(disp[cantidadDispositivosIO] != NULL)
-	{
-		cantidadDispositivosIO++;
-	}
-	printf("Cantidad total de dispositivos IO: %d\n",cantidadDispositivosIO);
+	while(disp[cantidadDispositivosIO] != NULL)	cantidadDispositivosIO++;
 	arrayDispositivosIO = malloc(cantidadDispositivosIO*sizeof(t_IO));
-	printf("Dispositivos IO: \t");
-	int i;
 	s_IO = malloc(sizeof(sem_t)*cantidadDispositivosIO);
+	int i;
 	for(i = 0; i < cantidadDispositivosIO; i++)
 	{
 		sem_init(&s_IO[i],0,0);
-	}
-	for(i = 0; i < cantidadDispositivosIO; i++)
-	{
 		arrayDispositivosIO[i].nombreIO = disp[i];
 		arrayDispositivosIO[i].retardo = atoi(retardo[i]);
 		arrayDispositivosIO[i].pcbEnLista = NULL;
-		printf("%s, ", arrayDispositivosIO[i].nombreIO);
 		pthread_create(&hiloIO, NULL, f_hiloIO, (void*)i);
 	}
-	printf("\n");
+	log_trace(logger, "Dispositivos de entrada/salida cargados");
 	free(disp);
 	free(retardo);
 }
@@ -1589,22 +1368,16 @@ void cargarSemaforos(void)
 	char** val = malloc(1000);
 	sem = config_get_array_value(configuracion, "SEMAFOROS");
 	val = config_get_array_value(configuracion, "VALOR_SEMAFOROS");
-	while(sem[cantidadSemaforos] != NULL)
-	{
-		cantidadSemaforos++;
-	}
-	printf("Cantidad total de Semáforos: %d\n",cantidadSemaforos);
+	while(sem[cantidadSemaforos] != NULL) cantidadSemaforos++;
 	arraySemaforos = malloc(cantidadSemaforos*sizeof(t_semaforo));
-	printf("Semáforos: \t");
 	int i;
 	for(i = 0; i < cantidadSemaforos; i++)
 	{
 		arraySemaforos[i].nombreSemaforo = sem[i];
 		arraySemaforos[i].valor = atoi(val[i]);
 		arraySemaforos[i].pcb = NULL;
-		printf("%s (%d), ", arraySemaforos[i].nombreSemaforo, arraySemaforos[i].valor);
 	}
-	printf("\n");
+	log_trace(logger, "Semáforos cargados");
 	free(sem);
 	free(val);
 }
@@ -1612,7 +1385,6 @@ void cargarSemaforos(void)
 
 void destruirPCB(int pid)
 {
-	//sem_wait(&s_ColaExit);
 	t_pcb* listaExit = l_exit;
 	t_pcb* listaAux = NULL;
 	t_pcb* aux = l_exit;
@@ -1627,7 +1399,6 @@ void destruirPCB(int pid)
 		l_exit = l_exit->siguiente;
 		free(listaAux);
 		printf("Destrui unico PCB\n");
-		//sem_post(&s_ColaExit);
 		return;
 	}
 	listaAux = listaExit;
@@ -1639,7 +1410,6 @@ void destruirPCB(int pid)
 			printf("destruyo pcb\n");
 			listaAux->siguiente = listaExit->siguiente;
 			free(listaExit);
-			//sem_post(&s_ColaExit);
 			return;
 		}
 		listaAux = listaExit;
@@ -1718,10 +1488,7 @@ void encolarEnReady(t_pcb* pcb)
 	}
 	else
 	{
-		while(aux->siguiente != NULL)
-		{
-			aux = aux->siguiente;
-		}
+		while(aux->siguiente != NULL) aux = aux->siguiente;
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
 		sem_post(&s_ProgramasEnReady);
@@ -1736,6 +1503,7 @@ t_pcb* desencolarReady(void)
 	sem_wait(&s_ColaReady);
 	t_pcb* aux = l_ready;
 	l_ready = aux->siguiente;
+	log_trace(logger,"Desencolando de Ready: %d", aux->pid);
 	sem_post(&s_ColaReady);
 	return aux;
 }
@@ -1744,6 +1512,7 @@ int encolarExec(t_pcb* pcb)
 {
 	sem_wait(&s_ColaCpu);
 	t_cpu* aux = l_cpu;
+	log_trace(logger,"Encolando en Exec: %d", pcb->pid);
 	while(aux != NULL)
 	{
 		if(aux->pcb == NULL)
@@ -1754,7 +1523,7 @@ int encolarExec(t_pcb* pcb)
 		}
 		aux = aux->siguiente;
 	}
-	printf("No hay cpus disponibles\n");
+	log_error(logger,"No hay CPU disponibles para encolar el PCB: %d", pcb->pid);
 	sem_post(&s_ColaCpu);
 	return -1;
 }
@@ -1763,6 +1532,7 @@ void desencolarExec(t_pcb* pcb)
 {
 	sem_wait(&s_ColaCpu);
 	t_cpu* aux = l_cpu;
+	log_trace(logger,"Desencolando PCB de Exec: %d",pcb->pid);
 	while(aux != NULL)
 	{
 		if(aux->pcb != NULL)
@@ -1777,7 +1547,7 @@ void desencolarExec(t_pcb* pcb)
 		}
 		aux = aux->siguiente;
 	}
-	printf("El pcb no estaba en ejecucion\n");
+	log_error(logger,"Error desencolando de Exec el PCB: %d",pcb->pid);
 	sem_post(&s_ColaCpu);
 	return;
 }
@@ -1786,208 +1556,22 @@ void encolarExit(t_pcb* pcb)
 {
 	sem_wait(&s_ColaExit);
 	t_pcb* aux = l_exit;
-
+	log_trace(logger,"Encolando PCB en Exit: %d",aux->pid);
 	if(l_exit == NULL)
 	{
 		l_exit = pcb;
 		pcb->siguiente = NULL;
-		printf("Encolando PRIMERO en exit %d\n", pcb->pid);
 		sem_post(&s_ColaExit);
 		sem_post(&s_ProgramasEnExit);
 		return;
 	}
 	else
 	{
-		while(aux->siguiente != NULL)
-		{
-			aux = aux->siguiente;
-		}
+		while(aux->siguiente != NULL) aux = aux->siguiente;
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
-		printf("Encolando ULTIMO en exit %d\n", pcb->pid);
 		sem_post(&s_ColaExit);
 		sem_post(&s_ProgramasEnExit);
 		return;
 	}
 }
-
-t_pcb readyAExec(void)
-{
-	sem_wait(&s_ColaReady);
-	t_pcb* auxReady = l_ready;
-	l_ready = auxReady->siguiente;
-	sem_post(&s_ColaReady);
-
-	t_pcb* auxExec = l_exec;
-	if(l_exec == NULL)
-	{
-		l_exec = auxReady;
-		auxReady->siguiente = NULL;
-		//return;
-	}
-	else
-	{
-		while(auxExec->siguiente != NULL)
-		{
-			auxExec = auxExec->siguiente;
-		}
-		auxExec->siguiente = auxReady;
-		auxReady->siguiente = NULL;
-		//return;
-	}
-	//	aux = l_exec;
-	//	while(aux != NULL)
-	//	{
-	//		printf("PID en exec: %d", aux->pid);
-	//		aux = aux->siguiente;
-	//	}
-	return *auxReady;
-}
-
-void execAReady(t_pcb pcb)
-{
-	t_pcb* auxExec = l_exec;
-	t_pcb* auxAnt;
-	//t_pcb* pcbAMover;
-	while (auxExec != NULL)
-	{
-		printf("PID EN EXEC: %d\n", auxExec->pid);
-		auxExec = auxExec->siguiente;
-	}
-	auxExec = l_exec;
-	if(auxExec->siguiente == NULL && auxExec->pid == pcb.pid)
-	{
-		l_exec = NULL;
-		//free(aux);
-		//return;
-	}
-	else
-	{
-		auxAnt = auxExec;
-		auxExec = auxExec->siguiente;
-		while(auxExec != NULL)
-		{
-			if(auxExec->pid == pcb.pid)
-			{
-				auxAnt->siguiente = auxExec->siguiente;
-				//free(aux);
-			}
-			else
-			{
-				auxAnt = auxExec;
-				auxExec = auxExec->siguiente;
-			}
-		}
-	}
-
-	printf("Desencole\n");
-
-	//pcbAMover = auxExec;
-	auxExec->pid = pcb.pid;
-	auxExec->segmentoCodigo = pcb.segmentoCodigo;
-	auxExec->segmentoStack = pcb.segmentoStack;
-	auxExec->cursorStack = pcb.cursorStack;
-	auxExec->indiceCodigo = pcb.indiceCodigo;
-	auxExec->indiceEtiquetas = pcb.indiceEtiquetas;
-	auxExec->programCounter = pcb.programCounter;
-	auxExec->tamanioContextoActual = pcb.tamanioContextoActual;
-	auxExec->tamanioIndiceEtiquetas = pcb.tamanioIndiceEtiquetas;
-	auxExec->tamanioIndiceCodigo = pcb.tamanioIndiceCodigo;
-	auxExec->peso = pcb.peso;
-	//auxExec->siguiente = NULL;
-
-	printf("Asigne\n");
-
-	sem_wait(&s_ColaReady);
-	t_pcb* aux = l_ready;
-	if(l_ready == NULL)
-	{
-		l_ready = auxExec;
-		sem_post(&s_ColaReady);
-		return;
-	}
-	else
-	{
-		while(aux->siguiente != NULL)
-		{
-			aux = aux->siguiente;
-		}
-		aux->siguiente = auxExec;
-		auxExec->siguiente = NULL;
-		sem_post(&s_ColaReady);
-		return;
-	}
-}
-
-void execAExit(t_pcb pcb)
-{
-	t_pcb* auxExec = l_exec;
-	t_pcb* auxAnt;
-	//t_pcb* pcbAMover;
-	if(auxExec->siguiente == NULL && auxExec->pid == pcb.pid)
-	{
-		l_exec = NULL;
-		//free(aux);
-		//return;
-	}
-	else
-	{
-		auxAnt = auxExec;
-		auxExec = auxExec->siguiente;
-		while(auxExec != NULL)
-		{
-			if(auxExec->pid == pcb.pid)
-			{
-				auxAnt->siguiente = auxExec->siguiente;
-				//free(aux);
-				//return;
-			}
-			auxAnt = auxExec;
-			auxExec = auxExec->siguiente;
-		}
-	}
-
-	//pcbAMover = auxExec;
-	auxExec->pid = pcb.pid;
-	auxExec->segmentoCodigo = pcb.segmentoCodigo;
-	auxExec->segmentoStack = pcb.segmentoStack;
-	auxExec->cursorStack = pcb.cursorStack;
-	auxExec->indiceCodigo = pcb.indiceCodigo;
-	auxExec->indiceEtiquetas = pcb.indiceEtiquetas;
-	auxExec->programCounter = pcb.programCounter;
-	auxExec->tamanioContextoActual = pcb.tamanioContextoActual;
-	auxExec->tamanioIndiceEtiquetas = pcb.tamanioIndiceEtiquetas;
-	auxExec->tamanioIndiceCodigo = pcb.tamanioIndiceCodigo;
-	auxExec->peso = pcb.peso;
-	auxExec->siguiente = NULL;
-
-	sem_wait(&s_ColaExit);
-	t_pcb* aux = l_exit;
-
-	if(l_exit == NULL)
-	{
-		l_exit = auxExec;
-		auxExec->siguiente = NULL;
-		printf("Encolando PRIMERO en exit %d\n", auxExec->pid);
-		sem_post(&s_ColaExit);
-		return;
-	}
-	else
-	{
-		while(aux->siguiente != NULL)
-		{
-			aux = aux->siguiente;
-		}
-		aux->siguiente = auxExec;
-		auxExec->siguiente = NULL;
-		printf("Encolando ULTIMO en exit %d\n", auxExec->pid);
-		sem_post(&s_ColaExit);
-		return;
-	}
-}
-
-void socketDesconectado(void)
-{
-	sleep(10);
-}
-
