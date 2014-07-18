@@ -201,6 +201,7 @@ int main(){
 
 			log_trace(logger, "Llamo al parser");
 			analizadorLinea(instruccionAEjecutar,&funciones,&kernel_functions);
+			log_trace(logger, "Espero %d segundos de retardo", retardo);
 			usleep(retardo*1000);
 			pcb->programCounter++;
 			quantumUtilizado++;
@@ -248,7 +249,6 @@ int main(){
 		generarSuperMensaje();
 		send(kernelSocket,superMensaje, sizeof(int)*11,0);
 		estaEjecutando = 0;
-		printf("Retorno PCB al Kernel\n");
 		liberarDiccionario();
 		if(matarCPU == 1)
 		{
@@ -311,6 +311,7 @@ void conectarConUMV()
 
 void dejarDeDarServicio()
 {
+	log_info(logger, "Se recibio señal para finalizar la ejecucion");
 	matarCPU = 1;
 	if(!estaEjecutando) kill(getpid(), SIGKILL);
 }
@@ -371,6 +372,7 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 	mensaje[1] = base;
 	mensaje[2] = offset;
 	mensaje[3] = tamanio;
+	log_trace(logger, "Solicito bytes a la UMV");
 	send(socketUMV, &operacion, sizeof(char), 0);
 	status = recv(socketUMV, &confirmacion, sizeof(char), 0);
 	if(confirmacion != 0)
@@ -380,17 +382,21 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 		if(!haySegFault)
 		{
 			status = recv(socketUMV, buffer, tamanio, 0);
-			printf("recibo datos segmento\n");
+			log_trace(logger, "Recibo datos desde la UMV");
 			return buffer;
 		}
 		else
 		{
-			printf("Termino programa\n");
 			terminarPrograma = 1;
 			errorDeEjecucion = 1;
-			printf("HUBO SEG FAULT\n");
+			log_error(logger, "SEGMENTATION FAULT");
 			return NULL;
 		}
+	}
+	else
+	{
+		log_error(logger, "No se recibio confirmacion por parte de la UMV");
+		return NULL;
 	}
 }
 
@@ -401,6 +407,7 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 	char confirmacion;
 	char conf;
 	char* package;
+	log_trace(logger, "Solicito enviar bytes a la UMV");
 	send(socketUMV, &operacion, sizeof(char), 0);
 	recv(socketUMV, &confirmacion, sizeof(char), 0);
 	if(confirmacion == 1)
@@ -408,13 +415,18 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 		package = serializarEnvioBytes(pid, base, offset, tamanio, buffer);
 		send(socketUMV, package, 4*sizeof(int) + tamanio, 0);
 		recv(socketUMV, &conf, sizeof(char), 0);
-		printf("CONF: %d\n", conf);
 		if(conf == -1)
 		{
+			log_error(logger, "SEGMENTATION FAULT");
 			terminarPrograma = 1;
 			errorDeEjecucion = 1;
+			return;
 		}
+		log_trace(logger, "La informacion se envio correctamente");
+		return;
 	}
+	log_error(logger, "No se recibio confirmacion por parte de la UMV");
+	return;
 }
 
 char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buffer)
