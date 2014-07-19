@@ -597,11 +597,18 @@ t_puntero AnSISOP_definirVariable(t_nombre_variable identificador_variable)
 		int offset;
 		char variable = (char) identificador_variable;
 		UMV_enviarBytes(pcb->pid,pcb->segmentoStack,(pcb->cursorStack + pcb->tamanioContextoActual * 5),5,&variable);
-		offset = pcb->cursorStack + pcb->tamanioContextoActual * 5 + 1;
-		agregarAlDiccionario(variable, offset);
-		pcb->tamanioContextoActual++;
-		//todo:Diccionario de variables. ??? ???
-		return offset;
+		if(!errorDeEjecucion)
+		{
+			offset = pcb->cursorStack + pcb->tamanioContextoActual * 5 + 1;
+			agregarAlDiccionario(variable, offset);
+			pcb->tamanioContextoActual++;
+			//todo:Diccionario de variables. ??? ???
+			return offset;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	else
 	{
