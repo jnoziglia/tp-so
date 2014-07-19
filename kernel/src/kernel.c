@@ -176,6 +176,7 @@ t_IO* arrayDispositivosIO;
 int cantidadDispositivosIO = 0;
 t_semaforo* arraySemaforos;
 int cantidadSemaforos = 0;
+t_pcb* listadoSemaforos;
 int quantum = 1;
 int retardo = 0;
 t_imprimir* l_imprimir;
@@ -534,6 +535,7 @@ void* f_hiloPCP()
 									if(arraySemaforos[semaforoEncontrado].pcb == NULL)
 									{
 										arraySemaforos[semaforoEncontrado].pcb = pcb;
+										printf("Encole el primer PCB en el semaforo\n");
 										break;
 									}
 									else
@@ -543,9 +545,9 @@ void* f_hiloPCP()
 										printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
 										while(listaAux->siguiente != NULL)
 										{
-											listaAux = listaAux->siguiente;
 											printf("PID BLOQUEADO: %d\n", listaAux->pid);
 											printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
+											listaAux = listaAux->siguiente;
 										}
 										listaAux->siguiente = pcb;
 										pcb->siguiente = NULL;
@@ -569,9 +571,9 @@ void* f_hiloPCP()
 								if(arraySemaforos[semaforoEncontrado].pcb != NULL)
 								{
 									t_pcb* aux = arraySemaforos[semaforoEncontrado].pcb;
-									aux->siguiente = NULL;
 									printf("Se pasa a ready un PCB: %d\n", aux->pid);
 									arraySemaforos[semaforoEncontrado].pcb = arraySemaforos[semaforoEncontrado].pcb->siguiente;
+									aux->siguiente = NULL;
 									encolarEnReady(aux);
 									break;
 								}
