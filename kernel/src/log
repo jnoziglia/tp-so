@@ -1,0 +1,276 @@
+[TRACE] 07:43:42:156 Kernel/(7470:7470): Levanto configuracion
+[TRACE] 07:43:42:156 Kernel/(7470:7470): Cargo variables compartidas
+[TRACE] 07:43:42:156 Kernel/(7470:7470): Variables compartidas cargadas
+[TRACE] 07:43:42:156 Kernel/(7470:7470): Cargo dispositivos de entrada/salida
+[TRACE] 07:43:42:157 Kernel/(7470:7470): Dispositivos de entrada/salida cargados
+[TRACE] 07:43:42:157 Kernel/(7470:7470): Cargo semaforos
+[TRACE] 07:43:42:157 Kernel/(7470:7470): Semáforos cargados
+[INFO] 07:43:42:157 Kernel/(7470:7470): Se establecio conexion con la UMV
+[TRACE] 07:43:42:157 Kernel/(7470:7472): Inicio del Hilo del IO: HDD1
+[TRACE] 07:43:42:157 Kernel/(7470:7475): Levanto hilo PLP
+[TRACE] 07:43:42:157 Kernel/(7470:7474): Levanto hilo PCP
+[TRACE] 07:43:42:157 Kernel/(7470:7471): Inicio del Hilo del IO: LPT1
+[INFO] 07:43:51:999 Kernel/(7470:7474): Se conecto un cpu por el socket 7
+[TRACE] 07:43:51:999 Kernel/(7470:7474): Se agrego el cpu 7 a la lista de cpus
+[TRACE] 07:43:51:999 Kernel/(7470:7474): Le envio al cpu 7 el quantum y retardo
+[INFO] 07:44:17:397 Kernel/(7470:7475): Se conecto un programa por el socket 8
+[INFO] 07:44:17:398 Kernel/(7470:7475): Se recibio el codigo del programa 8
+[INFO] 07:44:17:398 Kernel/(7470:7475): Llegó un programa y se encola en New: 8
+
+[INFO] 07:44:17:398 Kernel/(7470:7477): Se puede pasar un programa de NEW a READY
+[TRACE] 07:44:17:398 Kernel/(7470:7477): Desencolo el programa 8 de new
+[TRACE] 07:44:17:398 Kernel/(7470:7477): Solicito a la UMV crear segmento de Stack del programa 8
+[TRACE] 07:44:17:398 Kernel/(7470:7477): Solicito a la UMV crear segmentos
+[TRACE] 07:44:17:398 Kernel/(7470:7477): Envio segmento tamanio 300
+[INFO] 07:44:17:399 Kernel/(7470:7477): Segmento creado correctamente
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Solicito a la UMV crear segmento de Codigo del programa 8
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Solicito a la UMV crear segmentos
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Envio segmento tamanio 52
+[INFO] 07:44:17:399 Kernel/(7470:7477): Segmento creado correctamente
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Solicito a la UMV crear segmento de Indice de Codigo del programa 8
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Solicito a la UMV crear segmentos
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Envio segmento tamanio 40
+[INFO] 07:44:17:399 Kernel/(7470:7477): Segmento creado correctamente
+[TRACE] 07:44:17:399 Kernel/(7470:7477): El pcb se creo correctamente
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Envio a la UMV el Codigo del programa 8
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Solicito a la UMV enviar bytes
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Envio datos del programa 8, base 6202 para almacenar
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Envio a la UMV el Indice de Codigo del programa 8
+[TRACE] 07:44:17:399 Kernel/(7470:7477): Solicito a la UMV enviar bytes
+[TRACE] 07:44:17:400 Kernel/(7470:7477): Envio datos del programa 8, base 4625 para almacenar
+[TRACE] 07:44:17:400 Kernel/(7470:7477): Se encolo en ready el pcb con PID 8
+[INFO] 07:44:17:400 Kernel/(7470:7479): Hay PCBs encolados en READY
+[INFO] 07:44:17:400 Kernel/(7470:7479): Hay cpus listos para ejecutar
+[TRACE] 07:44:17:400 Kernel/(7470:7479): Desencolando de Ready: 8
+[TRACE] 07:44:17:400 Kernel/(7470:7479): Encolando en Exec: 8
+[TRACE] 07:44:17:400 Kernel/(7470:7479): Envio al cpu 7 el PCB con pid 8
+[INFO] 07:44:20:641 Kernel/(7470:7474): El cpu 7 informa que se le termino el quantum a un proceso
+[TRACE] 07:44:20:641 Kernel/(7470:7474): Recibiendo PCB con pid 8 del cpu 7
+[TRACE] 07:44:20:641 Kernel/(7470:7474): Desencolando PCB de Exec: 8
+[TRACE] 07:44:20:641 Kernel/(7470:7474): Se encolo en ready el pcb con PID 8
+[INFO] 07:44:20:641 Kernel/(7470:7479): Hay PCBs encolados en READY
+[INFO] 07:44:20:641 Kernel/(7470:7479): Hay cpus listos para ejecutar
+[TRACE] 07:44:20:641 Kernel/(7470:7479): Desencolando de Ready: 8
+[TRACE] 07:44:20:641 Kernel/(7470:7479): Encolando en Exec: 8
+[TRACE] 07:44:20:641 Kernel/(7470:7479): Envio al cpu 7 el PCB con pid 8
+[INFO] 07:44:22:880 Kernel/(7470:7474): Llego una solicitud del cpu 7 para finalizar un programa
+[TRACE] 07:44:22:919 Kernel/(7470:7474): Recibiendo PCB con pid 8 del cpu 7
+[TRACE] 07:44:22:919 Kernel/(7470:7474): Desencolando PCB de Exec: 8
+[TRACE] 07:44:22:919 Kernel/(7470:7474): Encolando PCB en Exit: 8
+[INFO] 07:44:22:919 Kernel/(7470:7478): Hay programas encolados en EXIT
+[TRACE] 07:44:22:919 Kernel/(7470:7478): Informo al programa 8 que debe terminar su ejecucion
+[TRACE] 07:44:22:919 Kernel/(7470:7478): Solicito a la UMV destruir segmentos del programa 8
+[INFO] 07:44:22:919 Kernel/(7470:7478): Segmentos del programa 8 destruidos
+[INFO] 07:44:22:919 Kernel/(7470:7478): PCB Destruido
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Levanto configuracion
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Cargo variables compartidas
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Variables compartidas cargadas
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Cargo dispositivos de entrada/salida
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Dispositivos de entrada/salida cargados
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Cargo semaforos
+[TRACE] 07:47:13:620 Kernel/(7582:7582): Semáforos cargados
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Levanto configuracion
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Cargo variables compartidas
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Variables compartidas cargadas
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Cargo dispositivos de entrada/salida
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Dispositivos de entrada/salida cargados
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Cargo semaforos
+[TRACE] 07:47:35:404 Kernel/(7588:7588): Semáforos cargados
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Levanto configuracion
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Cargo variables compartidas
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Variables compartidas cargadas
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Cargo dispositivos de entrada/salida
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Dispositivos de entrada/salida cargados
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Cargo semaforos
+[TRACE] 07:48:00:532 Kernel/(7595:7595): Semáforos cargados
+[INFO] 07:48:00:532 Kernel/(7595:7595): Se establecio conexion con la UMV
+[TRACE] 07:48:00:532 Kernel/(7595:7597): Inicio del Hilo del IO: HDD1
+[TRACE] 07:48:00:532 Kernel/(7595:7600): Levanto hilo PLP
+[TRACE] 07:48:00:532 Kernel/(7595:7599): Levanto hilo PCP
+[TRACE] 07:48:00:532 Kernel/(7595:7596): Inicio del Hilo del IO: LPT1
+[INFO] 07:48:03:325 Kernel/(7595:7599): Se conecto un cpu por el socket 7
+[TRACE] 07:48:03:325 Kernel/(7595:7599): Se agrego el cpu 7 a la lista de cpus
+[TRACE] 07:48:03:325 Kernel/(7595:7599): Le envio al cpu 7 el quantum y retardo
+[INFO] 07:48:04:523 Kernel/(7595:7600): Se conecto un programa por el socket 8
+[INFO] 07:48:04:523 Kernel/(7595:7600): Se recibio el codigo del programa 8
+[INFO] 07:48:04:523 Kernel/(7595:7600): Llegó un programa y se encola en New: 8
+
+[INFO] 07:48:04:523 Kernel/(7595:7602): Se puede pasar un programa de NEW a READY
+[TRACE] 07:48:04:523 Kernel/(7595:7602): Desencolo el programa 8 de new
+[TRACE] 07:48:04:523 Kernel/(7595:7602): Solicito a la UMV crear segmento de Stack del programa 8
+[TRACE] 07:48:04:523 Kernel/(7595:7602): Solicito a la UMV crear segmentos
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Envio segmento tamanio 300
+[INFO] 07:48:04:524 Kernel/(7595:7602): Segmento creado correctamente
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Solicito a la UMV crear segmento de Codigo del programa 8
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Solicito a la UMV crear segmentos
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Envio segmento tamanio 52
+[INFO] 07:48:04:524 Kernel/(7595:7602): Segmento creado correctamente
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Solicito a la UMV crear segmento de Indice de Codigo del programa 8
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Solicito a la UMV crear segmentos
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Envio segmento tamanio 40
+[INFO] 07:48:04:524 Kernel/(7595:7602): Segmento creado correctamente
+[TRACE] 07:48:04:524 Kernel/(7595:7602): El pcb se creo correctamente
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Envio a la UMV el Codigo del programa 8
+[TRACE] 07:48:04:524 Kernel/(7595:7602): Solicito a la UMV enviar bytes
+[TRACE] 07:48:04:525 Kernel/(7595:7602): Envio datos del programa 8, base 6202 para almacenar
+[TRACE] 07:48:04:525 Kernel/(7595:7602): Envio a la UMV el Indice de Codigo del programa 8
+[TRACE] 07:48:04:525 Kernel/(7595:7602): Solicito a la UMV enviar bytes
+[TRACE] 07:48:04:525 Kernel/(7595:7602): Envio datos del programa 8, base 4625 para almacenar
+[TRACE] 07:48:04:525 Kernel/(7595:7602): Se encolo en ready el pcb con PID 8
+[INFO] 07:48:04:525 Kernel/(7595:7604): Hay PCBs encolados en READY
+[INFO] 07:48:04:525 Kernel/(7595:7604): Hay cpus listos para ejecutar
+[TRACE] 07:48:04:525 Kernel/(7595:7604): Desencolando de Ready: 8
+[TRACE] 07:48:04:525 Kernel/(7595:7604): Encolando en Exec: 8
+[TRACE] 07:48:04:525 Kernel/(7595:7604): Envio al cpu 7 el PCB con pid 8
+[INFO] 07:48:07:764 Kernel/(7595:7599): El cpu 7 informa que se le termino el quantum a un proceso
+[TRACE] 07:48:07:764 Kernel/(7595:7599): Recibiendo PCB con pid 8 del cpu 7
+[TRACE] 07:48:07:764 Kernel/(7595:7599): Desencolando PCB de Exec: 8
+[TRACE] 07:48:07:764 Kernel/(7595:7599): Se encolo en ready el pcb con PID 8
+[INFO] 07:48:07:764 Kernel/(7595:7604): Hay PCBs encolados en READY
+[INFO] 07:48:07:764 Kernel/(7595:7604): Hay cpus listos para ejecutar
+[TRACE] 07:48:07:764 Kernel/(7595:7604): Desencolando de Ready: 8
+[TRACE] 07:48:07:764 Kernel/(7595:7604): Encolando en Exec: 8
+[TRACE] 07:48:07:764 Kernel/(7595:7604): Envio al cpu 7 el PCB con pid 8
+[INFO] 07:48:10:5 Kernel/(7595:7599): Llego una solicitud del cpu 7 para finalizar un programa
+[TRACE] 07:48:10:44 Kernel/(7595:7599): Recibiendo PCB con pid 8 del cpu 7
+[TRACE] 07:48:10:44 Kernel/(7595:7599): Desencolando PCB de Exec: 8
+[TRACE] 07:48:10:44 Kernel/(7595:7599): Encolando PCB en Exit: 8
+[INFO] 07:48:10:44 Kernel/(7595:7603): Hay programas encolados en EXIT
+[TRACE] 07:48:10:44 Kernel/(7595:7603): Informo al programa 8 que debe terminar su ejecucion
+[TRACE] 07:48:10:44 Kernel/(7595:7603): Solicito a la UMV destruir segmentos del programa 8
+[INFO] 07:48:10:46 Kernel/(7595:7603): Segmentos del programa 8 destruidos
+[INFO] 07:48:10:46 Kernel/(7595:7603): PCB Destruido
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Levanto configuracion
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Cargo variables compartidas
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Variables compartidas cargadas
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Cargo dispositivos de entrada/salida
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Dispositivos de entrada/salida cargados
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Cargo semaforos
+[TRACE] 07:50:58:210 Kernel/(7638:7638): Semáforos cargados
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Levanto configuracion
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Cargo variables compartidas
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Variables compartidas cargadas
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Cargo dispositivos de entrada/salida
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Dispositivos de entrada/salida cargados
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Cargo semaforos
+[TRACE] 07:51:36:698 Kernel/(7645:7645): Semáforos cargados
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Levanto configuracion
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Cargo variables compartidas
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Variables compartidas cargadas
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Cargo dispositivos de entrada/salida
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Dispositivos de entrada/salida cargados
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Cargo semaforos
+[TRACE] 07:51:54:91 Kernel/(7651:7651): Semáforos cargados
+[INFO] 07:51:54:92 Kernel/(7651:7651): Se establecio conexion con la UMV
+[TRACE] 07:51:54:92 Kernel/(7651:7653): Inicio del Hilo del IO: HDD1
+[TRACE] 07:51:54:92 Kernel/(7651:7656): Levanto hilo PLP
+[TRACE] 07:51:54:92 Kernel/(7651:7655): Levanto hilo PCP
+[TRACE] 07:51:54:92 Kernel/(7651:7652): Inicio del Hilo del IO: LPT1
+[INFO] 07:51:56:116 Kernel/(7651:7655): Se conecto un cpu por el socket 7
+[TRACE] 07:51:56:117 Kernel/(7651:7655): Se agrego el cpu 7 a la lista de cpus
+[TRACE] 07:51:56:117 Kernel/(7651:7655): Le envio al cpu 7 el quantum y retardo
+[INFO] 07:51:57:187 Kernel/(7651:7656): Se conecto un programa por el socket 8
+[INFO] 07:51:57:187 Kernel/(7651:7656): Se recibio el codigo del programa 8
+[INFO] 07:51:57:187 Kernel/(7651:7656): Llegó un programa y se encola en New: 8
+
+[INFO] 07:51:57:187 Kernel/(7651:7658): Se puede pasar un programa de NEW a READY
+[TRACE] 07:51:57:187 Kernel/(7651:7658): Desencolo el programa 8 de new
+[TRACE] 07:51:57:187 Kernel/(7651:7658): Solicito a la UMV crear segmento de Stack del programa 8
+[TRACE] 07:51:57:187 Kernel/(7651:7658): Solicito a la UMV crear segmentos
+[TRACE] 07:51:57:188 Kernel/(7651:7658): Envio segmento tamanio 300
+[INFO] 07:51:57:188 Kernel/(7651:7658): Segmento creado correctamente
+[TRACE] 07:51:57:188 Kernel/(7651:7658): Solicito a la UMV crear segmento de Codigo del programa 8
+[TRACE] 07:51:57:188 Kernel/(7651:7658): Solicito a la UMV crear segmentos
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Envio segmento tamanio 52
+[INFO] 07:51:57:189 Kernel/(7651:7658): Segmento creado correctamente
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Solicito a la UMV crear segmento de Indice de Codigo del programa 8
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Solicito a la UMV crear segmentos
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Envio segmento tamanio 40
+[INFO] 07:51:57:189 Kernel/(7651:7658): Segmento creado correctamente
+[TRACE] 07:51:57:189 Kernel/(7651:7658): El pcb se creo correctamente
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Envio a la UMV el Codigo del programa 8
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Solicito a la UMV enviar bytes
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Envio datos del programa 8, base 6202 para almacenar
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Envio a la UMV el Indice de Codigo del programa 8
+[TRACE] 07:51:57:189 Kernel/(7651:7658): Solicito a la UMV enviar bytes
+[TRACE] 07:51:57:190 Kernel/(7651:7658): Envio datos del programa 8, base 4625 para almacenar
+[TRACE] 07:51:57:190 Kernel/(7651:7658): Se encolo en ready el pcb con PID 8
+[INFO] 07:51:57:190 Kernel/(7651:7660): Hay PCBs encolados en READY
+[INFO] 07:51:57:190 Kernel/(7651:7660): Hay cpus listos para ejecutar
+[TRACE] 07:51:57:190 Kernel/(7651:7660): Desencolando de Ready: 8
+[TRACE] 07:51:57:190 Kernel/(7651:7660): Encolando en Exec: 8
+[TRACE] 07:51:57:190 Kernel/(7651:7660): Envio al cpu 7 el PCB con pid 8
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Levanto configuracion
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Cargo variables compartidas
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Variables compartidas cargadas
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Cargo dispositivos de entrada/salida
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Dispositivos de entrada/salida cargados
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Cargo semaforos
+[TRACE] 07:52:08:467 Kernel/(7686:7686): Semáforos cargados
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Levanto configuracion
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Cargo variables compartidas
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Variables compartidas cargadas
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Cargo dispositivos de entrada/salida
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Dispositivos de entrada/salida cargados
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Cargo semaforos
+[TRACE] 07:53:10:125 Kernel/(7693:7693): Semáforos cargados
+[INFO] 07:53:10:125 Kernel/(7693:7693): Se establecio conexion con la UMV
+[TRACE] 07:53:10:125 Kernel/(7693:7695): Inicio del Hilo del IO: HDD1
+[TRACE] 07:53:10:125 Kernel/(7693:7698): Levanto hilo PLP
+[TRACE] 07:53:10:126 Kernel/(7693:7697): Levanto hilo PCP
+[TRACE] 07:53:10:126 Kernel/(7693:7694): Inicio del Hilo del IO: LPT1
+[INFO] 07:53:11:939 Kernel/(7693:7697): Se conecto un cpu por el socket 7
+[TRACE] 07:53:11:939 Kernel/(7693:7697): Se agrego el cpu 7 a la lista de cpus
+[TRACE] 07:53:11:939 Kernel/(7693:7697): Le envio al cpu 7 el quantum y retardo
+[INFO] 07:53:13:603 Kernel/(7693:7698): Se conecto un programa por el socket 8
+[INFO] 07:53:13:604 Kernel/(7693:7698): Se recibio el codigo del programa 8
+[INFO] 07:53:13:604 Kernel/(7693:7698): Llegó un programa y se encola en New: 8
+
+[INFO] 07:53:13:604 Kernel/(7693:7700): Se puede pasar un programa de NEW a READY
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Desencolo el programa 8 de new
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Solicito a la UMV crear segmento de Stack del programa 8
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Solicito a la UMV crear segmentos
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Envio segmento tamanio 300
+[INFO] 07:53:13:604 Kernel/(7693:7700): Segmento creado correctamente
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Solicito a la UMV crear segmento de Codigo del programa 8
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Solicito a la UMV crear segmentos
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Envio segmento tamanio 52
+[INFO] 07:53:13:604 Kernel/(7693:7700): Segmento creado correctamente
+[TRACE] 07:53:13:604 Kernel/(7693:7700): Solicito a la UMV crear segmento de Indice de Codigo del programa 8
+[TRACE] 07:53:13:605 Kernel/(7693:7700): Solicito a la UMV crear segmentos
+[TRACE] 07:53:13:605 Kernel/(7693:7700): Envio segmento tamanio 40
+[INFO] 07:53:13:605 Kernel/(7693:7700): Segmento creado correctamente
+[TRACE] 07:53:13:605 Kernel/(7693:7700): El pcb se creo correctamente
+[TRACE] 07:53:13:605 Kernel/(7693:7700): Envio a la UMV el Codigo del programa 8
+[TRACE] 07:53:13:605 Kernel/(7693:7700): Solicito a la UMV enviar bytes
+[TRACE] 07:53:13:605 Kernel/(7693:7700): Envio datos del programa 8, base 6202 para almacenar
+[TRACE] 07:53:13:606 Kernel/(7693:7700): Envio a la UMV el Indice de Codigo del programa 8
+[TRACE] 07:53:13:606 Kernel/(7693:7700): Solicito a la UMV enviar bytes
+[TRACE] 07:53:13:606 Kernel/(7693:7700): Envio datos del programa 8, base 4625 para almacenar
+[TRACE] 07:53:13:606 Kernel/(7693:7700): Se encolo en ready el pcb con PID 8
+[INFO] 07:53:13:606 Kernel/(7693:7702): Hay PCBs encolados en READY
+[INFO] 07:53:13:606 Kernel/(7693:7702): Hay cpus listos para ejecutar
+[TRACE] 07:53:13:606 Kernel/(7693:7702): Desencolando de Ready: 8
+[TRACE] 07:53:13:606 Kernel/(7693:7702): Encolando en Exec: 8
+[TRACE] 07:53:13:606 Kernel/(7693:7702): Envio al cpu 7 el PCB con pid 8
+[INFO] 07:53:16:844 Kernel/(7693:7697): El cpu 7 informa que se le termino el quantum a un proceso
+[TRACE] 07:53:16:844 Kernel/(7693:7697): Recibiendo PCB con pid 8 del cpu 7
+[TRACE] 07:53:16:844 Kernel/(7693:7697): Desencolando PCB de Exec: 8
+[TRACE] 07:53:16:844 Kernel/(7693:7697): Se encolo en ready el pcb con PID 8
+[INFO] 07:53:16:844 Kernel/(7693:7702): Hay PCBs encolados en READY
+[INFO] 07:53:16:844 Kernel/(7693:7702): Hay cpus listos para ejecutar
+[TRACE] 07:53:16:844 Kernel/(7693:7702): Desencolando de Ready: 8
+[TRACE] 07:53:16:844 Kernel/(7693:7702): Encolando en Exec: 8
+[TRACE] 07:53:16:844 Kernel/(7693:7702): Envio al cpu 7 el PCB con pid 8
+[INFO] 07:53:19:88 Kernel/(7693:7697): Llego una solicitud del cpu 7 para finalizar un programa
+[TRACE] 07:53:19:127 Kernel/(7693:7697): Recibiendo PCB con pid 8 del cpu 7
+[TRACE] 07:53:19:127 Kernel/(7693:7697): Desencolando PCB de Exec: 8
+[TRACE] 07:53:19:127 Kernel/(7693:7697): Encolando PCB en Exit: 8
+[INFO] 07:53:19:127 Kernel/(7693:7701): Hay programas encolados en EXIT
+[TRACE] 07:53:19:127 Kernel/(7693:7701): Informo al programa 8 que debe terminar su ejecucion
+[TRACE] 07:53:19:127 Kernel/(7693:7701): Solicito a la UMV destruir segmentos del programa 8
+[INFO] 07:53:19:129 Kernel/(7693:7701): Segmentos del programa 8 destruidos
+[INFO] 07:53:19:129 Kernel/(7693:7701): PCB Destruido
+[INFO] 07:53:28:587 Kernel/(7693:7697): Se desconecto el cpu 7
+[TRACE] 07:53:28:587 Kernel/(7693:7697): Se saco el cpu 7 de la lista de cpus
+[TRACE] 07:53:28:587 Kernel/(7693:7697): Finalizada conexion con cpu 7

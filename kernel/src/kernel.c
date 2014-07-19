@@ -119,7 +119,6 @@ void conexionUMV(void);
 int UMV_crearSegmentos(int mensaje[2]);
 void UMV_destruirSegmentos(int pid);
 void* f_hiloMostrarNew();
-void serializarPcb(t_pcb* pcb, void* package);
 t_pcb* recibirSuperMensaje ( int superMensaje[11] );
 void cargarConfig(void);
 void cargarVariablesCompartidas(void);
@@ -134,10 +133,6 @@ t_pcb* desencolarReady(void);
 int encolarExec(t_pcb* pcb);
 void desencolarExec(t_pcb* pcb);
 void encolarExit(t_pcb* pcb);
-t_pcb readyAExec(void);
-void execAReady(t_pcb pcb);
-void execAExit(t_pcb pcb);
-void socketDesconectado(void);
 void agregarCpu(int socketID);
 t_pcb* sacarCpuDeEjecucion(int socketID);
 void* f_hiloColaExit(void);
@@ -208,8 +203,8 @@ t_config* configuracion;
 
 int main(int cantArgs, char** args) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
-	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
-	logger = log_create(NULL, "Kernel", 0, LOG_LEVEL_TRACE);
+	//int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
+	logger = log_create(args[2], "Kernel", 0, LOG_LEVEL_TRACE);
 	configuracion = config_create(args[1]);
 	cargarConfig();
 	sem_init(&s_Multiprogramacion,0,gradoMultiprogramacion);
@@ -232,10 +227,10 @@ int main(int cantArgs, char** args) {
 	cargarSemaforos();
 
 	conexionUMV();
-	rhPCP = pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
-	rhPLP = pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
-	rhMostrarNew = pthread_create(&hiloMostrarNew, NULL, f_hiloMostrarNew, NULL);
-	rhColaReady = pthread_create(&hiloColaReady, NULL, f_hiloColaReady, NULL);
+	pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
+	pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
+	pthread_create(&hiloMostrarNew, NULL, f_hiloMostrarNew, NULL);
+	pthread_create(&hiloColaReady, NULL, f_hiloColaReady, NULL);
 	//rhColaIO = pthread_create(&hiloIO, NULL, f_hiloIO, NULL);
 	pthread_join(hiloPCP, NULL);
 	pthread_join(hiloPLP, NULL);
@@ -293,9 +288,9 @@ void* f_hiloPCP()
 	int pid, valorAImprimir, tamanioTexto;
 	char* texto;
 	char operacion;
-	char ping = 1;
+	//char ping = 1;
 	t_pcb* pcb;
-	t_pcb* puntero;
+	//t_pcb* puntero;
 	//signal(SIGPIPE, SIG_IGN);
 	//void* package = malloc(sizeof(t_pcb));
 	//t_pcb* pcb;
@@ -330,7 +325,7 @@ void* f_hiloPCP()
 		readPCP = fdRPCP;
 		//writePCP = fdWPCP;
 		statusSelect = select(maximoCpu + 1, &readPCP, NULL, NULL, NULL);
-		printf("SELECT: %d\n", statusSelect);
+		//printf("SELECT: %d\n", statusSelect);
 		for(i=3; i<=maximoCpu; i++)
 		{
 			if(FD_ISSET(i, &readPCP))
@@ -340,6 +335,7 @@ void* f_hiloPCP()
 					sem_wait(&s_ConexionCpu);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 					log_info(logger, "Se conecto un cpu por el socket %d", socketAux);
+					printf("CPU Conectado en el socket %d.\n", socketAux);
 					FD_SET(socketAux, &fdRPCP);
 					agregarCpu(socketAux);
 					//FD_SET(socketAux, &fdRPCP);
@@ -393,15 +389,15 @@ void* f_hiloPCP()
 							if(mensaje2 == 0)
 							{
 								//TODO: Obtener valor variable compartida.
-								printf("Obtener valor variable compartida %s\n", variable);
+								//printf("Obtener valor variable compartida %s\n", variable);
 								int j;
 								for(j = 0; j < cantidadVariablesCompartidas; j++)
 								{
-									printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+									//printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
 									if(string_equals_ignore_case(arrayVariablesCompartidas[j].nombreVariable, variable))
 									{
 										valorVariable = arrayVariablesCompartidas[j].valorVariable;
-										printf("Variable Global pedida: %s Valor %d\n",variable,valorVariable);
+										log_trace(logger,"Variable Global pedida: %s Valor %d",variable,valorVariable);
 										break;
 									}
 								}
@@ -412,15 +408,15 @@ void* f_hiloPCP()
 							{
 								//TODO: Asignar variable compartida.
 								recv(i,&valorVariable,sizeof(int),0);
-								printf("Asignar valor variable compartida: %s\n", variable);
+								//printf("Asignar valor variable compartida: %s\n", variable);
 								int j;
 								for(j = 0; j < cantidadVariablesCompartidas; j++)
 								{
-									printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
+									//printf("Busco las variables: Buscada: %s, actual: %s\n", variable, arrayVariablesCompartidas[j].nombreVariable);
 									if(string_equals_ignore_case(variable, arrayVariablesCompartidas[j].nombreVariable))
 									{
 										arrayVariablesCompartidas[j].valorVariable = valorVariable;
-										printf("Variable Global asignada: %s Valor %d\n",variable,valorVariable);
+										log_trace(logger,"Variable Global asignada: %s Valor %d",variable,valorVariable);
 										break;
 									}
 								}
@@ -429,7 +425,7 @@ void* f_hiloPCP()
 							else
 							{
 								//Error.
-								printf("Error accediendo a variables compartidas.\n");
+								log_error(logger,"Error accediendo a variables compartidas.");
 							}
 						}
 						else if (mensaje == 3)
@@ -439,14 +435,14 @@ void* f_hiloPCP()
 							int tamanio = 0, tiempo = -1;
 							recv(i,&tamanio,sizeof(int),0);
 							char* dispositivo = malloc(tamanio);
-							printf("Tamanio del nombre del dispositivo: %d\n",tamanio);
+							//printf("Tamanio del nombre del dispositivo: %d\n",tamanio);
 							recv(i,dispositivo,tamanio,0);
 							dispositivo[tamanio] = '\0';
 							recv(i,&tiempo,sizeof(int),0);
-							printf("Nombre del dispositivo: %s\n",dispositivo);
+							//printf("Nombre del dispositivo: %s\n",dispositivo);
 							//Recepción del PCB
 							recv(i,&superMensaje,sizeof(superMensaje),0);
-							printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
+							//printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
 							pcb = recibirSuperMensaje(superMensaje);
 							desencolarExec(pcb);
 							pcb->siguiente = NULL;
@@ -454,7 +450,7 @@ void* f_hiloPCP()
 							int j;
 							for(j = 0; j < cantidadDispositivosIO; j++)
 							{
-								printf("Busco el dispositivo. Buscado: %s, actual: %s\n", dispositivo, arrayDispositivosIO[j].nombreIO);
+								//printf("Busco el dispositivo. Buscado: %s, actual: %s\n", dispositivo, arrayDispositivosIO[j].nombreIO);
 								if(string_equals_ignore_case(dispositivo, arrayDispositivosIO[j].nombreIO))
 								{
 									//Generar el elemento de la lista para encolar
@@ -473,7 +469,7 @@ void* f_hiloPCP()
 										while(listaAux->siguiente != NULL) listaAux = arrayDispositivosIO[j].pcbEnLista->siguiente;
 										listaAux->siguiente = aux;
 									}
-									printf("PCB Encolado en el dispositivo %s\n",arrayDispositivosIO[j].nombreIO);
+									log_info(logger,"PCB Encolado en el dispositivo %s",arrayDispositivosIO[j].nombreIO);
 									sem_post(&s_IO[j]);
 									break;
 								}
@@ -487,31 +483,31 @@ void* f_hiloPCP()
 							int tamanio = 0;
 							recv(i,&tamanio,sizeof(int),0);
 							char* semaforo = malloc(tamanio);
-							printf("Tamanio del nombre del semaforo: %d\n",tamanio);
+							//printf("Tamanio del nombre del semaforo: %d\n",tamanio);
 							recv(i,semaforo,tamanio,0);
 							semaforo[tamanio] = '\0';
-							printf("Nombre del semaforo: %s\n",semaforo);
+							//printf("Nombre del semaforo: %s\n",semaforo);
 							char mensaje2;
 							recv(i,&mensaje2,sizeof(char),0);
-							printf("Operación: %d\n",mensaje2);
+							//printf("Operación: %d\n",mensaje2);
 							//Busco afuera cuál es el semaforo,
 							int j, semaforoEncontrado = -1;
 							for(j = 0; j < cantidadSemaforos; j++)
 							{
-								printf("Busco el semáforo. Buscado: %s, actual: %s\n", semaforo, arraySemaforos[j].nombreSemaforo);
+								//printf("Busco el semáforo. Buscado: %s, actual: %s\n", semaforo, arraySemaforos[j].nombreSemaforo);
 								if(string_equals_ignore_case(semaforo, arraySemaforos[j].nombreSemaforo))
 								{
 									semaforoEncontrado = j;
 								}
 							}
-							printf("Encolo en el semaforo %s", arraySemaforos[semaforoEncontrado].nombreSemaforo);
+							//printf("Encolo en el semaforo %s", arraySemaforos[semaforoEncontrado].nombreSemaforo);
 							if(semaforoEncontrado == -1)
 							{
 								mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
 								send(i,&mensaje2,sizeof(char),0);
-								printf("No se encontró el semáforo solicitado. Se destruye el PCB");
+								//printf("No se encontró el semáforo solicitado. Se destruye el PCB");
 								recv(i,&superMensaje,sizeof(superMensaje),0);
-								printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
+								//printf("PCB a EntradaSalida: %d\n", superMensaje[0]);
 								pcb = recibirSuperMensaje(superMensaje);
 								desencolarExec(pcb);
 								pcb->siguiente = NULL;
@@ -521,17 +517,17 @@ void* f_hiloPCP()
 							if(mensaje2 == 0)
 							{
 								//WAIT
-								printf("Wait\n");
+								//printf("Wait\n");
 								arraySemaforos[semaforoEncontrado].valor--;
 								if(arraySemaforos[semaforoEncontrado].valor < 0)
 								{
 									//Se bloquea el programa.
-									printf("Se bloquea el PCB.\n");
+									//printf("Se bloquea el PCB.\n");
 									mensaje2 = 0; //Se bloquea el programa. Hay que pedir PCB.
 									send(i,&mensaje2,sizeof(char),0);
 									//Recepción del PCB
 									recv(i,&superMensaje,sizeof(superMensaje),0);
-									printf("PCB a bloquear: %d\n", superMensaje[0]);
+									//printf("PCB a bloquear: %d\n", superMensaje[0]);
 									pcb = recibirSuperMensaje(superMensaje);
 									desencolarExec(pcb);
 									pcb->siguiente = NULL;
@@ -539,18 +535,18 @@ void* f_hiloPCP()
 									if(arraySemaforos[semaforoEncontrado].pcb == NULL)
 									{
 										arraySemaforos[semaforoEncontrado].pcb = pcb;
-										printf("Encole el primer PCB en el semaforo\n");
+										//printf("Encole el primer PCB en el semaforo\n");
 										break;
 									}
 									else
 									{
 										t_pcb* listaAux = arraySemaforos[semaforoEncontrado].pcb;
-										printf("PID BLOQUEADO: %d\n", listaAux->pid);
-										printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
+										//printf("PID BLOQUEADO: %d\n", listaAux->pid);
+										//printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
 										while(listaAux->siguiente != NULL)
 										{
-											printf("PID BLOQUEADO: %d\n", listaAux->pid);
-											printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
+											//printf("PID BLOQUEADO: %d\n", listaAux->pid);
+											//printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
 											listaAux = listaAux->siguiente;
 										}
 										listaAux->siguiente = pcb;
@@ -561,7 +557,7 @@ void* f_hiloPCP()
 								else
 								{
 									//Puede seguir ejecutando
-									printf("Puede seguir ejecutando\n");
+									//printf("Puede seguir ejecutando\n");
 									char mensaje3 = 1; //Enviar confirmación: Puede seguir ejecutando.
 									send(i,&mensaje3,sizeof(char),0);
 									break;
@@ -570,12 +566,12 @@ void* f_hiloPCP()
 							else if (mensaje2 == 1)
 							{
 								//SIGNAL
-								printf("Signal\n");
+								//printf("Signal\n");
 								arraySemaforos[semaforoEncontrado].valor++;
 								if(arraySemaforos[semaforoEncontrado].pcb != NULL)
 								{
 									t_pcb* aux = arraySemaforos[semaforoEncontrado].pcb;
-									printf("Se pasa a ready un PCB: %d\n", aux->pid);
+									log_info(logger,"Se desbloquea el PCB %d del semáforo %s", aux->pid, arraySemaforos[semaforoEncontrado].nombreSemaforo);
 									arraySemaforos[semaforoEncontrado].pcb = arraySemaforos[semaforoEncontrado].pcb->siguiente;
 									aux->siguiente = NULL;
 									encolarEnReady(aux);
@@ -585,7 +581,7 @@ void* f_hiloPCP()
 							else
 							{
 								//Error.
-								printf("Error en la recepción de la operación.\n");
+								//printf("Error en la recepción de la operación.\n");
 								break;
 							}
 							free(semaforo);
@@ -759,7 +755,7 @@ t_pcb* sacarCpuDeEjecucion(int socketID)
 void* f_hiloHabilitarCpu(void)
 {
 	int superMensaje[11];
-	int status;
+	//int status;
 	int socketID;
 	while(1)
 	{
@@ -784,10 +780,10 @@ void* f_hiloHabilitarCpu(void)
 
 		socketID = encolarExec(pcbAux);
 		log_trace(logger, "Envio al cpu %d el PCB con pid %d", socketID, superMensaje[0]);
-		status = send(socketID, superMensaje, 11*sizeof(int), 0);
+		send(socketID, superMensaje, 11*sizeof(int), 0);
 		sem_post(&s_ConexionCpu);
 	}
-
+	return NULL;
 }
 
 void* f_hiloPLP()
@@ -800,9 +796,7 @@ void* f_hiloPLP()
 	int socketAux;
 	int i, j, status, maximo = 0;
 	int maximoAnterior;
-	char package[PACKAGESIZE], mensajePrograma;
-	t_pcb* listaExit;
-	t_imprimir* listaImprimir;
+	char package[PACKAGESIZE];
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;		// No importa si uso IPv4 o IPv6
 	hints.ai_flags = AI_PASSIVE;		// Asigna el address del localhost: 127.0.0.1
@@ -839,6 +833,7 @@ void* f_hiloPLP()
 				{
 					socketAux = accept(socketServidor, (struct sockaddr *) &programa, &addrlen);
 					log_info(logger, "Se conecto un programa por el socket %d", socketAux);
+					printf("Nuevo programa conectado en el socket %d.\n", socketAux);
 					FD_SET(socketAux, &fdRPLP);
 					if (socketAux > maximo) maximo = socketAux;
 				}
@@ -900,6 +895,7 @@ void* f_hiloColaExit(void)
 		sem_post(&s_Multiprogramacion);
 		sem_post(&s_ColaExit);
 	}
+	return NULL;
 }
 
 void* f_hiloIO(void* pos)
@@ -933,7 +929,7 @@ int crearPcb(t_new programa, t_pcb* pcbAux)
 {
 	t_medatada_program* metadataAux = metadata_desde_literal(programa.codigo);
 	int mensaje[2];
-	int respuesta, i;
+	int respuesta;
 	pcbAux->pid = programa.pid;
 	pcbAux->programCounter = metadataAux->instruccion_inicio;
 	pcbAux->tamanioIndiceEtiquetas = metadataAux->etiquetas_size;
@@ -1124,7 +1120,8 @@ void encolarEnNew(t_new* programa)
 {
 	sem_wait(&s_ColaNew);
 	t_new* aux = l_new;
-	printf("Encolando %d\n",programa->pid);
+	//printf("Encolando %d\n",programa->pid);
+	log_info(logger,"Llegó un programa y se encola en New: %d\n",programa->pid);
 	if(aux == NULL)
 	{
 		l_new = programa;
@@ -1287,23 +1284,23 @@ void* f_hiloMostrarNew()
 t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 {
 	sem_wait(&s_ColaCpu);
-	printf("Entre a recibir supermensaje\n");
+	//printf("Entre a recibir supermensaje\n");
 	int i;
 	t_cpu* aux = l_cpu;
-	printf("tabla cpu: %p\n", aux);
+	//printf("tabla cpu: %p\n", aux);
 	while(aux != NULL)
 	{
-		printf("ENTRO AL WHILE\n");
+		//printf("ENTRO AL WHILE\n");
 		if(aux->pcb != NULL)
 		{
 			if(aux->pcb->pid == superMensaje[0]) break;
 		}
-		printf("cpu siguiente: %p\n", aux->siguiente);
+		//printf("cpu siguiente: %p\n", aux->siguiente);
 		aux= aux->siguiente;
 	}
-	if(aux == NULL) printf("El PCB no existe\n");
-	printf("CPU: %p\n", aux);
-	printf("PID: %d\n",aux->pcb->pid);
+	if(aux == NULL) log_error(logger,"Se recibio un PCB que no existe\n");
+	//printf("CPU: %p\n", aux);
+	//printf("PID: %d\n",aux->pcb->pid);
 	aux->pcb->pid = superMensaje[0];
 	aux->pcb->segmentoCodigo = superMensaje[1];
 	aux->pcb->segmentoStack=	superMensaje[2] ;
@@ -1316,9 +1313,9 @@ t_pcb* recibirSuperMensaje ( int superMensaje[11] )
 	aux->pcb->tamanioIndiceCodigo=superMensaje[9] ;
 	aux->pcb->peso=superMensaje[10] ;
 
-	for(i=0; i<11; i++){
-		printf("pcb: %d\n", superMensaje[i]);
-	}
+//	for(i=0; i<11; i++){
+//		printf("pcb: %d\n", superMensaje[i]);
+//	}
 	sem_post(&s_ColaCpu);
 	return aux->pcb;
 }
@@ -1344,10 +1341,7 @@ void cargarVariablesCompartidas(void)
 	log_trace(logger, "Cargo variables compartidas");
 	char** vars = malloc(1000);
 	vars = config_get_array_value(configuracion, "VARIABLES_COMPARTIDAS");
-	while(vars[cantidadVariablesCompartidas] != NULL)
-	{
-		cantidadVariablesCompartidas++;
-	}
+	while(vars[cantidadVariablesCompartidas] != NULL) cantidadVariablesCompartidas++;
 	int i;
 	arrayVariablesCompartidas = malloc(cantidadVariablesCompartidas*sizeof(t_variableCompartida));
 	for(i = 0; i < cantidadVariablesCompartidas; i++) arrayVariablesCompartidas[i].nombreVariable = vars[i];
@@ -1409,7 +1403,7 @@ void destruirPCB(int pid)
 	t_pcb* aux = l_exit;
 	while(aux != NULL)
 	{
-		printf("PID en Exit: %d\n",aux->pid);
+		//printf("PID en Exit: %d\n",aux->pid);
 		aux = aux->siguiente;
 	}
 	if(listaExit->pid == pid)
@@ -1417,7 +1411,8 @@ void destruirPCB(int pid)
 		listaAux = l_exit;
 		l_exit = l_exit->siguiente;
 		free(listaAux);
-		printf("Destrui unico PCB\n");
+		log_info(logger,"PCB Destruido");
+		//printf("Destrui unico PCB\n");
 		return;
 	}
 	listaAux = listaExit;
@@ -1426,7 +1421,7 @@ void destruirPCB(int pid)
 	{
 		if(listaExit->pid == pid)
 		{
-			printf("destruyo pcb\n");
+			log_info(logger,"PCB Destruido");
 			listaAux->siguiente = listaExit->siguiente;
 			free(listaExit);
 			return;
@@ -1434,7 +1429,6 @@ void destruirPCB(int pid)
 		listaAux = listaExit;
 		listaExit = listaExit->siguiente;
 	}
-	printf("Salgo del Destruir Segmento\n");
 }
 
 t_new desencolarNew(void)
@@ -1510,7 +1504,7 @@ void encolarEnReady(t_pcb* pcb)
 	{
 		while(aux->siguiente != NULL)
 		{
-			printf("SIGUIENTE: %p", aux->siguiente);
+			//printf("SIGUIENTE: %p", aux->siguiente);
 			aux = aux->siguiente;
 		}
 		aux->siguiente = pcb;
@@ -1566,14 +1560,14 @@ void desencolarExec(t_pcb* pcb)
 				aux->pcb = NULL;
 				sem_post(&s_ColaCpu);
 				sem_post(&s_CpuDisponible);
-				printf("Se desencolo %d de exec\n", pcb->pid);
+				//printf("Se desencolo %d de exec\n", pcb->pid);
 				return;
 			}
 		}
 		aux = aux->siguiente;
 	}
 	log_error(logger,"Error desencolando de Exec el PCB: %d",pcb->pid);
-	printf("Error desencolando de Exec el PCB: %d\n", pcb->pid);
+	//printf("Error desencolando de Exec el PCB: %d\n", pcb->pid);
 	sem_post(&s_ColaCpu);
 	return;
 }

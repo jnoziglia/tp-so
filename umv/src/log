@@ -47242,3 +47242,452 @@ Memoria libre: 5650 bytes de 6000 bytes
 [INFO] 06:52:48:32 UMV/(7962:7963): Proceso: 2 	 Segmento: 1 	 Base: 5469
 [INFO] 06:52:48:32 UMV/(7962:7963): ----------------------------------------------
 [INFO] 06:52:48:32 UMV/(7962:7963): Llego una solicitud desde consola
+[INFO] 07:43:42:157 UMV/(7465:7467): Se conecto el kernel con socket 5
+[INFO] 07:43:51:998 UMV/(7465:7467): Se conecto un cpu con socket 6
+[INFO] 07:44:17:398 UMV/(7465:7473): Llego una operacion del kernel
+[TRACE] 07:44:17:398 UMV/(7465:7473): Se solicita crear un segmento del programa 8 con tamanio 300
+[TRACE] 07:44:17:399 UMV/(7465:7473): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 07:44:17:399 UMV/(7465:7473): Se posiciono el segmento correctamente
+[TRACE] 07:44:17:399 UMV/(7465:7473): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:44:17:399 UMV/(7465:7473): El segmento se creo correctamente
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se envio la base del nuevo segmento al kernel
+[INFO] 07:44:17:399 UMV/(7465:7473): Llego una operacion del kernel
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se solicita crear un segmento del programa 8 con tamanio 52
+[TRACE] 07:44:17:399 UMV/(7465:7473): Posicionando segmento de tamanio 52 en memoria segun First Fit
+[INFO] 07:44:17:399 UMV/(7465:7473): Se posiciono el segmento correctamente
+[TRACE] 07:44:17:399 UMV/(7465:7473): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:44:17:399 UMV/(7465:7473): El segmento se creo correctamente
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se envio la base del nuevo segmento al kernel
+[INFO] 07:44:17:399 UMV/(7465:7473): Llego una operacion del kernel
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se solicita crear un segmento del programa 8 con tamanio 40
+[TRACE] 07:44:17:399 UMV/(7465:7473): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 07:44:17:399 UMV/(7465:7473): Se posiciono el segmento correctamente
+[TRACE] 07:44:17:399 UMV/(7465:7473): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:44:17:399 UMV/(7465:7473): El segmento se creo correctamente
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se envio la base del nuevo segmento al kernel
+[INFO] 07:44:17:399 UMV/(7465:7473): Llego una operacion del kernel
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se solicita enviar bytes al programa 8, base 6202, desde 0, tamanio 52
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se busca el segmento del programa 8, base 6202
+[INFO] 07:44:17:399 UMV/(7465:7473): Se encontro el segmento
+[TRACE] 07:44:17:399 UMV/(7465:7473): Se envio confirmacion al kernel
+[INFO] 07:44:17:400 UMV/(7465:7473): Llego una operacion del kernel
+[TRACE] 07:44:17:400 UMV/(7465:7473): Se solicita enviar bytes al programa 8, base 4625, desde 0, tamanio 40
+[TRACE] 07:44:17:400 UMV/(7465:7473): Se busca el segmento del programa 8, base 4625
+[INFO] 07:44:17:400 UMV/(7465:7473): Se encontro el segmento
+[TRACE] 07:44:17:400 UMV/(7465:7473): Se envio confirmacion al kernel
+[INFO] 07:44:17:400 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:17:400 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 4625, desde 0, tamanio 8
+[TRACE] 07:44:17:400 UMV/(7465:7481): Se busca el segmento del programa 8, base 4625
+[INFO] 07:44:17:400 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:17:400 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:17:439 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:17:439 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 6202, desde 6, tamanio 16
+[TRACE] 07:44:17:439 UMV/(7465:7481): Se busca el segmento del programa 8, base 6202
+[INFO] 07:44:17:439 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:17:439 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:17:479 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:17:479 UMV/(7465:7481): Se solicita enviar bytes al programa 8, base 8973, desde 0, tamanio 5
+[TRACE] 07:44:17:479 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:17:479 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:17:479 UMV/(7465:7481): Se le envio confirmacion al cpu 6
+[INFO] 07:44:17:479 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:17:479 UMV/(7465:7481): Se solicita enviar bytes al programa 8, base 8973, desde 5, tamanio 5
+[TRACE] 07:44:17:479 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:17:479 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:17:479 UMV/(7465:7481): Se le envio confirmacion al cpu 6
+[INFO] 07:44:18:480 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:18:480 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 4625, desde 8, tamanio 8
+[TRACE] 07:44:18:480 UMV/(7465:7481): Se busca el segmento del programa 8, base 4625
+[INFO] 07:44:18:480 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:18:480 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:18:519 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:18:519 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 6202, desde 22, tamanio 7
+[TRACE] 07:44:18:519 UMV/(7465:7481): Se busca el segmento del programa 8, base 6202
+[INFO] 07:44:18:519 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:18:519 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:18:559 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:18:559 UMV/(7465:7481): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:44:18:559 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:18:559 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:18:559 UMV/(7465:7481): Se le envio confirmacion al cpu 6
+[INFO] 07:44:19:560 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:19:560 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 4625, desde 16, tamanio 8
+[TRACE] 07:44:19:560 UMV/(7465:7481): Se busca el segmento del programa 8, base 4625
+[INFO] 07:44:19:560 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:19:560 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:19:599 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:19:599 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 6202, desde 29, tamanio 7
+[TRACE] 07:44:19:599 UMV/(7465:7481): Se busca el segmento del programa 8, base 6202
+[INFO] 07:44:19:599 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:19:599 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:19:639 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:19:640 UMV/(7465:7481): Se solicita enviar bytes al programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:44:19:640 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:19:640 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:19:640 UMV/(7465:7481): Se le envio confirmacion al cpu 6
+[INFO] 07:44:20:641 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:20:641 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 8973, desde 0, tamanio 10
+[TRACE] 07:44:20:641 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:20:641 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:20:641 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:20:679 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:20:679 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 4625, desde 24, tamanio 8
+[TRACE] 07:44:20:679 UMV/(7465:7481): Se busca el segmento del programa 8, base 4625
+[INFO] 07:44:20:679 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:20:679 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:20:719 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:20:719 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 6202, desde 36, tamanio 12
+[TRACE] 07:44:20:719 UMV/(7465:7481): Se busca el segmento del programa 8, base 6202
+[INFO] 07:44:20:719 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:20:719 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:20:760 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:20:760 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:44:20:760 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:20:760 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:20:760 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:20:799 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:20:799 UMV/(7465:7481): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:44:20:799 UMV/(7465:7481): Se busca el segmento del programa 8, base 8973
+[INFO] 07:44:20:799 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:20:799 UMV/(7465:7481): Se le envio confirmacion al cpu 6
+[INFO] 07:44:21:800 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:21:801 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 4625, desde 32, tamanio 8
+[TRACE] 07:44:21:801 UMV/(7465:7481): Se busca el segmento del programa 8, base 4625
+[INFO] 07:44:21:801 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:21:801 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:21:839 UMV/(7465:7481): Llego una operacion del cpu 6
+[TRACE] 07:44:21:840 UMV/(7465:7481): Se solicitan los bytes del programa 8, base 6202, desde 48, tamanio 4
+[TRACE] 07:44:21:840 UMV/(7465:7481): Se busca el segmento del programa 8, base 6202
+[INFO] 07:44:21:840 UMV/(7465:7481): Se encontro el segmento
+[TRACE] 07:44:21:840 UMV/(7465:7481): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:44:22:919 UMV/(7465:7473): Llego una operacion del kernel
+[TRACE] 07:44:22:920 UMV/(7465:7473): Se solicita destruir los segmentos del programa 8
+[TRACE] 07:44:22:920 UMV/(7465:7473): Se destruyeron los segmentos del programa 8
+[INFO] 07:48:00:532 UMV/(7592:7594): Se conecto el kernel con socket 5
+[INFO] 07:48:03:324 UMV/(7592:7594): Se conecto un cpu con socket 6
+[INFO] 07:48:04:523 UMV/(7592:7598): Llego una operacion del kernel
+[TRACE] 07:48:04:524 UMV/(7592:7598): Se solicita crear un segmento del programa 8 con tamanio 300
+[TRACE] 07:48:04:524 UMV/(7592:7598): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 07:48:04:524 UMV/(7592:7598): Se posiciono el segmento correctamente
+[TRACE] 07:48:04:524 UMV/(7592:7598): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:48:04:524 UMV/(7592:7598): El segmento se creo correctamente
+[TRACE] 07:48:04:524 UMV/(7592:7598): Se envio la base del nuevo segmento al kernel
+[INFO] 07:48:04:524 UMV/(7592:7598): Llego una operacion del kernel
+[TRACE] 07:48:04:524 UMV/(7592:7598): Se solicita crear un segmento del programa 8 con tamanio 52
+[TRACE] 07:48:04:524 UMV/(7592:7598): Posicionando segmento de tamanio 52 en memoria segun First Fit
+[INFO] 07:48:04:524 UMV/(7592:7598): Se posiciono el segmento correctamente
+[TRACE] 07:48:04:524 UMV/(7592:7598): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:48:04:524 UMV/(7592:7598): El segmento se creo correctamente
+[TRACE] 07:48:04:524 UMV/(7592:7598): Se envio la base del nuevo segmento al kernel
+[INFO] 07:48:04:524 UMV/(7592:7598): Llego una operacion del kernel
+[TRACE] 07:48:04:524 UMV/(7592:7598): Se solicita crear un segmento del programa 8 con tamanio 40
+[TRACE] 07:48:04:524 UMV/(7592:7598): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 07:48:04:524 UMV/(7592:7598): Se posiciono el segmento correctamente
+[TRACE] 07:48:04:524 UMV/(7592:7598): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:48:04:524 UMV/(7592:7598): El segmento se creo correctamente
+[TRACE] 07:48:04:524 UMV/(7592:7598): Se envio la base del nuevo segmento al kernel
+[INFO] 07:48:04:525 UMV/(7592:7598): Llego una operacion del kernel
+[TRACE] 07:48:04:525 UMV/(7592:7598): Se solicita enviar bytes al programa 8, base 6202, desde 0, tamanio 52
+[TRACE] 07:48:04:525 UMV/(7592:7598): Se busca el segmento del programa 8, base 6202
+[INFO] 07:48:04:525 UMV/(7592:7598): Se encontro el segmento
+[TRACE] 07:48:04:525 UMV/(7592:7598): Se envio confirmacion al kernel
+[INFO] 07:48:04:525 UMV/(7592:7598): Llego una operacion del kernel
+[TRACE] 07:48:04:525 UMV/(7592:7598): Se solicita enviar bytes al programa 8, base 4625, desde 0, tamanio 40
+[TRACE] 07:48:04:525 UMV/(7592:7598): Se busca el segmento del programa 8, base 4625
+[INFO] 07:48:04:525 UMV/(7592:7598): Se encontro el segmento
+[TRACE] 07:48:04:525 UMV/(7592:7598): Se envio confirmacion al kernel
+[INFO] 07:48:04:525 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:04:525 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 4625, desde 0, tamanio 8
+[TRACE] 07:48:04:525 UMV/(7592:7606): Se busca el segmento del programa 8, base 4625
+[INFO] 07:48:04:525 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:04:525 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:04:563 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:04:563 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 6202, desde 6, tamanio 16
+[TRACE] 07:48:04:563 UMV/(7592:7606): Se busca el segmento del programa 8, base 6202
+[INFO] 07:48:04:563 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:04:563 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:04:603 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:04:604 UMV/(7592:7606): Se solicita enviar bytes al programa 8, base 8973, desde 0, tamanio 5
+[TRACE] 07:48:04:604 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:04:604 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:04:604 UMV/(7592:7606): Se le envio confirmacion al cpu 6
+[INFO] 07:48:04:604 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:04:604 UMV/(7592:7606): Se solicita enviar bytes al programa 8, base 8973, desde 5, tamanio 5
+[TRACE] 07:48:04:604 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:04:604 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:04:604 UMV/(7592:7606): Se le envio confirmacion al cpu 6
+[INFO] 07:48:05:605 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:05:605 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 4625, desde 8, tamanio 8
+[TRACE] 07:48:05:605 UMV/(7592:7606): Se busca el segmento del programa 8, base 4625
+[INFO] 07:48:05:605 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:05:605 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:05:644 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:05:644 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 6202, desde 22, tamanio 7
+[TRACE] 07:48:05:644 UMV/(7592:7606): Se busca el segmento del programa 8, base 6202
+[INFO] 07:48:05:644 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:05:644 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:05:683 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:05:684 UMV/(7592:7606): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:48:05:684 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:05:684 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:05:684 UMV/(7592:7606): Se le envio confirmacion al cpu 6
+[INFO] 07:48:06:685 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:06:685 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 4625, desde 16, tamanio 8
+[TRACE] 07:48:06:685 UMV/(7592:7606): Se busca el segmento del programa 8, base 4625
+[INFO] 07:48:06:685 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:06:685 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:06:723 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:06:723 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 6202, desde 29, tamanio 7
+[TRACE] 07:48:06:723 UMV/(7592:7606): Se busca el segmento del programa 8, base 6202
+[INFO] 07:48:06:723 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:06:723 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:06:763 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:06:763 UMV/(7592:7606): Se solicita enviar bytes al programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:48:06:763 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:06:763 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:06:763 UMV/(7592:7606): Se le envio confirmacion al cpu 6
+[INFO] 07:48:07:764 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:07:765 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 8973, desde 0, tamanio 10
+[TRACE] 07:48:07:765 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:07:765 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:07:765 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:07:803 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:07:804 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 4625, desde 24, tamanio 8
+[TRACE] 07:48:07:804 UMV/(7592:7606): Se busca el segmento del programa 8, base 4625
+[INFO] 07:48:07:804 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:07:804 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:07:843 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:07:844 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 6202, desde 36, tamanio 12
+[TRACE] 07:48:07:844 UMV/(7592:7606): Se busca el segmento del programa 8, base 6202
+[INFO] 07:48:07:844 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:07:844 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:07:884 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:07:885 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:48:07:885 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:07:885 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:07:885 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:07:923 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:07:923 UMV/(7592:7606): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:48:07:924 UMV/(7592:7606): Se busca el segmento del programa 8, base 8973
+[INFO] 07:48:07:924 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:07:924 UMV/(7592:7606): Se le envio confirmacion al cpu 6
+[INFO] 07:48:08:924 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:08:926 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 4625, desde 32, tamanio 8
+[TRACE] 07:48:08:926 UMV/(7592:7606): Se busca el segmento del programa 8, base 4625
+[INFO] 07:48:08:926 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:08:926 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:08:965 UMV/(7592:7606): Llego una operacion del cpu 6
+[TRACE] 07:48:08:965 UMV/(7592:7606): Se solicitan los bytes del programa 8, base 6202, desde 48, tamanio 4
+[TRACE] 07:48:08:965 UMV/(7592:7606): Se busca el segmento del programa 8, base 6202
+[INFO] 07:48:08:965 UMV/(7592:7606): Se encontro el segmento
+[TRACE] 07:48:08:965 UMV/(7592:7606): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:48:10:46 UMV/(7592:7598): Llego una operacion del kernel
+[TRACE] 07:48:10:46 UMV/(7592:7598): Se solicita destruir los segmentos del programa 8
+[TRACE] 07:48:10:46 UMV/(7592:7598): Se destruyeron los segmentos del programa 8
+[INFO] 07:51:54:92 UMV/(7648:7650): Se conecto el kernel con socket 5
+[INFO] 07:51:56:116 UMV/(7648:7650): Se conecto un cpu con socket 6
+[INFO] 07:51:57:188 UMV/(7648:7654): Llego una operacion del kernel
+[TRACE] 07:51:57:188 UMV/(7648:7654): Se solicita crear un segmento del programa 8 con tamanio 300
+[TRACE] 07:51:57:188 UMV/(7648:7654): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 07:51:57:188 UMV/(7648:7654): Se posiciono el segmento correctamente
+[TRACE] 07:51:57:188 UMV/(7648:7654): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:51:57:188 UMV/(7648:7654): El segmento se creo correctamente
+[TRACE] 07:51:57:188 UMV/(7648:7654): Se envio la base del nuevo segmento al kernel
+[INFO] 07:51:57:189 UMV/(7648:7654): Llego una operacion del kernel
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se solicita crear un segmento del programa 8 con tamanio 52
+[TRACE] 07:51:57:189 UMV/(7648:7654): Posicionando segmento de tamanio 52 en memoria segun First Fit
+[INFO] 07:51:57:189 UMV/(7648:7654): Se posiciono el segmento correctamente
+[TRACE] 07:51:57:189 UMV/(7648:7654): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:51:57:189 UMV/(7648:7654): El segmento se creo correctamente
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se envio la base del nuevo segmento al kernel
+[INFO] 07:51:57:189 UMV/(7648:7654): Llego una operacion del kernel
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se solicita crear un segmento del programa 8 con tamanio 40
+[TRACE] 07:51:57:189 UMV/(7648:7654): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 07:51:57:189 UMV/(7648:7654): Se posiciono el segmento correctamente
+[TRACE] 07:51:57:189 UMV/(7648:7654): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:51:57:189 UMV/(7648:7654): El segmento se creo correctamente
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se envio la base del nuevo segmento al kernel
+[INFO] 07:51:57:189 UMV/(7648:7654): Llego una operacion del kernel
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se solicita enviar bytes al programa 8, base 6202, desde 0, tamanio 52
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se busca el segmento del programa 8, base 6202
+[INFO] 07:51:57:189 UMV/(7648:7654): Se encontro el segmento
+[TRACE] 07:51:57:189 UMV/(7648:7654): Se envio confirmacion al kernel
+[INFO] 07:51:57:190 UMV/(7648:7654): Llego una operacion del kernel
+[TRACE] 07:51:57:190 UMV/(7648:7654): Se solicita enviar bytes al programa 8, base 4625, desde 0, tamanio 40
+[TRACE] 07:51:57:190 UMV/(7648:7654): Se busca el segmento del programa 8, base 4625
+[INFO] 07:51:57:190 UMV/(7648:7654): Se encontro el segmento
+[TRACE] 07:51:57:190 UMV/(7648:7654): Se envio confirmacion al kernel
+[INFO] 07:51:57:190 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:57:190 UMV/(7648:7662): Se solicitan los bytes del programa 8, base 4625, desde 0, tamanio 8
+[TRACE] 07:51:57:190 UMV/(7648:7662): Se busca el segmento del programa 8, base 4625
+[INFO] 07:51:57:190 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:57:190 UMV/(7648:7662): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:51:57:227 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:57:227 UMV/(7648:7662): Se solicitan los bytes del programa 8, base 6202, desde 6, tamanio 16
+[TRACE] 07:51:57:227 UMV/(7648:7662): Se busca el segmento del programa 8, base 6202
+[INFO] 07:51:57:227 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:57:227 UMV/(7648:7662): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:51:57:267 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:57:267 UMV/(7648:7662): Se solicita enviar bytes al programa 8, base 8973, desde 0, tamanio 5
+[TRACE] 07:51:57:267 UMV/(7648:7662): Se busca el segmento del programa 8, base 8973
+[INFO] 07:51:57:267 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:57:267 UMV/(7648:7662): Se le envio confirmacion al cpu 6
+[INFO] 07:51:57:267 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:57:267 UMV/(7648:7662): Se solicita enviar bytes al programa 8, base 8973, desde 5, tamanio 5
+[TRACE] 07:51:57:267 UMV/(7648:7662): Se busca el segmento del programa 8, base 8973
+[INFO] 07:51:57:267 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:57:267 UMV/(7648:7662): Se le envio confirmacion al cpu 6
+[INFO] 07:51:58:268 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:58:268 UMV/(7648:7662): Se solicitan los bytes del programa 8, base 4625, desde 8, tamanio 8
+[TRACE] 07:51:58:268 UMV/(7648:7662): Se busca el segmento del programa 8, base 4625
+[INFO] 07:51:58:268 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:58:268 UMV/(7648:7662): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:51:58:307 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:58:307 UMV/(7648:7662): Se solicitan los bytes del programa 8, base 6202, desde 22, tamanio 7
+[TRACE] 07:51:58:307 UMV/(7648:7662): Se busca el segmento del programa 8, base 6202
+[INFO] 07:51:58:307 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:58:307 UMV/(7648:7662): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:51:58:347 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:58:348 UMV/(7648:7662): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:51:58:348 UMV/(7648:7662): Se busca el segmento del programa 8, base 8973
+[INFO] 07:51:58:348 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:58:348 UMV/(7648:7662): Se le envio confirmacion al cpu 6
+[INFO] 07:51:59:349 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:59:349 UMV/(7648:7662): Se solicitan los bytes del programa 8, base 4625, desde 16, tamanio 8
+[TRACE] 07:51:59:350 UMV/(7648:7662): Se busca el segmento del programa 8, base 4625
+[INFO] 07:51:59:350 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:59:350 UMV/(7648:7662): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:51:59:387 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:59:387 UMV/(7648:7662): Se solicitan los bytes del programa 8, base 6202, desde 29, tamanio 7
+[TRACE] 07:51:59:387 UMV/(7648:7662): Se busca el segmento del programa 8, base 6202
+[INFO] 07:51:59:387 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:59:387 UMV/(7648:7662): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:51:59:427 UMV/(7648:7662): Llego una operacion del cpu 6
+[TRACE] 07:51:59:428 UMV/(7648:7662): Se solicita enviar bytes al programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:51:59:428 UMV/(7648:7662): Se busca el segmento del programa 8, base 8973
+[INFO] 07:51:59:428 UMV/(7648:7662): Se encontro el segmento
+[TRACE] 07:51:59:428 UMV/(7648:7662): Se le envio confirmacion al cpu 6
+[INFO] 07:53:10:125 UMV/(7690:7692): Se conecto el kernel con socket 5
+[INFO] 07:53:11:939 UMV/(7690:7692): Se conecto un cpu con socket 6
+[INFO] 07:53:13:604 UMV/(7690:7696): Llego una operacion del kernel
+[TRACE] 07:53:13:604 UMV/(7690:7696): Se solicita crear un segmento del programa 8 con tamanio 300
+[TRACE] 07:53:13:604 UMV/(7690:7696): Posicionando segmento de tamanio 300 en memoria segun First Fit
+[INFO] 07:53:13:604 UMV/(7690:7696): Se posiciono el segmento correctamente
+[TRACE] 07:53:13:604 UMV/(7690:7696): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:53:13:604 UMV/(7690:7696): El segmento se creo correctamente
+[TRACE] 07:53:13:604 UMV/(7690:7696): Se envio la base del nuevo segmento al kernel
+[INFO] 07:53:13:604 UMV/(7690:7696): Llego una operacion del kernel
+[TRACE] 07:53:13:604 UMV/(7690:7696): Se solicita crear un segmento del programa 8 con tamanio 52
+[TRACE] 07:53:13:604 UMV/(7690:7696): Posicionando segmento de tamanio 52 en memoria segun First Fit
+[INFO] 07:53:13:604 UMV/(7690:7696): Se posiciono el segmento correctamente
+[TRACE] 07:53:13:604 UMV/(7690:7696): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:53:13:604 UMV/(7690:7696): El segmento se creo correctamente
+[TRACE] 07:53:13:604 UMV/(7690:7696): Se envio la base del nuevo segmento al kernel
+[INFO] 07:53:13:605 UMV/(7690:7696): Llego una operacion del kernel
+[TRACE] 07:53:13:605 UMV/(7690:7696): Se solicita crear un segmento del programa 8 con tamanio 40
+[TRACE] 07:53:13:605 UMV/(7690:7696): Posicionando segmento de tamanio 40 en memoria segun First Fit
+[INFO] 07:53:13:605 UMV/(7690:7696): Se posiciono el segmento correctamente
+[TRACE] 07:53:13:605 UMV/(7690:7696): Insertando segmento en tabla segun su posicion en memoria
+[INFO] 07:53:13:605 UMV/(7690:7696): El segmento se creo correctamente
+[TRACE] 07:53:13:605 UMV/(7690:7696): Se envio la base del nuevo segmento al kernel
+[INFO] 07:53:13:605 UMV/(7690:7696): Llego una operacion del kernel
+[TRACE] 07:53:13:606 UMV/(7690:7696): Se solicita enviar bytes al programa 8, base 6202, desde 0, tamanio 52
+[TRACE] 07:53:13:606 UMV/(7690:7696): Se busca el segmento del programa 8, base 6202
+[INFO] 07:53:13:606 UMV/(7690:7696): Se encontro el segmento
+[TRACE] 07:53:13:606 UMV/(7690:7696): Se envio confirmacion al kernel
+[INFO] 07:53:13:606 UMV/(7690:7696): Llego una operacion del kernel
+[TRACE] 07:53:13:606 UMV/(7690:7696): Se solicita enviar bytes al programa 8, base 4625, desde 0, tamanio 40
+[TRACE] 07:53:13:606 UMV/(7690:7696): Se busca el segmento del programa 8, base 4625
+[INFO] 07:53:13:606 UMV/(7690:7696): Se encontro el segmento
+[TRACE] 07:53:13:606 UMV/(7690:7696): Se envio confirmacion al kernel
+[INFO] 07:53:13:606 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:13:606 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 4625, desde 0, tamanio 8
+[TRACE] 07:53:13:606 UMV/(7690:7704): Se busca el segmento del programa 8, base 4625
+[INFO] 07:53:13:606 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:13:606 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:13:643 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:13:643 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 6202, desde 6, tamanio 16
+[TRACE] 07:53:13:643 UMV/(7690:7704): Se busca el segmento del programa 8, base 6202
+[INFO] 07:53:13:643 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:13:643 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:13:684 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:13:684 UMV/(7690:7704): Se solicita enviar bytes al programa 8, base 8973, desde 0, tamanio 5
+[TRACE] 07:53:13:684 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:13:684 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:13:684 UMV/(7690:7704): Se le envio confirmacion al cpu 6
+[INFO] 07:53:13:684 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:13:684 UMV/(7690:7704): Se solicita enviar bytes al programa 8, base 8973, desde 5, tamanio 5
+[TRACE] 07:53:13:684 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:13:684 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:13:684 UMV/(7690:7704): Se le envio confirmacion al cpu 6
+[INFO] 07:53:14:685 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:14:686 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 4625, desde 8, tamanio 8
+[TRACE] 07:53:14:686 UMV/(7690:7704): Se busca el segmento del programa 8, base 4625
+[INFO] 07:53:14:686 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:14:686 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:14:723 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:14:723 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 6202, desde 22, tamanio 7
+[TRACE] 07:53:14:723 UMV/(7690:7704): Se busca el segmento del programa 8, base 6202
+[INFO] 07:53:14:723 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:14:723 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:14:763 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:14:764 UMV/(7690:7704): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:53:14:764 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:14:764 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:14:764 UMV/(7690:7704): Se le envio confirmacion al cpu 6
+[INFO] 07:53:15:765 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:15:766 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 4625, desde 16, tamanio 8
+[TRACE] 07:53:15:766 UMV/(7690:7704): Se busca el segmento del programa 8, base 4625
+[INFO] 07:53:15:766 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:15:766 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:15:803 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:15:803 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 6202, desde 29, tamanio 7
+[TRACE] 07:53:15:803 UMV/(7690:7704): Se busca el segmento del programa 8, base 6202
+[INFO] 07:53:15:803 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:15:803 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:15:843 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:15:843 UMV/(7690:7704): Se solicita enviar bytes al programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:53:15:843 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:15:843 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:15:843 UMV/(7690:7704): Se le envio confirmacion al cpu 6
+[INFO] 07:53:16:844 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:16:845 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 8973, desde 0, tamanio 10
+[TRACE] 07:53:16:845 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:16:845 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:16:845 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:16:884 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:16:884 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 4625, desde 24, tamanio 8
+[TRACE] 07:53:16:884 UMV/(7690:7704): Se busca el segmento del programa 8, base 4625
+[INFO] 07:53:16:884 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:16:884 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:16:923 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:16:923 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 6202, desde 36, tamanio 12
+[TRACE] 07:53:16:923 UMV/(7690:7704): Se busca el segmento del programa 8, base 6202
+[INFO] 07:53:16:923 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:16:923 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:16:963 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:16:963 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 8973, desde 6, tamanio 4
+[TRACE] 07:53:16:963 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:16:963 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:16:963 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:16:3 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:16:3 UMV/(7690:7704): Se solicita enviar bytes al programa 8, base 8973, desde 1, tamanio 4
+[TRACE] 07:53:16:4 UMV/(7690:7704): Se busca el segmento del programa 8, base 8973
+[INFO] 07:53:16:4 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:16:4 UMV/(7690:7704): Se le envio confirmacion al cpu 6
+[INFO] 07:53:18:5 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:18:5 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 4625, desde 32, tamanio 8
+[TRACE] 07:53:18:5 UMV/(7690:7704): Se busca el segmento del programa 8, base 4625
+[INFO] 07:53:18:5 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:18:5 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:18:44 UMV/(7690:7704): Llego una operacion del cpu 6
+[TRACE] 07:53:18:44 UMV/(7690:7704): Se solicitan los bytes del programa 8, base 6202, desde 48, tamanio 4
+[TRACE] 07:53:18:44 UMV/(7690:7704): Se busca el segmento del programa 8, base 6202
+[INFO] 07:53:18:44 UMV/(7690:7704): Se encontro el segmento
+[TRACE] 07:53:18:45 UMV/(7690:7704): Se le enviaron al cpu 6 los bytes solicitados
+[INFO] 07:53:19:129 UMV/(7690:7696): Llego una operacion del kernel
+[TRACE] 07:53:19:129 UMV/(7690:7696): Se solicita destruir los segmentos del programa 8
+[TRACE] 07:53:19:129 UMV/(7690:7696): Se destruyeron los segmentos del programa 8
+[INFO] 07:53:28:587 UMV/(7690:7704): Se desconecto el cpu 6
+[TRACE] 07:53:28:587 UMV/(7690:7704): Termine conexion con el cpu 6
+[INFO] 07:53:29:122 UMV/(7690:7696): Llego una operacion del kernel
