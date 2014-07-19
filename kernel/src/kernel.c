@@ -380,7 +380,7 @@ void* f_hiloPCP()
 							pcb->siguiente = NULL;
 							encolarExit(pcb);
 						}
-						else if(mensaje == 10) //todo:podria ser ENUM
+						else if(mensaje == 9) //todo:podria ser ENUM
 						{
 							//Se muere el programa
 							log_info(logger, "Llego una solicitud del cpu %d para finalizar un programa", i);
@@ -1138,8 +1138,8 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 
 void Programa_imprimirTexto(int pid, char* texto)
 {
-	int tamanio = strlen(texto)+1;
-	texto[tamanio-1] = '\0';
+	int tamanio = strlen(texto);
+	//texto[tamanio] = '\0';
 	char operacion = 1;
 	send(pid, &operacion, sizeof(char), 0);
 	send(pid, &tamanio, sizeof(int), 0);

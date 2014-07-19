@@ -211,14 +211,8 @@ int main(int cantArgs, char** args){
 			{
 				log_info(logger, "El programa %d finalizo su ejecucion", pcb->pid);
 				//printf("error %d", errorDeEjecucion);
-				if(!errorDeEjecucion)
-				{
-					estadoCPU = 0;
-				}
-				else
-				{
-					estadoCPU = 10;
-				}
+				if(!errorDeEjecucion) estadoCPU = 0;
+				if(errorDeEjecucion) estadoCPU = 9;
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
 				send(kernelSocket,superMensaje, sizeof(int)*11,0);
@@ -406,6 +400,7 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 			errorDeEjecucion = 1;
 			log_error(logger, "SEGMENTATION FAULT");
 			printf("= Segmentation Fault =\n");
+			AnSISOP_imprimirTexto("SEGMENTATION FAULT");
 			return NULL;
 		}
 	}
@@ -439,6 +434,8 @@ void UMV_enviarBytes(int pid, int base, int offset, int tamanio, void* buffer)
 			printf("= Segmentation Fault =\n");
 			terminarPrograma = 1;
 			errorDeEjecucion = 1;
+			printf("Mando a programa\n");
+//			AnSISOP_imprimirTexto("SEGMENTATION FAULT");
 			return;
 		}
 		log_trace(logger, "La informacion se envio correctamente");
@@ -865,8 +862,8 @@ void AnSISOP_imprimirTexto(char* texto)
 	if(!errorDeEjecucion)
 	{
 		char confirmacion;
-		int tamanio = strlen(texto)+1;
-		texto[tamanio-1] = '\0';
+		int tamanio = strlen(texto);
+		//texto[tamanio] = '\0';
 		//printf("Primitiva imprimir texto: %s\n", texto);
 		estadoCPU = 6; //Imprimir
 		send(kernelSocket,&estadoCPU,sizeof(char),0);
