@@ -201,6 +201,7 @@ sem_t s_CpuDisponible;
 sem_t s_ColaCpu;
 sem_t s_ColaExec;
 sem_t s_ColaIO;
+sem_t s_ConexionCpu;
 
 /*Archivo de Configuración*/
 t_config* configuracion;
@@ -225,6 +226,7 @@ int main(int cantArgs, char** args) {
 	sem_init(&s_ProgramasEnNew,0,0);
 	sem_init(&s_ColaCpu,0,1);
 	sem_init(&s_ProgramasEnExit,0,0);
+	sem_init(&s_ConexionCpu,0,1);
 	cargarVariablesCompartidas();
 	cargarDispositivosIO();
 	cargarSemaforos();
@@ -335,6 +337,7 @@ void* f_hiloPCP()
 			{
 				if(i == socketPCP)
 				{
+					sem_wait(&s_ConexionCpu);
 					socketAux = accept(socketPCP, (struct sockaddr *) &conexioncpu, &addrlen);
 					log_info(logger, "Se conecto un cpu por el socket %d", socketAux);
 					FD_SET(socketAux, &fdRPCP);
@@ -344,6 +347,7 @@ void* f_hiloPCP()
 					log_trace(logger, "Le envio al cpu %d el quantum y retardo", socketAux);
 					send(socketAux, &quantum, sizeof(int), 0);
 					send(socketAux, &retardo, sizeof(int), 0);
+					sem_post(&s_ConexionCpu);
 				}
 				else
 				{
@@ -620,8 +624,8 @@ void* f_hiloPCP()
 							pcb = recibirSuperMensaje(superMensaje);
 							log_trace(logger, "Recibiendo PCB con pid %d del cpu %d", superMensaje[0], i);
 							//desencolarExec(pcb);
+							pcb = sacarCpuDeEjecucion(i);
 							pcb->siguiente = NULL;
-							sacarCpuDeEjecucion(i);
 							encolarEnReady(pcb);
 							//Hago la desconexion
 							close(i);
@@ -762,6 +766,7 @@ void* f_hiloHabilitarCpu(void)
 		sem_wait(&s_ProgramasEnReady);
 		log_info(logger, "Hay PCBs encolados en READY");
 		sem_wait(&s_CpuDisponible);
+		sem_wait(&s_ConexionCpu);
 		log_info(logger, "Hay cpus listos para ejecutar");
 		t_pcb* pcbAux;
 		pcbAux = desencolarReady();
@@ -780,6 +785,7 @@ void* f_hiloHabilitarCpu(void)
 		socketID = encolarExec(pcbAux);
 		log_trace(logger, "Envio al cpu %d el PCB con pid %d", socketID, superMensaje[0]);
 		status = send(socketID, superMensaje, 11*sizeof(int), 0);
+		sem_post(&s_ConexionCpu);
 	}
 
 }

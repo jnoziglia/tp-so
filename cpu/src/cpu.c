@@ -146,7 +146,7 @@ int main(int cantArgs, char** args){
 	char ping;
 	char puedeRecibir = 10;
 	char* instruccionAEjecutar = malloc(1);
-	logger = log_create(NULL, "CPU", 1, LOG_LEVEL_TRACE);
+	logger = log_create(NULL, "CPU", 0, LOG_LEVEL_TRACE);
 	t_config* configuracion = config_create(args[1]);
 	BACKLOG = config_get_int_value(configuracion, "BACKLOG");			// Define cuantas conexiones vamos a mantener pendientes al mismo tiempo
 	PACKAGESIZE = config_get_int_value(configuracion, "PACKAGESIZE");	// Define cual va a ser el size maximo del paquete a enviar
@@ -374,7 +374,9 @@ void* UMV_solicitarBytes(int pid, int base, int offset, int tamanio)
 	mensaje[3] = tamanio;
 	log_trace(logger, "Solicito bytes a la UMV");
 	send(socketUMV, &operacion, sizeof(char), 0);
+	printf("Pedido enviado\n");
 	status = recv(socketUMV, &confirmacion, sizeof(char), 0);
+	printf("confirmacion recibida %d\n",confirmacion);
 	if(confirmacion != 0)
 	{
 		send(socketUMV, mensaje, 4*sizeof(int), 0);
@@ -466,9 +468,9 @@ void recibirSuperMensaje ( int* superMensaje )
 	pcb->tamanioIndiceCodigo=superMensaje[9] ;
 	pcb->peso=superMensaje[10] ;
 
-	for(i=0; i<11; i++){
-		printf("pcb: %d\n", superMensaje[i]);
-	}
+//	for(i=0; i<11; i++){
+//		printf("pcb: %d\n", superMensaje[i]);
+//	}
 	return;
 }
 
@@ -485,6 +487,10 @@ void generarSuperMensaje(void)
 	superMensaje[8] = pcb->tamanioIndiceEtiquetas;
 	superMensaje[9] = pcb->tamanioIndiceCodigo;
 	superMensaje[10] = pcb->peso;
+	int i;
+	for(i=0; i<11; i++){
+		printf("pcb: %d\n", superMensaje[i]);
+	}
 	return;
 }
 
