@@ -100,7 +100,7 @@ int main (int cantArgs, char** args)
 	sem_init(&s_TablaSegmentos,0,1);
 	sem_init(&s_cpu,0,1);
 
-
+	printf("==========\t UMV \t==========\n");
 
 	t_config* configuracion = config_create(args[1]);
 	logi = log_create(args[2], "UMV", 0, LOG_LEVEL_TRACE);
@@ -484,6 +484,7 @@ void* f_hiloCpu(void* socketCliente)
 		if(recv(socketCPU, &operacion, sizeof(char), 0) == 0)
 		{
 			log_info(logi, "Se desconecto el cpu %d", socketCPU);
+			printf("Se desconecto el cpu %d\n", socketCPU);
 			hiceWait = 0;
 			break;
 		}
@@ -498,6 +499,7 @@ void* f_hiloCpu(void* socketCliente)
 			if(recv(socketCPU, mensaje, 4*sizeof(int), 0) == 0)
 			{
 				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				printf("Se desconecto el cpu %d\n", socketCPU);
 				break;
 			}
 			buffer = malloc(mensaje[3]);
@@ -527,6 +529,7 @@ void* f_hiloCpu(void* socketCliente)
 			if(recv(socketCPU, &pid, sizeof(int), 0) == 0)
 			{
 				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				printf("Se desconecto el cpu %d\n", socketCPU);
 				break;
 			}
 			status = recv(socketCPU, &base, sizeof(int), 0);
@@ -539,6 +542,7 @@ void* f_hiloCpu(void* socketCliente)
 			if(send(socketCPU, &enviarError, sizeof(char), 0) == 0)
 			{
 				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				printf("Se desconecto el cpu %d\n", socketCPU);
 				break;
 			}
 //			log_trace(logi, "Se le envio confirmacion al cpu %d", socketCPU);
@@ -557,6 +561,7 @@ void* f_hiloCpu(void* socketCliente)
 			else
 			{
 				log_info(logi, "Se desconecto el cpu %d", socketCPU);
+				printf("Se desconecto el cpu %d\n", socketCPU);
 				break;
 			}
 		}
@@ -639,6 +644,7 @@ void* solicitarBytes(int base, int offset, int tamanio)
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
 		log_error(logi, "SEGMENTATION FAULT");
+		printf("SEGMENTATION FAULT\n");
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
 		return NULL;
@@ -661,6 +667,7 @@ int enviarBytes(int base, int offset, int tamanio, void* buffer)
 	if ((segmentoBuscado == NULL) || (offset + tamanio > segmentoBuscado->tamanio))
 	{
 		log_error(logi, "SEGMENTATION FAULT");
+		printf("SEGMENTATION FAULT\n");
 		sem_post(&s_cambioProcesoActivo);
 		sem_post(&s_TablaSegmentos);
 		return -1;
@@ -682,6 +689,7 @@ int crearSegmento(int idProceso, int tamanio)
 	if(inicioNuevo == NULL)
 	{
 		log_error(logi, "MEMORY OVERLOAD");
+		printf("MEMORY OVERLOAD\n");
 		sem_post(&s_TablaSegmentos);
 		return -1;
 	}
