@@ -1206,7 +1206,7 @@ void* f_hiloMostrarNew()
 	while(1)
 	{
 		gets(ingreso);
-		if(string_equals_ignore_case(ingreso,"mostrar-new"))
+		if(string_equals_ignore_case(ingreso,"new"))
 		{
 			sem_wait(&s_ColaNew);
 			printf("Procesos encolados en New\n");
@@ -1222,7 +1222,7 @@ void* f_hiloMostrarNew()
 			sem_post(&s_ColaNew);
 			continue;
 		}
-		else if(string_equals_ignore_case(ingreso,"mostrar-ready"))
+		else if(string_equals_ignore_case(ingreso,"ready"))
 		{
 			sem_wait(&s_ColaReady);
 			printf("Procesos encolados en Ready\n");
@@ -1237,7 +1237,7 @@ void* f_hiloMostrarNew()
 			sem_post(&s_ColaReady);
 			continue;
 		}
-		else if(string_equals_ignore_case(ingreso,"mostrar-exec"))
+		else if(string_equals_ignore_case(ingreso,"exec"))
 		{
 			sem_wait(&s_ColaCpu);
 			printf("Procesos encolados en Ejecucion\n");
@@ -1252,7 +1252,7 @@ void* f_hiloMostrarNew()
 			sem_post(&s_ColaCpu);
 			continue;
 		}
-		else if(string_equals_ignore_case(ingreso,"mostrar-semaforos"))
+		else if(string_equals_ignore_case(ingreso,"semaforos"))
 		{
 			printf("Listado de semáforos, valor y PCB's bloqueados si los hay\n");
 			printf("Semáforo\t Valor\t PID Bloqueados\n");
@@ -1275,7 +1275,7 @@ void* f_hiloMostrarNew()
 			}
 			continue;
 		}
-		else if(string_equals_ignore_case(ingreso,"mostrar-io"))
+		else if(string_equals_ignore_case(ingreso,"io"))
 		{
 			printf("Listado de dispositivos de Entrada y Salida, y su Retardo\n");
 			printf("Dispositivo\t Retardo\n");
@@ -1287,7 +1287,7 @@ void* f_hiloMostrarNew()
 			}
 			continue;
 		}
-		if(string_equals_ignore_case(ingreso,"mostrar-exit"))
+		if(string_equals_ignore_case(ingreso,"exit"))
 		{
 			sem_wait(&s_ColaExit);
 			printf("Procesos encolados en Exit\n");

@@ -2,11 +2,11 @@
 
 #Copiar carpetas so-commons-library, ansisop-parser, tp-2014-1c-unnamed a las ip.
 echo 'IP-PC1'
-read $ip1
+read ip1
 echo 'IP-PC2'
-read $ip2
+read ip2
 echo 'IP-PC3'
-read $ip3
+read ip3
 
 scp -rpCq ../so-commons-library $ip1:/home/utnso 
 scp -rpCq ../so-commons-library $ip2:/home/utnso
