@@ -967,9 +967,21 @@ void mostrarMemoria(bool mostrarPantalla)
 		}
 		else
 		{
-			log_info(logi, "%p -- Libre",contador);
-			if(mostrarPantalla) printf("%p -- Libre\n",contador);
-			contador++;
+			if(auxSegmento != NULL)
+			{
+				log_info(logi, "Desde la posicion %p hasta la %p esta libre",contador, auxSegmento->dirInicio);
+				if(mostrarPantalla) printf("Desde la posicion %p hasta la %p esta libre\n",contador, auxSegmento->dirInicio);
+				contador = auxSegmento->dirInicio;
+			}
+			else
+			{
+				log_info(logi, "Desde la posicion %p hasta la %p esta libre",contador, finMemPpal);
+				if(mostrarPantalla) printf("Desde la posicion %p hasta la %p esta libre\n",contador, finMemPpal);
+				contador = finMemPpal;
+			}
+//			log_info(logi, "%p -- Libre",contador);
+//			if(mostrarPantalla) printf("%p -- Libre\n",contador);
+//			contador++;
 		}
 	}
 	auxSegmento = tablaSegmentos;
