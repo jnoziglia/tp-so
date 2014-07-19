@@ -384,12 +384,14 @@ void* mainEsperarConexiones()
 			if (id == kernel)
 			{
 				log_info(logi, "Se conecto el kernel con socket %d", socketCliente);
+				printf("Se conecto el kernel por el socket %d\n", socketCliente);
 				pthread_create(&hiloKernel, NULL, f_hiloKernel, (void*)socketCliente);
 				continue;
 			}
 			if (id == cpu)
 			{
 				log_info(logi, "Se conecto un cpu con socket %d", socketCliente);
+				printf("Se conecto un cpu por el socket %d\n", socketCliente);
 				pthread_create(&hiloCpu, NULL, f_hiloCpu, (void*)socketCliente);
 				continue;
 			}
@@ -397,6 +399,7 @@ void* mainEsperarConexiones()
 		else
 		{
 			log_error(logi, "Se trato de conectar un dispositivo desconocido");
+			printf("Se trato de conectar un dispositivo desconocido\n");
 			continue;
 		}
 	}
