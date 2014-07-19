@@ -141,10 +141,10 @@ sem_t s_terminarCPU;
 
 int main(int cantArgs, char** args){
 
-	void* package = malloc(sizeof(t_pcb));
-	void* indiceCodigo;
-	char ping;
-	char puedeRecibir = 10;
+//	void* package = malloc(sizeof(t_pcb));
+//	void* indiceCodigo;
+//	char ping;
+//	char puedeRecibir = 10;
 	char* instruccionAEjecutar = malloc(1);
 	logger = log_create(NULL, "CPU", 0, LOG_LEVEL_TRACE);
 	t_config* configuracion = config_create(args[1]);
@@ -161,6 +161,8 @@ int main(int cantArgs, char** args){
 	conectarConUMV();
 	conectarConKernel();
 	pcb = malloc (sizeof(t_pcb));
+	printf("==========\t CPU \t==========\n");
+	printf("Conectado con Kernel (Socket: %d), y con UMV (Socket: %d)\n",kernelSocket,socketUMV);
 
 	int i,a;
 	while(1)
