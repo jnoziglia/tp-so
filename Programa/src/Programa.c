@@ -46,7 +46,7 @@ int main(int cantArgs, char **args) {
 	char* buffer = malloc(1000);
 
 	int valor, tamanioTexto;
-	char* texto;
+	char* texto = malloc(1);
 
 	//log_create(NULL, "Programa", 1, LOG_LEVEL_TRACE);
 
@@ -92,16 +92,11 @@ int main(int cantArgs, char **args) {
 	    }
 
 	    int tamanio=sizeof(char) * num-1;
-	    printf("tamanio = %d", tamanio);
-	    printf("tamanio-1 = %d", num-1);
-	    printf("\nEl código es:");
-	    printf("%s", codigo);
 	    char mensaje[tamanio+1];
 	    memcpy(mensaje, codigo, tamanio);
 	    mensaje[tamanio+1] = '\0';
 	    //printf("socket %d\n",serverSocket);
 	    send(serverSocket, mensaje,tamanio, 0);
-	    printf("Código enviado\n");
 	    while (1)
 	    {
 	    	recv(serverSocket, &operacion, sizeof(char), 0);
@@ -113,7 +108,7 @@ int main(int cantArgs, char **args) {
 	    	else if(operacion == 1)	//Imprimir texto
 	    	{
 	    		recv(serverSocket, &tamanioTexto, sizeof(int), 0);
-	    		texto = malloc(tamanioTexto);
+	    		texto = realloc(texto,tamanioTexto);
 	    		recv(serverSocket, texto, tamanioTexto, 0);
 	    		texto[tamanioTexto] = '\0';
 	    		printf("%s\n", texto);
@@ -123,7 +118,6 @@ int main(int cantArgs, char **args) {
 	    		break;
 	    	}
 	    }
-	    printf("Operacion: %d\n",operacion);
     }
 	free(buffer);
 	fclose(script);

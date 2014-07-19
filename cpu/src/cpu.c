@@ -847,7 +847,8 @@ void AnSISOP_imprimirTexto(char* texto)
 	if(!errorDeEjecucion)
 	{
 		char confirmacion;
-		int tamanio = strlen(texto);
+		int tamanio = strlen(texto)+1;
+		texto[tamanio-1] = '\0';
 		printf("Primitiva imprimir texto: %s\n", texto);
 		estadoCPU = 6; //Imprimir
 		send(kernelSocket,&estadoCPU,sizeof(char),0);

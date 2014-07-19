@@ -1120,7 +1120,8 @@ char* serializarEnvioBytes(int pid, int base, int offset, int tamanio, void* buf
 
 void Programa_imprimirTexto(int pid, char* texto)
 {
-	int tamanio = strlen(texto);
+	int tamanio = strlen(texto)+1;
+	texto[tamanio-1] = '\0';
 	char operacion = 1;
 	send(pid, &operacion, sizeof(char), 0);
 	send(pid, &tamanio, sizeof(int), 0);
