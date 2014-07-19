@@ -49,6 +49,7 @@ int main(int cantArgs, char **args) {
 	char* texto = malloc(1);
 
 	//log_create(NULL, "Programa", 1, LOG_LEVEL_TRACE);
+	printf("==========\t Programa \t==========\n");
 
 	t_config* configuracion = config_create(getenv("ANSISOP_CONFIG"));
 	IP = config_get_string_value(configuracion, "IP");
