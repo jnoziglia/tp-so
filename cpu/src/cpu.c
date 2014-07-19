@@ -208,7 +208,15 @@ int main(int cantArgs, char** args){
 			if(terminarPrograma)
 			{
 				log_info(logger, "El programa %d finalizo su ejecucion", pcb->pid);
-				estadoCPU = 0;
+				printf("error %d", errorDeEjecucion);
+				if(!errorDeEjecucion)
+				{
+					estadoCPU = 0;
+				}
+				else
+				{
+					estadoCPU = 10;
+				}
 				send(kernelSocket,&estadoCPU,sizeof(char),0);
 				generarSuperMensaje();
 				send(kernelSocket,superMensaje, sizeof(int)*11,0);

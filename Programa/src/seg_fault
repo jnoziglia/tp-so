@@ -2,6 +2,6 @@
 begin
 variables a
 	#Imprimi 300 lugares despues de donde se definio a
-	print *&a+10000
+	print *&a+300
 end
 

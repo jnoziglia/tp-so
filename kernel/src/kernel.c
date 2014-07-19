@@ -362,6 +362,18 @@ void* f_hiloPCP()
 							pcb->siguiente = NULL;
 							encolarExit(pcb);
 						}
+						else if(mensaje == 10) //todo:podria ser ENUM
+						{
+							//Se muere el programa
+							log_info(logger, "Llego una solicitud del cpu %d para finalizar un programa", i);
+							recv(i,&superMensaje,sizeof(superMensaje),0);
+							log_trace(logger, "Recibiendo PCB con pid %d del cpu %d", superMensaje[0],i);
+							pcb = recibirSuperMensaje(superMensaje);
+							desencolarExec(pcb);
+							pcb->siguiente = NULL;
+							Programa_imprimirTexto(pcb->pid, "SEGMENTATION FAULT");
+							encolarExit(pcb);
+						}
 						else if (mensaje == 1)
 						{
 							//Se termina el quantum
