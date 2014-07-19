@@ -207,7 +207,7 @@ t_config* configuracion;
 int main(int cantArgs, char** args) {
 	pthread_t hiloPCP, hiloPLP, hiloMostrarNew, hiloColaReady;
 	int rhPCP, rhPLP, rhMostrarNew, rhColaReady, rhColaIO;
-	logger = log_create(NULL, "Kernel", 1, LOG_LEVEL_TRACE);
+	logger = log_create(NULL, "Kernel", 0, LOG_LEVEL_TRACE);
 	configuracion = config_create(args[1]);
 	cargarConfig();
 	sem_init(&s_Multiprogramacion,0,gradoMultiprogramacion);
@@ -499,6 +499,7 @@ void* f_hiloPCP()
 									semaforoEncontrado = j;
 								}
 							}
+							printf("Encolo en el semaforo %s", arraySemaforos[semaforoEncontrado].nombreSemaforo);
 							if(semaforoEncontrado == -1)
 							{
 								mensaje2 = -1; //Se bloquea el programa. Hay que pedir PCB.
@@ -538,7 +539,14 @@ void* f_hiloPCP()
 									else
 									{
 										t_pcb* listaAux = arraySemaforos[semaforoEncontrado].pcb;
-										while(listaAux->siguiente != NULL) listaAux = listaAux->siguiente;
+										printf("PID BLOQUEADO: %d\n", listaAux->pid);
+										printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
+										while(listaAux->siguiente != NULL)
+										{
+											listaAux = listaAux->siguiente;
+											printf("PID BLOQUEADO: %d\n", listaAux->pid);
+											printf("PID SIGUIENTE: %p\n", listaAux->siguiente);
+										}
 										listaAux->siguiente = pcb;
 										pcb->siguiente = NULL;
 										break;
@@ -561,6 +569,7 @@ void* f_hiloPCP()
 								if(arraySemaforos[semaforoEncontrado].pcb != NULL)
 								{
 									t_pcb* aux = arraySemaforos[semaforoEncontrado].pcb;
+									aux->siguiente = NULL;
 									printf("Se pasa a ready un PCB: %d\n", aux->pid);
 									arraySemaforos[semaforoEncontrado].pcb = arraySemaforos[semaforoEncontrado].pcb->siguiente;
 									encolarEnReady(aux);
@@ -1483,6 +1492,7 @@ void encolarEnReady(t_pcb* pcb)
 	if(l_ready == NULL)
 	{
 		l_ready = pcb;
+		pcb->siguiente = NULL;
 		sem_post(&s_ProgramasEnReady);
 		sem_post(&s_ColaReady);
 		log_trace(logger, "Se encolo en ready el pcb con PID %d", pcb->pid);
@@ -1548,12 +1558,14 @@ void desencolarExec(t_pcb* pcb)
 				aux->pcb = NULL;
 				sem_post(&s_ColaCpu);
 				sem_post(&s_CpuDisponible);
+				printf("Se desencolo %d de exec\n", pcb->pid);
 				return;
 			}
 		}
 		aux = aux->siguiente;
 	}
 	log_error(logger,"Error desencolando de Exec el PCB: %d",pcb->pid);
+	printf("Error desencolando de Exec el PCB: %d\n", pcb->pid);
 	sem_post(&s_ColaCpu);
 	return;
 }
