@@ -23,6 +23,6 @@ echo ' '
 scp -rpCq ../tp-2014-1c-unnamed $ip1:/home/utnso 
 scp -rpCq ../tp-2014-1c-unnamed $ip2:/home/utnso
 scp -rpCq ../tp-2014-1c-unnamed $ip3:/home/utnso
-echo 'Parser Copiado!'
+echo 'TP Copiado!'
 echo ' '
 

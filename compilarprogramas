@@ -3,21 +3,21 @@
 #Compilar Programas
 
 cd ./cpu/src/
-gcc cpu.c -o cpu -lcommons -lpthread -lparser-ansisop
+gcc -w cpu.c -o cpu -lcommons -lpthread -lparser-ansisop
 echo 'CPU Compilada'
 echo ' '
 
 cd ../../kernel/src/
-gcc kernel.c -o kernel -lcommons -lpthread -lparser-ansisop
+gcc -w kernel.c -o kernel -lcommons -lpthread -lparser-ansisop
 echo 'Kernel Compilado' 
 echo ' '
 
 cd ../../Programa/src
-gcc Programa.c -o Programa -lcommons
+gcc -w Programa.c -o Programa -lcommons
 echo 'Programa Compilado. Declarar variable de entorno!'
 echo 'export ANSISOP_CONFIG=./config'
 echo ' '
 
 cd ../../umv/src
-gcc umv.c -o umv -lcommons -lpthread
+gcc -w umv.c -o umv -lcommons -lpthread
 echo 'UMV Compilado'
