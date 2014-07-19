@@ -1005,8 +1005,11 @@ void mostrarContenidoDeMemoria(bool mostrarPantalla, int offset, int tamanio)
 	//printf("Contenido de la memoria desde %p hasta %p:\n\n", contador,contador+tamanio-1);
 	for (i=0; i<tamanio; i++)
 	{
-		log_info(logi, "%p --- %d \t %c",contador+i,*(contador+i), *(contador+i));
-		if(mostrarPantalla) printf("%p --- %d \t %c \n",contador+i,*(contador+i), *(contador+i));
+		if(*(contador+i) != 0)
+		{
+			log_info(logi, "%p --- %d \t %c",contador+i,*(contador+i), *(contador+i));
+			if(mostrarPantalla) printf("%p --- %d \t %c \n",contador+i,*(contador+i), *(contador+i));
+		}
 		//log_info(logi, "%c",*(contador+i));
 //		printf("%p --- %d\t",contador+i,*(contador+i));
 //		printf("%c\n",*(contador+i));
