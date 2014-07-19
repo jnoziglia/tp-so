@@ -217,7 +217,7 @@ int main(int cantArgs, char** args) {
 	sem_init(&s_ColaExec,0,1);
 	sem_init(&s_ComUmv,0,1);
 	sem_init(&s_ColaIO,0,1);
-	sem_init(&s_Semaforos,0,0);
+	sem_init(&s_Semaforos,0,1);
 	sem_init(&s_ProgramaImprimir,0,1);
 	sem_init(&s_ProgramasEnReady,0,0);
 	sem_init(&s_CpuDisponible,0,0);
@@ -340,7 +340,7 @@ void* f_hiloPCP()
 					agregarCpu(socketAux);
 					//FD_SET(socketAux, &fdRPCP);
 					if (socketAux > maximoCpu) maximoCpu = socketAux;
-					log_trace("Le envio al cpu %d el quantum y retardo", socketAux);
+					log_trace(logger, "Le envio al cpu %d el quantum y retardo", socketAux);
 					send(socketAux, &quantum, sizeof(int), 0);
 					send(socketAux, &retardo, sizeof(int), 0);
 				}
@@ -477,7 +477,8 @@ void* f_hiloPCP()
 						}
 						else if (mensaje == 4)
 						{
-							log_info(logger, "Llego una solicitud del cpu %d para manejo de semaforo");
+
+							log_info(logger, "Llego una solicitud del cpu %d para manejo de semaforo",i);
 							int tamanio = 0;
 							recv(i,&tamanio,sizeof(int),0);
 							char* semaforo = malloc(tamanio);
@@ -537,8 +538,9 @@ void* f_hiloPCP()
 									else
 									{
 										t_pcb* listaAux = arraySemaforos[semaforoEncontrado].pcb;
-										while(listaAux->siguiente != NULL) listaAux = arraySemaforos[semaforoEncontrado].pcb->siguiente;
+										while(listaAux->siguiente != NULL) listaAux = listaAux->siguiente;
 										listaAux->siguiente = pcb;
+										pcb->siguiente = NULL;
 										break;
 									}
 								}
@@ -575,7 +577,7 @@ void* f_hiloPCP()
 						}
 						else if(mensaje == 5)	//Imprimir
 						{
-							log_info(logger, "Llego una solicitud del cpu %d para imprimir un valor por pantalla");
+							log_info(logger, "Llego una solicitud del cpu %d para imprimir un valor por pantalla",i);
 							operacion = 0;
 							recv(i, &pid, sizeof(int), 0);
 							recv(i, &valorAImprimir, sizeof(int), 0);
@@ -587,7 +589,7 @@ void* f_hiloPCP()
 						}
 						else if (mensaje == 6)
 						{
-							log_info(logger, "Llego una solicitud del cpu %d para imprimir texto por pantalla");
+							log_info(logger, "Llego una solicitud del cpu %d para imprimir texto por pantalla",i);
 							recv(i, &pid, sizeof(int), 0);
 							recv(i, &tamanioTexto, sizeof(int), 0);
 							texto = malloc(tamanioTexto);	//TODO: Revisar malloc
@@ -606,10 +608,10 @@ void* f_hiloPCP()
 							recv(i,&superMensaje,sizeof(superMensaje),0);
 							pcb = recibirSuperMensaje(superMensaje);
 							log_trace(logger, "Recibiendo PCB con pid %d del cpu %d", superMensaje[0], i);
-							desencolarExec(pcb);
+							//desencolarExec(pcb);
 							pcb->siguiente = NULL;
-							encolarEnReady(pcb);
 							sacarCpuDeEjecucion(i);
+							encolarEnReady(pcb);
 							//Hago la desconexion
 							close(i);
 							log_trace(logger, "Finalizada conexion con cpu %d", i);
@@ -1488,7 +1490,11 @@ void encolarEnReady(t_pcb* pcb)
 	}
 	else
 	{
-		while(aux->siguiente != NULL) aux = aux->siguiente;
+		while(aux->siguiente != NULL)
+		{
+			printf("SIGUIENTE: %p", aux->siguiente);
+			aux = aux->siguiente;
+		}
 		aux->siguiente = pcb;
 		pcb->siguiente = NULL;
 		sem_post(&s_ProgramasEnReady);
