@@ -428,8 +428,8 @@ void* f_hiloKernel(void* socketCliente)
 			{
 				respuesta = crearSegmento(mensaje[0], mensaje[1]);
 				send(socketKernel, &respuesta, sizeof(int), 0);
-				if(respuesta != -1) log_trace(logi, "Se envio la base del nuevo segmento al kernel");
-				if(respuesta == -1) log_trace(logi, "Se le informo al kernel del memory overload");
+//				if(respuesta != -1) log_trace(logi, "Se envio la base del nuevo segmento al kernel");
+//				if(respuesta == -1) log_trace(logi, "Se le informo al kernel del memory overload");
 			}
 		}
 		else if(operacion == operEnviarBytes)
@@ -446,7 +446,7 @@ void* f_hiloKernel(void* socketCliente)
 			enviarBytes(base, offset, tamanio, buffer);
 			free(buffer);
 			send(socketKernel,&confirmacion,sizeof(char),0);
-			log_trace(logi, "Se envio confirmacion al kernel");
+//			log_trace(logi, "Se envio confirmacion al kernel");
 		}
 		else if(operacion == operDestruirSegmentos)
 		{
@@ -504,14 +504,14 @@ void* f_hiloCpu(void* socketCliente)
 			{
 				haySegFault = 1;
 				send(socketCPU, &haySegFault, sizeof(char), 0);
-				log_trace(logi, "Se le informo al cpu %d del segmentation fault", socketCPU);
+//				log_trace(logi, "Se le informo al cpu %d del segmentation fault", socketCPU);
 			}
 			else
 			{
 				haySegFault = 0;
 				send(socketCPU, &haySegFault, sizeof(char), 0);
 				send(socketCPU, buffer, mensaje[3], 0);
-				log_trace(logi, "Se le enviaron al cpu %d los bytes solicitados", socketCPU);
+//				log_trace(logi, "Se le enviaron al cpu %d los bytes solicitados", socketCPU);
 			}
 			free(buffer);
 
@@ -538,7 +538,7 @@ void* f_hiloCpu(void* socketCliente)
 				log_info(logi, "Se desconecto el cpu %d", socketCPU);
 				break;
 			}
-			log_trace(logi, "Se le envio confirmacion al cpu %d", socketCPU);
+//			log_trace(logi, "Se le envio confirmacion al cpu %d", socketCPU);
 			free(buffer);
 		}
 		else if(operacion == operDestruirSegmentos)
@@ -619,7 +619,7 @@ void destruirSegmentos( int id){
 			auxSiguiente = auxSiguiente->siguiente;
 		}
 	}
-	log_trace(logi, "Se destruyeron los segmentos del programa %d", id);
+//	log_trace(logi, "Se destruyeron los segmentos del programa %d", id);
 	sem_post(&s_TablaSegmentos);
 	//mostrarEstructuras();
 	return;
@@ -690,24 +690,24 @@ int crearSegmento(int idProceso, int tamanio)
 	segmentoNuevo->dirInicio = inicioNuevo;
 	insertarSegmento(segmentoNuevo);
 	sem_post(&s_TablaSegmentos);
-	log_info(logi, "El segmento se creo correctamente");
+//	log_info(logi, "El segmento se creo correctamente");
 	return segmentoNuevo->base;
 }
 
 t_segmento* buscarSegmento(int base)
 {
-	log_trace(logi, "Se busca el segmento del programa %d, base %d", procesoActivo, base);
+//	log_trace(logi, "Se busca el segmento del programa %d, base %d", procesoActivo, base);
 	t_segmento* aux = tablaSegmentos;
 	while(aux != NULL)
 	{
 		if(aux->base == base && aux->idProceso == procesoActivo)
 		{
-			log_info(logi, "Se encontro el segmento");
+//			log_info(logi, "Se encontro el segmento");
 			return aux;
 		}
 		aux = aux->siguiente;
 	}
-	log_error(logi, "No se encontro el segmento");
+//	log_error(logi, "No se encontro el segmento");
 	return NULL;
 }
 
@@ -729,7 +729,7 @@ void* posicionarSegmento(int algoritmo, int tamanio)
 /* Algoritmos First fit y Worst fit */
 void* first_fit(int tamanio)
 {
-	log_trace(logi, "Posicionando segmento de tamanio %d en memoria segun First Fit", tamanio);
+//	log_trace(logi, "Posicionando segmento de tamanio %d en memoria segun First Fit", tamanio);
 	int compactado = 0;
 	t_segmento* aux;
 	aux = tablaSegmentos;
@@ -738,7 +738,7 @@ void* first_fit(int tamanio)
 	{
 		if(tamanio <= (int)(aux->dirInicio - auxinicio))
 		{
-			log_info(logi, "Se posiciono el segmento correctamente");
+//			log_info(logi, "Se posiciono el segmento correctamente");
 			return auxinicio;
 		}
 		else
@@ -751,7 +751,7 @@ void* first_fit(int tamanio)
 	{
 		if(tamanio <= (int)(finMemPpal - auxinicio))
 		{
-			log_info(logi, "Se posiciono el segmento correctamente");
+//			log_info(logi, "Se posiciono el segmento correctamente");
 			return auxinicio;
 		}
 		else
@@ -772,7 +772,7 @@ void* first_fit(int tamanio)
 
 void* worst_fit(int tamanio)
 {
-	log_trace(logi, "Posicionando segmento de tamanio %d en memoria segun Worst Fit", tamanio);
+//	log_trace(logi, "Posicionando segmento de tamanio %d en memoria segun Worst Fit", tamanio);
 	int compactado = 0;
 	t_segmento* aux = tablaSegmentos;
 	void* auxinicio = memPpal;
@@ -782,7 +782,7 @@ void* worst_fit(int tamanio)
 	{
 		if(tamanio < (int)(finMemPpal - memPpal))
 		{
-			log_info(logi, "Se posiciono el segmento correctamente");
+//			log_info(logi, "Se posiciono el segmento correctamente");
 			return memPpal;
 		}
 		else
@@ -816,7 +816,7 @@ void* worst_fit(int tamanio)
 		{
 			if(tamMax >= tamanio)
 			{
-				log_info(logi, "Se posiciono el segmento correctamente");
+//				log_info(logi, "Se posiciono el segmento correctamente");
 				return dirTamMax;
 			}
 			else
@@ -854,7 +854,7 @@ int nuevoIDSegmento(int idProceso)
 
 void insertarSegmento(t_segmento* segmento)
 {
-	log_trace(logi, "Insertando segmento en tabla segun su posicion en memoria");
+//	log_trace(logi, "Insertando segmento en tabla segun su posicion en memoria");
 	t_segmento* auxAnterior = tablaSegmentos;
 	t_segmento* aux;
 	if(tablaSegmentos == NULL)
@@ -912,7 +912,7 @@ void* compactar(void)
 		aux = auxSegmento->dirInicio+auxSegmento->tamanio;
 		auxSegmento = auxSegmento->siguiente;
 	}
-	log_info(logi, "Compactacion completada");
+//	log_info(logi, "Compactacion completada");
 	return aux;
 }
 
