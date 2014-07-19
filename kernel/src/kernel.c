@@ -226,6 +226,24 @@ int main(int cantArgs, char** args) {
 	cargarDispositivosIO();
 	cargarSemaforos();
 
+	int i;
+	printf("==========\t Kernel \t==========\n");
+	printf("Variables Compartidas:\t");
+	for(i=0;i<cantidadVariablesCompartidas;i++) printf("%s  ",arrayVariablesCompartidas[i].nombreVariable);
+	printf("\nSemáforos\t");
+	for(i=0;i<cantidadSemaforos;i++) printf("%s (%d) ", arraySemaforos[i].nombreSemaforo, arraySemaforos[i].valor);
+	printf("\nDispositivos Entrada/Salida (HIO): \t");
+	for(i=0;i<cantidadDispositivosIO;i++) printf("%s  ",arrayDispositivosIO[i].nombreIO);
+	printf("\n------------------------------------------------------------\n");
+
+
+
+
+
+
+
+
+
 	conexionUMV();
 	pthread_create(&hiloPCP, NULL, f_hiloPCP, NULL);
 	pthread_create(&hiloPLP, NULL, f_hiloPLP, NULL);
